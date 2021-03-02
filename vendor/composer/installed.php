@@ -1,16 +1,25 @@
 <?php return array (
   'root' => 
   array (
-    'pretty_version' => 'v5.2.99',
-    'version' => '5.2.99.0',
+    'pretty_version' => 'dev-main',
+    'version' => 'dev-main',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
-    'name' => 'symfony/website-skeleton',
+    'reference' => 'f6d52ffb806fc9eaacdf7256a5c29e57fa94a93f',
+    'name' => '__root__',
   ),
   'versions' => 
   array (
+    '__root__' => 
+    array (
+      'pretty_version' => 'dev-main',
+      'version' => 'dev-main',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'f6d52ffb806fc9eaacdf7256a5c29e57fa94a93f',
+    ),
     'composer/package-versions-deprecated' => 
     array (
       'pretty_version' => '1.11.99.1',
@@ -357,8 +366,8 @@
     array (
       'provided' => 
       array (
-        0 => '1.0',
-        1 => '1.0.0',
+        0 => '1.0.0',
+        1 => '1.0',
       ),
     ),
     'psr/simple-cache-implementation' => 
@@ -1018,15 +1027,6 @@
       ),
       'reference' => 'd9ce6aa8abdb84fc0db8a6f47962a949e1c652c2',
     ),
-    'symfony/website-skeleton' => 
-    array (
-      'pretty_version' => 'v5.2.99',
-      'version' => '5.2.99.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => NULL,
-    ),
     'symfony/yaml' => 
     array (
       'pretty_version' => 'v5.2.2',
@@ -1035,6 +1035,15 @@
       array (
       ),
       'reference' => '6bb8b36c6dea8100268512bf46e858c8eb5c545e',
+    ),
+    'symfonycasts/verify-email-bundle' => 
+    array (
+      'pretty_version' => 'v1.2.0',
+      'version' => '1.2.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '9fc2cf3118e9f249c7bff11786fed4ea2c06e5ed',
     ),
     'twig/extra-bundle' => 
     array (

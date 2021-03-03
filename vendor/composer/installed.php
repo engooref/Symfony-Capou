@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'f6d52ffb806fc9eaacdf7256a5c29e57fa94a93f',
+    'reference' => '90e8eb33f736dcf8e22484900cc55e6ad7249091',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'f6d52ffb806fc9eaacdf7256a5c29e57fa94a93f',
+      'reference' => '90e8eb33f736dcf8e22484900cc55e6ad7249091',
     ),
     'composer/package-versions-deprecated' => 
     array (
@@ -597,6 +597,15 @@
       array (
       ),
       'reference' => 'ff455b2afd3f98237d4131ffebe190e59cc0f011',
+    ),
+    'symfony/google-mailer' => 
+    array (
+      'pretty_version' => 'v5.2.3',
+      'version' => '5.2.3.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'e93f9d09b1cf02ce74d65c08c2ddda33a0b284ef',
     ),
     'symfony/http-client' => 
     array (

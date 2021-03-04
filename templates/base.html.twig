@@ -9,16 +9,33 @@
 			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         {% block stylesheets %}
         	<style>
-        		.navbar{margin-bottom : 60px;}
+        		.navbar-brand>img{
+        			margin-top : -5px;
+        		}
+        		.navbar-brand{
+        			font-size : 30px;
+        		}
+        		.navbar-header>h1{
+        			font-size : 30px;
+        		}
+        		.navbar-nav{
+        			padding-top : 20px;
+        			font-size : 20px;
+        		}
+        		
+        		.navbar-right{
+        			padding-bottom : 15px;
+        		}
+        		
 			</style>
 	    {% endblock %}
 	    <nav class="navbar navbar-inverse">
 			<div class="container-fluid">
   				<div class="navbar-header">
   					<a class="navbar-brand" href="/home">
-      					<img src="img/Logo_Capou.png" alt="Logo" width="90" height="90" class="d-inline-block align-top">
+      					<img src="img/Logo_Capou.png" alt="Logo" width="70" height="70" class="d-inline-block align-top">
     				</a>
-     				<a class="navbar-brand" href="/home"> Lycée Capou </a>
+     				<h1 class="navbar-brand"> Lycée Capou </h1>
     			</div>
     			{% if app.user %}
     				<ul class="nav navbar-nav">
@@ -27,7 +44,7 @@
                         <li><a href="/logs"> Logs </a></li>
     				</ul>
     				<ul class="nav navbar-nav navbar-right">
-    					<li><a href="/account"> Votre Compte </a></li>
+    					<li><a href="/account"><span class="glyphicon glyphicon-user"></span> Votre Compte </a></li>
     					<li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Déconnexion </a></li>
     				</ul>
 				{% else %}

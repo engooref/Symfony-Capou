@@ -9,12 +9,71 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/qb666/git/Symfony-Capou/src/Controller/PilotageController.php'|file_link(0) }}">src/Controller/PilotageController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/qb666/git/Symfony-Capou/templates/pilotage/index.html.twig'|file_link(0) }}">templates/pilotage/index.html.twig</a></code></li>
-    </ul>
+    <h1 class="textCenter">Hello {{ controller_name }}! ✅</h1>
+	<table>
+		<tr>
+    		<td>
+    			<canvas id="mon_canevas">
+					[No canvas support]
+				</canvas>
+                <script>
+                    window.onload = function (){
+                    	var canvas  = document.getElementById("mon_canevas");
+                        var context = canvas.getContext('2d');
+                        
+                    	context.beginPath();
+                        context.fillStyle = 'red'; // couleur de remplissage
+                        context.fillRect(150,30,120,70);
+                        context.fill();
+                    }
+                </script>
+    		</td>
+    		
+    		<td>
+    			<canvas id="mon_canevas">
+					[No canvas support]
+				</canvas>
+                <script>
+                    window.onload = function (){
+                    	var canvas  = document.getElementById("mon_canevas");
+                        var context = canvas.getContext('2d');
+                        
+                    	context.beginPath();
+                        context.fillStyle = 'red'; // couleur de remplissage
+                        context.fillRect(150,30,120,70);
+                        context.fill();
+                    }
+                </script>
+    		</td>
+		</tr>
+		<tr>
+			<td>
+    			<div class="eletrovanne">
+            		<h2> Electrovannes </br></h2>
+                    <form action="/home" method="GET">
+                        <select name="electrovanne" id="electrovanne">
+                            <option value="electrovanne1"> electrovanne 1 </option>
+                            <option value="electrovanne2"> electrovanne 2 </option>
+                            <option value="electrovanne3"> electrovanne 3 </option>
+                        </select>
+                    </form>
+    			</div>
+			</td>
+			
+			<td>
+    			<div class="stationPompage">
+            		<h2> Stations de pompage </br></h2>
+                    <form action="/home" method="GET">
+                        <select name="stationPompage" id="stationPompage">
+                            <option value="stationPompage1"> Station de pompage 1 </option>
+                            <option value="stationPompage2"> Station de pompage 2 </option>
+                            <option value="stationPompage3"> Station de pompage 3 </option>
+                        </select>
+                    </form>
+    			</div>
+			</td>
+		</tr>
+	</table>
 </div>
+
 {% endblock %}

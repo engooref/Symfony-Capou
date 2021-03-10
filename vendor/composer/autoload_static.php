@@ -568,9 +568,19 @@ class ComposerStaticInit287842bf87ab958d87aa579220c409a1
     );
 
     public static $classMap = array (
+        'App\\Controller\\AccountController' => __DIR__ . '/../..' . '/src/Controller/AccountController.php',
+        'App\\Controller\\HomeController' => __DIR__ . '/../..' . '/src/Controller/HomeController.php',
+        'App\\Controller\\LogsController' => __DIR__ . '/../..' . '/src/Controller/LogsController.php',
+        'App\\Controller\\PilotageController' => __DIR__ . '/../..' . '/src/Controller/PilotageController.php',
+        'App\\Controller\\RegistrationController' => __DIR__ . '/../..' . '/src/Controller/RegistrationController.php',
+        'App\\Controller\\SecurityController' => __DIR__ . '/../..' . '/src/Controller/SecurityController.php',
+        'App\\Controller\\WipyController' => __DIR__ . '/../..' . '/src/Controller/WipyController.php',
         'App\\Entity\\Operator' => __DIR__ . '/../..' . '/src/Entity/Operator.php',
+        'App\\Form\\RegistrationFormType' => __DIR__ . '/../..' . '/src/Form/RegistrationFormType.php',
         'App\\Kernel' => __DIR__ . '/../..' . '/src/Kernel.php',
         'App\\Repository\\OperatorRepository' => __DIR__ . '/../..' . '/src/Repository/OperatorRepository.php',
+        'App\\Security\\EmailVerifier' => __DIR__ . '/../..' . '/src/Security/EmailVerifier.php',
+        'App\\Security\\OperatorAuthenticator' => __DIR__ . '/../..' . '/src/Security/OperatorAuthenticator.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Collator' => __DIR__ . '/..' . '/symfony/intl/Resources/stubs/Collator.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',

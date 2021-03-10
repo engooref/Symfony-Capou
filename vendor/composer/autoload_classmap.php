@@ -6,9 +6,19 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Controller\\AccountController' => $baseDir . '/src/Controller/AccountController.php',
+    'App\\Controller\\HomeController' => $baseDir . '/src/Controller/HomeController.php',
+    'App\\Controller\\LogsController' => $baseDir . '/src/Controller/LogsController.php',
+    'App\\Controller\\PilotageController' => $baseDir . '/src/Controller/PilotageController.php',
+    'App\\Controller\\RegistrationController' => $baseDir . '/src/Controller/RegistrationController.php',
+    'App\\Controller\\SecurityController' => $baseDir . '/src/Controller/SecurityController.php',
+    'App\\Controller\\WipyController' => $baseDir . '/src/Controller/WipyController.php',
     'App\\Entity\\Operator' => $baseDir . '/src/Entity/Operator.php',
+    'App\\Form\\RegistrationFormType' => $baseDir . '/src/Form/RegistrationFormType.php',
     'App\\Kernel' => $baseDir . '/src/Kernel.php',
     'App\\Repository\\OperatorRepository' => $baseDir . '/src/Repository/OperatorRepository.php',
+    'App\\Security\\EmailVerifier' => $baseDir . '/src/Security/EmailVerifier.php',
+    'App\\Security\\OperatorAuthenticator' => $baseDir . '/src/Security/OperatorAuthenticator.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Collator' => $vendorDir . '/symfony/intl/Resources/stubs/Collator.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',

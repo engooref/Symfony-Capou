@@ -3835,7 +3835,7 @@
         },
         {
             "name": "symfony/google-mailer",
-            "version": "v5.2.3",
+            "version": "v5.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/google-mailer.git",
@@ -3880,7 +3880,7 @@
             "description": "Symfony Google Mailer Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/google-mailer/tree/v5.2.3"
+                "source": "https://github.com/symfony/google-mailer/tree/v5.2.4"
             },
             "funding": [
                 {

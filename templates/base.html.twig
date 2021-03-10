@@ -9,66 +9,18 @@
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         {% block stylesheets %}
-        	<style>
-        		.navbar-brand>img{
-        			margin-top : -5px;
-        		}
-        		.navbar-brand{
-        			font-size : 30px;
-        		}
-        		.navbar-header>h1{
-        			font-size : 30px;
-        		}
-        		.navbar-nav{
-        			padding-top : 20px;
-        			font-size : 20px;
-        		}
-        		.navbar-right{
-        			padding-bottom : 15px;
-        		}
-        		.cLogin{
-        			margin-left : 500px;
-        			margin-right : 500px;
-        			margin-top : 100px;
-        		}
-        		.cRegister{
-        			margin-left : 500px;
-        			margin-right : 500px;
-        			margin-top : 100px;
-        		}
-        		.centerForm{
-        			margin-left : 100px;
-        		}
-        		.form-control{
-        			margin-bottom : 20px;
-        		}
-        		.textCenter{
-        			text-align : center;
-        			margin-bottom : 25px;
-        		}
-        		.eletrovanne{
-        			text-align : center;
-        			margin-left : 125px;
-        			margin-right : 25px;
-        		}
-        		.stationPompage{
-        			text-align : center;
-        			margin-left : 25px;
-        			margin-right : 100px;
-        		}
-			</style>
+        	<link rel="stylesheet" href="./css/stylesheet.css" type="text/css" />
 	    {% endblock %}
 	    <nav class="navbar navbar-inverse">
 			<div class="container-fluid">
   				<div class="navbar-header">
-  					<a class="navbar-brand" href="/home">
+  					<a class="navbar-brand" href="/">
       					<img src="./img/Logo_Capou.png" alt="Logo" width="70" height="70" class="d-inline-block align-top">
     				</a>
-     				<h1 class="navbar-brand"> Lycée Capou </h1>
+     				<a class="navbar-brand" href="/"><h1> Lycée Capou </h1></a>
     			</div>
     			{% if app.user %}
     				<ul class="nav navbar-nav">
-      					<li><a href="/home"> Accueil </a></li>
                         <li><a href="/pilotage"> Pilotage </a></li>
                         <li><a href="/logs"> Logs </a></li>
     				</ul>
@@ -78,8 +30,7 @@
     				</ul>
 				{% else %}
 					<ul class="nav navbar-nav">
-      					<li><a href="/home"> Accueil </a></li>
-      					<li><a href="/wipy"> Test Wipy </a></li>
+      					<li><a href="/esp"> Test Wipy </a></li>
     				</ul>
     				<ul class="nav navbar-nav navbar-right">
                     	<li><a href="/register"><span class="glyphicon glyphicon-user"></span> Inscription </a></li>

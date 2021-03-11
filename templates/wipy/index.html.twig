@@ -9,6 +9,23 @@
 </style>
 
 <div class="example-wrapper">
-
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col">Id</th>
+				<th scope="col">Longitude</th>
+				<th scope="col">Latitude</th>
+			</tr>
+		</thead>
+		<tbody>
+	        {% for longitude in esp %}
+				<tr>
+					<th scope="row">{{ longitude.id }}</th>
+					<td>{{ longitude.longitude }}</td>
+					<td>{{ longitude.latitude }}</td>
+				</tr>
+	        {% endfor %}</p> 
+		</tbody>
+	</table>   
 </div>
 {% endblock %}

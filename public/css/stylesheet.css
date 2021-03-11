@@ -50,10 +50,20 @@
 	margin-right : 25px;
 }
 
+.electrovanneButton{
+	text-align : center;
+	margin-left : 100px;
+
+}
+
 .stationPompage{
 	text-align : center;
 	margin-left : 25px;
-	margin-right : 100px;
+}
+
+.stationPompageButton{
+	text-align : center;
+	margin-right : -15px;
 }
 
 .account{

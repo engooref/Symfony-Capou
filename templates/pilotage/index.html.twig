@@ -13,37 +13,28 @@
 	<table>
 		<tr>
     		<td>
-    			<canvas id="mon_canevas">
-					[No canvas support]
-				</canvas>
-                <script>
-                    window.onload = function (){
-                    	var canvas  = document.getElementById("mon_canevas");
-                        var context = canvas.getContext('2d');
-                        
-                    	context.beginPath();
-                        context.fillStyle = 'red'; // couleur de remplissage
-                        context.fillRect(150,30,120,70);
-                        context.fill();
-                    }
-                </script>
+    			<div id="buttonElectrovanne" class="electrovanneButton"> <input type="checkbox" unchecked data-toggle="toggle" data-onstyle="success"></div>
+    				<div class="modal" tabindex="-1">
+  						<div class="modal-dialog">
+    						<div class="modal-content">
+      							<div class="modal-header">
+        							<h5 class="modal-title">Modal title</h5>
+        							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      							</div>
+      							<div class="modal-body">
+        							<p>Modal body text goes here.</p>
+      							</div>
+      							<div class="modal-footer">
+        							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        							<button type="button" class="btn btn-primary">Save changes</button>
+      							</div>
+    						</div>
+  						</div>
+					</div>
     		</td>
     		
     		<td>
-    			<canvas id="mon_canevas">
-					[No canvas support]
-				</canvas>
-                <script>
-                    window.onload = function (){
-                    	var canvas  = document.getElementById("mon_canevas");
-                        var context = canvas.getContext('2d');
-                        
-                    	context.beginPath();
-                        context.fillStyle = 'red'; // couleur de remplissage
-                        context.fillRect(150,30,120,70);
-                        context.fill();
-                    }
-                </script>
+    			<div class="stationPompageButton"> <input id="buttonStation" type="checkbox" unchecked data-toggle="toggle" data-onstyle="success"> </div>
     		</td>
 		</tr>
 		<tr>
@@ -75,5 +66,9 @@
 		</tr>
 	</table>
 </div>
-
+<script type="text/javascript">
+    				$( "#buttonElectrovanne" ).on( "click", function() {
+ 						 alert('Ce code fonctionne !');
+					});
+				</script>
 {% endblock %}

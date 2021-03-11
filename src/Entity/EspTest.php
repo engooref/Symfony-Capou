@@ -20,21 +20,38 @@ class EspTest
     /**
      * @ORM\Column(type="integer")
      */
-    private $val;
+    private $longitude;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $latitude;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getVal(): ?int
+    public function getLongitude(): ?int
     {
-        return $this->val;
+        return $this->longitude;
     }
 
-    public function setVal(int $val): self
+    public function setLongitude(int $longitude): self
     {
-        $this->val = $val;
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?int
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(int $latitude): self
+    {
+        $this->latitude = $latitude;
 
         return $this;
     }

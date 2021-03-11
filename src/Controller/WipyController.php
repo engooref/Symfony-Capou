@@ -21,14 +21,14 @@ class WipyController extends AbstractController
     #[Route('/input', name: 'input')]
     public function input()
     {
-        $val = $_GET['val'];
+        $longitude = $_GET['longitude'];
+        $latitude = $_GET['latitude'];
         $esp = new EspTest();
-        $esp->setval($val);
-        if($esp->getVal()){
-            $doctrine = $this->getDoctrine()->getManager();
-            $doctrine->persist($esp);
-            $doctrine->flush();
-            return $this->redirectToRoute('esp');
-        }
+        $esp->setlongitude($longitude);
+        $esp->setlatitude($latitude);
+        $doctrine = $this->getDoctrine()->getManager();
+        $doctrine->persist($esp);
+        $doctrine->flush();
+        return $this->redirectToRoute('esp');
     }
 }

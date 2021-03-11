@@ -9,16 +9,19 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-	<div class="mb-3">
-        <p class="account"><strong><u> Email</u></strong> : {{ app.user.username }}</p>
-        </br>
-        <p class="account"><strong><u> Mdp (crypted)</u></strong> : {{ app.user.password }}</p>
-        </br>
-        <p class="account"><strong><u> Role</u></strong> : {% for user in app %}
-					<li>{{ user.roles }}</li>
-                {% endfor %}</p>
-    </div>
+    <table class="table">
+		<thead>
+			<tr>
+				<th scope="col">Email</th>
+				<th scope="col">Role</th>
+			</tr>
+		</thead>
+		<tbody>
+				<tr>
+					<td>{{ app.user.username }}</td>
+					<td>{% for user in app %}	<li>{{ user.roles }}</li>    {% endfor %}</td>
+				</tr>
+		</tbody>
+	</table>
 </div>
 {% endblock %}

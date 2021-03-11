@@ -13,6 +13,16 @@ return [
         '/_profiler/search_bar' => [[['_route' => '_profiler_search_bar', '_controller' => 'web_profiler.controller.profiler::searchBarAction'], null, null, null, false, false, null]],
         '/_profiler/phpinfo' => [[['_route' => '_profiler_phpinfo', '_controller' => 'web_profiler.controller.profiler::phpinfoAction'], null, null, null, false, false, null]],
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
+        '/account' => [[['_route' => 'account', '_controller' => 'App\\Controller\\AccountController::index'], null, null, null, false, false, null]],
+        '/' => [[['_route' => 'home', '_controller' => 'App\\Controller\\HomeController::index'], null, null, null, false, false, null]],
+        '/logs' => [[['_route' => 'logs', '_controller' => 'App\\Controller\\LogsController::index'], null, null, null, false, false, null]],
+        '/pilotage' => [[['_route' => 'pilotage', '_controller' => 'App\\Controller\\PilotageController::index'], null, null, null, false, false, null]],
+        '/register' => [[['_route' => 'app_register', '_controller' => 'App\\Controller\\RegistrationController::register'], null, null, null, false, false, null]],
+        '/verify/email' => [[['_route' => 'app_verify_email', '_controller' => 'App\\Controller\\RegistrationController::verifyUserEmail'], null, null, null, false, false, null]],
+        '/login' => [[['_route' => 'app_login', '_controller' => 'App\\Controller\\SecurityController::login'], null, null, null, false, false, null]],
+        '/logout' => [[['_route' => 'app_logout', '_controller' => 'App\\Controller\\SecurityController::logout'], null, null, null, false, false, null]],
+        '/esp' => [[['_route' => 'esp', '_controller' => 'App\\Controller\\WipyController::FonctionDeRecuperationDesDonneesDuGetVal'], null, null, null, false, false, null]],
+        '/input' => [[['_route' => 'input', '_controller' => 'App\\Controller\\WipyController::input'], null, null, null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'

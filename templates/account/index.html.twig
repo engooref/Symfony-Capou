@@ -11,10 +11,14 @@
 <div class="example-wrapper">
     <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/qb666/git/Symfony-Capou/src/Controller/AccountController.php'|file_link(0) }}">src/Controller/AccountController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/qb666/git/Symfony-Capou/templates/account/index.html.twig'|file_link(0) }}">templates/account/index.html.twig</a></code></li>
-    </ul>
+	<div class="mb-3">
+        <p class="account"><strong><u> Email</u></strong> : {{ app.user.username }}</p>
+        </br>
+        <p class="account"><strong><u> Mdp (crypted)</u></strong> : {{ app.user.password }}</p>
+        </br>
+        <p class="account"><strong><u> Role</u></strong> : {% for user in app %}
+					<li>{{ user.roles }}</li>
+                {% endfor %}</p>
+    </div>
 </div>
 {% endblock %}

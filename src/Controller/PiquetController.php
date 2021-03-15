@@ -24,7 +24,7 @@ class PiquetController extends AbstractController
         }
             
         return $this->render('piquet/index.html.twig', [
-            'piquet' => '$piquet',
+            'piquet' => $piquet,
         ]);
     }
 }

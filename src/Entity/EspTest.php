@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use App\Repository\EspTestRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=EspTestRepository::class)
  */
-class EspTest
+class EspTest implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -55,5 +56,14 @@ class EspTest
 
         return $this;
     }
-
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'   => $this->getId(),
+            'longitude' => $this->getLongitude(),
+            'latitude' => $this->getLatitude()
+        ];   
+    }
 }

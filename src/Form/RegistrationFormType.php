@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Operator;
+use App\Entity\Operateur;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -48,7 +48,7 @@ class RegistrationFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Operator::class,
+            'data_class' => Operateur::class,
         ]);
     }
 }

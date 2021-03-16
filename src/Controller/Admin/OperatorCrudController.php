@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use App\Entity\Operator;
+use App\Entity\Operateur;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -15,7 +15,7 @@ class OperatorCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return Operator::class;
+        return Operateur::class;
     }
 
     

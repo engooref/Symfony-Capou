@@ -1,7 +1,5 @@
 security:
     encoders:
-        App\Entity\Operator:
-            algorithm: auto
         App\Entity\Operateur:
             algorithm: auto
 

@@ -2,7 +2,7 @@
 
 namespace App\Security;
 
-use App\Entity\Operator;
+use App\Entity\Operateur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,7 +67,7 @@ class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements Pa
             throw new InvalidCsrfTokenException();
         }
 
-        $user = $this->entityManager->getRepository(Operator::class)->findOneBy(['email' => $credentials['email']]);
+        $user = $this->entityManager->getRepository(Operateur::class)->findOneBy(['email' => $credentials['email']]);
 
         if (!$user) {
             // fail authentication with a custom error

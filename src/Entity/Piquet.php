@@ -25,7 +25,7 @@ class Piquet
     private $etat;
 
     /**
-     * @ORM\OneToMany(targetEntity=donneespiquet::class, mappedBy="idPiquet", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=DonneesPiquet::class, mappedBy="idPiquet", orphanRemoval=true)
      */
     private $idDonneesPiquet;
 

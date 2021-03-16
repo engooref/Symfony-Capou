@@ -20,7 +20,7 @@ class Groupe
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity=operateur::class, mappedBy="idGroupe")
+     * @ORM\OneToMany(targetEntity=Operateur::class, mappedBy="idGroupe")
      */
     private $idOperateur;
 
@@ -30,7 +30,7 @@ class Groupe
     private $idPiquets;
 
     /**
-     * @ORM\ManyToMany(targetEntity=electrovanne::class)
+     * @ORM\ManyToMany(targetEntity=Electrovanne::class)
      */
     private $idElectrovanne;
 
@@ -53,7 +53,7 @@ class Groupe
     }
 
     /**
-     * @return Collection|operateur[]
+     * @return Collection|Operateur[]
      */
     public function getIdOperateur(): Collection
     {
@@ -107,7 +107,7 @@ class Groupe
     }
 
     /**
-     * @return Collection|electrovanne[]
+     * @return Collection|Electrovanne[]
      */
     public function getIdElectrovanne(): Collection
     {

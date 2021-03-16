@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Operator;
+use App\Entity\Operateur;
+use App\Entity\Groupe;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
 use App\Security\OperatorAuthenticator;
@@ -28,20 +29,22 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, OperatorAuthenticator $authenticator): Response
     {
-        $user = new Operator();
+        $user = new Operateur();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
+            $entityManager = $this->getDoctrine()->getManager();
+            
             $user->setPassword(
                 $passwordEncoder->encodePassword(
                     $user,
                     $form->get('plainPassword')->getData()
                 )
             );
+            $user->setIdGroupe($entityManager->getRepository(Groupe::class)->findOneById('1'));
 
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
 

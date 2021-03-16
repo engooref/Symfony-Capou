@@ -22,7 +22,7 @@ class PiquetController extends AbstractController
                 'No product found for id '.$id
                 );
         }
-            
+        
         return $this->render('piquet/index.html.twig', [
             'piquet' => $piquet,
         ]);

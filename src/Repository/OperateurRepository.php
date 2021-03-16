@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Operator;
+use App\Entity\Operateur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -10,16 +10,16 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @method Operator|null find($id, $lockMode = null, $lockVersion = null)
- * @method Operator|null findOneBy(array $criteria, array $orderBy = null)
- * @method Operator[]    findAll()
- * @method Operator[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Operateur|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Operateur|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Operateur[]    findAll()
+ * @method Operateur[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class OperatorRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class OperateurRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Operator::class);
+        parent::__construct($registry, Operateur::class);
     }
 
     /**
@@ -27,7 +27,7 @@ class OperatorRepository extends ServiceEntityRepository implements PasswordUpgr
      */
     public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
     {
-        if (!$user instanceof Operator) {
+        if (!$user instanceof Operateur) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
         }
 
@@ -37,7 +37,7 @@ class OperatorRepository extends ServiceEntityRepository implements PasswordUpgr
     }
 
     // /**
-    //  * @return Operator[] Returns an array of Operator objects
+    //  * @return Operateur[] Returns an array of Operateur objects
     //  */
     /*
     public function findByExampleField($value)
@@ -54,7 +54,7 @@ class OperatorRepository extends ServiceEntityRepository implements PasswordUpgr
     */
 
     /*
-    public function findOneBySomeField($value): ?Operator
+    public function findOneBySomeField($value): ?Operateur
     {
         return $this->createQueryBuilder('o')
             ->andWhere('o.exampleField = :val')

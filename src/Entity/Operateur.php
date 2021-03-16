@@ -2,16 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\OperatorRepository;
+use App\Repository\OperateurRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity(repositoryClass=OperatorRepository::class)
- * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
+ * @ORM\Entity(repositoryClass=OperateurRepository::class)
  */
-class Operator implements UserInterface
+class Operateur implements UserInterface
 {
     /**
      * @ORM\Id
@@ -37,9 +35,10 @@ class Operator implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idOperateur")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $isVerified = false;
+    private $idGroupe;
 
     public function getId(): ?int
     {
@@ -103,11 +102,14 @@ class Operator implements UserInterface
     }
 
     /**
+     * Returning a salt is only needed, if you are not using a modern
+     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
+     *
      * @see UserInterface
      */
-    public function getSalt()
+    public function getSalt(): ?string
     {
-        // not needed when using the "bcrypt" algorithm in security.yaml
+        return null;
     }
 
     /**
@@ -119,14 +121,14 @@ class Operator implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function isVerified(): bool
+    public function getIdGroupe(): ?Groupe
     {
-        return $this->isVerified;
+        return $this->idGroupe;
     }
 
-    public function setIsVerified(bool $isVerified): self
+    public function setIdGroupe(?Groupe $idGroupe): self
     {
-        $this->isVerified = $isVerified;
+        $this->idGroupe = $idGroupe;
 
         return $this;
     }

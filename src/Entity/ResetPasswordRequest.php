@@ -22,7 +22,7 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Operator::class)
+     * @ORM\ManyToOne(targetEntity=Operateur::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;

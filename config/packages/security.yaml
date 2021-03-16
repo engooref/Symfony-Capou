@@ -2,6 +2,9 @@ security:
     encoders:
         App\Entity\Operator:
             algorithm: auto
+        App\Entity\Operateur:
+            algorithm: auto
+
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
@@ -9,8 +12,9 @@ security:
         users_in_memory: {memory: null}
         app_user_provider:
             entity:
-                class: App\Entity\Operator
+                class: App\Entity\Operateur
                 property: email
+        # used to reload user from session & other features (e.g. switch_user)
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

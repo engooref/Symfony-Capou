@@ -3,19 +3,144 @@
 {% block title %}Hello HomeController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
+    <link rel="stylesheet" href="./css/map.css">
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+    
+    <div class="example-wrapper">
+        <h1>Hello {{ controller_name }}! ✅</h1>
+    </div>
 
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2868.499687938307!2d1.3125257154721157!3d44.031732379110096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12ac0c477456dfbb%3A0xff6bd82eb72a1e1d!2sLyc%C3%A9e%20Agricole%20de%20Capou!5e0!3m2!1sfr!2sfr!4v1615302961224!5m2!1sfr!2sfr" 
-    width="600" 
-    height="450" 
-    style="border:0;" 
-    allowfullscreen="" 
-    loading="lazy"></iframe>
+	<div id="map" class="map"></div>
 
-</div>
+    <div id="popup" class="ol-popup">
+      <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+      <div id="popup-content"></div>
+    </div>
+
+
+{% endblock %}
+
+{% block script %}
+	<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script type="text/javascript">
+        var stylePiq = 
+         new ol.style.Style({
+             image: new ol.style.Circle({
+               fill: new ol.style.Fill({
+                       color: 'red'
+                     }),
+               radius: 5
+             }),
+           });
+        
+        var styleSta = 
+         new ol.style.Style({
+             image: new ol.style.RegularShape({
+               fill: new ol.style.Fill({
+                       color: 'red'
+                     }),
+               points: 4,
+               radius: 10
+             }),
+           });
+           
+        var styleVan = 
+         new ol.style.Style({
+             image: new ol.style.RegularShape({
+               fill: new ol.style.Fill({
+                       color: 'red'
+                     }),
+               points: 3,
+               radius: 5
+             }),
+           });
+           
+
+        act();
+        var intervalId = setInterval(act,10000);
+	  	
+	 	function act(){
+			$.get({
+				url  : '{{ path('extract') }}',
+       			dataType : 'json',
+       			success : addPoint
+   						
+   					var feat =  new ol.Feature({
+                    					geometry: new ol.geom.MultiPoint(coordPiq),
+                    			    });
+                    			    			    
+                   	feat.setStyle(stylePiq)
+                   	var layer = new ol.layer.Vector({
+                   		source: new ol.source.Vector({
+                  			features: [feat,]
+                		})
+                	});
+                	
+                	
+                	map.addLayer(layer);     			
+       			}	
+	        });
+		}
+			
+		function addPoint(data){ 
+    		if(map.getLayers() != null){map.getLayers().getSource().clear();}
+    		
+    		for(let i = 0; i < data['piquet']; i++){
+    			coordPiq.push(ol.proj.fromLonLat([long, lat]));
+    		}	
+   				
+        var map = new ol.Map({
+            layers: [
+              new ol.layer.Tile({
+                source: new ol.source.OSM({ maxZoom: 19 })
+             })
+            ],
+            target: 
+            	'map',
+        		view: new ol.View({
+        			center: 
+        				ol.proj.fromLonLat([1.3149833, 44.0315281]),
+        				maxZoom: 19,
+        				zoom: 17
+        		})
+        });
+        
+        var container = document.getElementById('popup');
+        var content = document.getElementById('popup-content');
+        var closer = document.getElementById('popup-closer');
+        
+        var overlay = new ol.Overlay({
+        	element: container,
+            autoPan: true,
+            autoPanAnimation: {
+              duration: 250
+            }
+        });
+        
+        map.addOverlay(overlay);
+        
+        closer.onclick = function() {
+        	overlay.setPosition(undefined);
+            closer.blur();
+            return false;
+        };
+          
+        map.on('singleclick', function (event) {
+            if (map.hasFeatureAtPixel(event.pixel) === true) {
+            	var coordinate = event.coordinate;    
+            	content.innerHTML = '<b>Hello</b><br />';
+            	overlay.setPosition(coordinate);
+            } else {
+            	overlay.setPosition(undefined);
+            	closer.blur();
+        	}
+                });
+	
+	</script>
 {% endblock %}

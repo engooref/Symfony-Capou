@@ -48,3 +48,4 @@ class ElectroVanneRepository extends ServiceEntityRepository
     }
     */
 }
+

@@ -2,19 +2,18 @@
 
 namespace App\Entity;
 
-use App\Repository\ElectrovanneRepository;
+use App\Repository\ElectroVanneRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ElectrovanneRepository::class)
+ * @ORM\Entity(repositoryClass=ElectroVanneRepository::class)
  */
-class Electrovanne
+class ElectroVanne
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
     private $id;
@@ -34,6 +33,12 @@ class Electrovanne
         $this->idDonneesVanne = new ArrayCollection();
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+    
     public function getId(): ?int
     {
         return $this->id;

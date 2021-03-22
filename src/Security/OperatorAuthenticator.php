@@ -24,7 +24,7 @@ class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements Pa
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'app_login';
+    public const LOGIN_ROUTE = 'login';
 
     private $entityManager;
     private $urlGenerator;
@@ -71,9 +71,12 @@ class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements Pa
 
         if (!$user) {
             // fail authentication with a custom error
-            throw new CustomUserMessageAuthenticationException('Email could not be found.');
+            throw new CustomUserMessageAuthenticationException("Email incorrect");
         }
 
+        if(!$user->getIsVerified()){
+            throw new CustomUserMessageAuthenticationException("Votre email n'est pas verifie");
+        }
         return $user;
     }
 

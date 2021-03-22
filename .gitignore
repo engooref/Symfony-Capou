@@ -3,6 +3,7 @@
 /.env.local
 /.env.local.php
 /.env.*.local
+/composer.lock
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
@@ -14,3 +15,5 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+/composer.json
+/symfony.lock

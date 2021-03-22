@@ -14,11 +14,10 @@ class Piquet
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
     private $id;
-
+    
     /**
      * @ORM\Column(type="boolean")
      */
@@ -34,11 +33,17 @@ class Piquet
         $this->idDonneesPiquet = new ArrayCollection();
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+    
     public function getId(): ?int
     {
         return $this->id;
     }
-
+    
     public function getEtat(): ?bool
     {
         return $this->etat;

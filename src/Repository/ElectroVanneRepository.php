@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Electrovanne;
+use App\Entity\ElectroVanne;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Electrovanne|null find($id, $lockMode = null, $lockVersion = null)
- * @method Electrovanne|null findOneBy(array $criteria, array $orderBy = null)
- * @method Electrovanne[]    findAll()
- * @method Electrovanne[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ElectroVanne|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ElectroVanne|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ElectroVanne[]    findAll()
+ * @method ElectroVanne[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ElectrovanneRepository extends ServiceEntityRepository
+class ElectroVanneRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Electrovanne::class);
+        parent::__construct($registry, ElectroVanne::class);
     }
 
     // /**
-    //  * @return Electrovanne[] Returns an array of Electrovanne objects
+    //  * @return ElectroVanne[] Returns an array of ElectroVanne objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class ElectrovanneRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Electrovanne
+    public function findOneBySomeField($value): ?ElectroVanne
     {
         return $this->createQueryBuilder('e')
             ->andWhere('e.exampleField = :val')

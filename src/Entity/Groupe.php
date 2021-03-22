@@ -30,7 +30,7 @@ class Groupe
     private $idPiquets;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Electrovanne::class)
+     * @ORM\ManyToMany(targetEntity=ElectroVanne::class)
      */
     private $idElectrovanne;
 

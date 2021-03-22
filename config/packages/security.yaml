@@ -23,7 +23,7 @@ security:
                 authenticators:
                     - App\Security\OperatorAuthenticator
             logout:
-                path: app_logout
+                path: logout
             anonymous: true
             lazy: true
             # activate different ways to authenticate

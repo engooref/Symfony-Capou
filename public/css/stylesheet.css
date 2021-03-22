@@ -15,6 +15,10 @@
 	font-size : 20px;
 }
 
+#linkPilotage:active{
+	color: red;
+}
+
 .navbar-right{
 	padding-bottom : 15px;
 }

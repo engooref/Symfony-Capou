@@ -12,7 +12,6 @@ class LogsController extends AbstractController
     public function index(): Response
     {
         return $this->render('logs/index.html.twig', [
-            'controller_name' => 'LogsController',
         ]);
     }
 }

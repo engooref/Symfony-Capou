@@ -12,7 +12,6 @@ class PilotageController extends AbstractController
     public function index(): Response
     {
         return $this->render('pilotage/index.html.twig', [
-            'controller_name' => 'PilotageController',
         ]);
     }
 }

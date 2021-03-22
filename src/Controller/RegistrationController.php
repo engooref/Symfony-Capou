@@ -43,6 +43,7 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
+            $user->setIsVerified(false);
             $user->setIdGroupe($entityManager->getRepository(Groupe::class)->findOneById('1'));
 
             $entityManager->persist($user);

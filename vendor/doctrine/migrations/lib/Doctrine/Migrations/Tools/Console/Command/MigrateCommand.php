@@ -48,7 +48,7 @@ final class MigrateCommand extends DoctrineCommand
                 'write-sql',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'The path to output the migration SQL file instead of executing it. Defaults to current working directory.',
+                'The path to output the migration SQL file. Defaults to current working directory.',
                 false
             )
             ->addOption(
@@ -81,6 +81,11 @@ The <info>%command.name%</info> command executes a migration to a specified vers
 
     <info>%command.full_name%</info>
 
+You can show more information about the process by increasing the verbosity level. To see the
+executed queries, set the level to debug with <comment>-vv</comment>:
+
+    <info>%command.full_name% -vv</info>
+
 You can optionally manually specify the version you wish to migrate to:
 
     <info>%command.full_name% FQCN</info>
@@ -98,7 +103,7 @@ You can also execute the migration as a <comment>--dry-run</comment>:
 
     <info>%command.full_name% FQCN --dry-run</info>
 
-You can output the would be executed SQL statements to a file with <comment>--write-sql</comment>:
+You can output the prepared SQL statements to a file with <comment>--write-sql</comment>:
 
     <info>%command.full_name% FQCN --write-sql</info>
 
@@ -111,6 +116,7 @@ You can also time all the different queries if you wanna know which one is takin
     <info>%command.full_name% --query-time</info>
 
 Use the --all-or-nothing option to wrap the entire migration in a transaction.
+
 EOT
             );
 

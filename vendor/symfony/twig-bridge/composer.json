@@ -22,7 +22,7 @@
         "twig/twig": "^2.13|^3.0.4"
     },
     "require-dev": {
-        "egulias/email-validator": "^2.1.10",
+        "egulias/email-validator": "^2.1.10|^3",
         "phpdocumentor/reflection-docblock": "^3.0|^4.0|^5.0",
         "symfony/asset": "^4.4|^5.0",
         "symfony/dependency-injection": "^4.4|^5.0",
@@ -30,6 +30,7 @@
         "symfony/form": "^5.1.9",
         "symfony/http-foundation": "^4.4|^5.0",
         "symfony/http-kernel": "^4.4|^5.0",
+        "symfony/intl": "^4.4|^5.0",
         "symfony/mime": "^5.2",
         "symfony/polyfill-intl-icu": "~1.0",
         "symfony/property-info": "^4.4|^5.1",

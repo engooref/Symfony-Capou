@@ -40,6 +40,8 @@ Now, in the root of your project place a file named ``migrations.php``, ``migrat
             'all_or_nothing' => true,
             'check_database_platform' => true,
             'organize_migrations' => 'none',
+            'connection' => null,
+            'em' => null,
         ];
 
     .. code-block:: yaml
@@ -59,6 +61,9 @@ Now, in the root of your project place a file named ``migrations.php``, ``migrat
         check_database_platform: true
         organize_migrations: none
 
+        connection: null
+        em: null
+
     .. code-block:: xml
 
         <?xml version="1.0" encoding="UTF-8"?>
@@ -66,6 +71,9 @@ Now, in the root of your project place a file named ``migrations.php``, ``migrat
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://doctrine-project.org/schemas/migrations/configuration/3.0
                             http://doctrine-project.org/schemas/migrations/configuration-3.0.xsd">
+
+            <connection>default</connection>
+            <em>default</em>
 
             <storage>
                 <table-storage
@@ -106,6 +114,9 @@ Now, in the root of your project place a file named ``migrations.php``, ``migrat
             "all_or_nothing": true,
             "check_database_platform": true,
             "organize_migrations": "none"
+
+            "connection": null,
+            "em": null
         }
 
 Please note that if you want to use the YAML configuration option, you will need to install the ``symfony/yaml`` package with composer:
@@ -131,6 +142,10 @@ Here are details about what each configuration option does:
 +----------------------------+------------+------------------------------+----------------------------------------------------------------------------------+
 | organize_migrations        | no         | ``none``                     | Whether to organize migration classes under year (``year``) or year and month (``year_and_month``) subdirectories. |
 +----------------------------+------------+------------------------------+----------------------------------------------------------------------------------+
+| connection                 | no         | null                         | The named connection to use (available only when ConnectionRegistryConnection is used). |
++----------------------------+------------+------------------------------+----------------------------------------------------------------------------------+
+| em                         | no         | null                         | The named entity manager to use (available only when ManagerRegistryEntityManager is used). |
++----------------------------+------------+------------------------------+----------------------------------------------------------------------------------+
 
 
 Here the possible options for ``table_storage``:
@@ -146,7 +161,7 @@ Here the possible options for ``table_storage``:
 +----------------------------+------------+------------------------------+----------------------------------------------------------------------------------+
 | executed_at_column_name    | no         | executed_at                  | The name of the column which stores the date that a migration was executed.      |
 +----------------------------+------------+------------------------------+----------------------------------------------------------------------------------+
-| execution_time_column_name | no         | executed_at                  | The name of the column which stores how long a migration took (milliseconds).    |
+| execution_time_column_name | no         | execution_time               | The name of the column which stores how long a migration took (milliseconds).    |
 +----------------------------+------------+------------------------------+----------------------------------------------------------------------------------+
 
 Manually Providing Migrations

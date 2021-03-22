@@ -59,6 +59,9 @@ use function sprintf;
  */
 class DependencyFactory
 {
+    /** @psalm-var array<string, bool> */
+    private $inResolution = [];
+
     /** @var Configuration */
     private $configuration;
 
@@ -129,7 +132,6 @@ class DependencyFactory
     public function freeze(): void
     {
         $this->frozen = true;
-        $this->getConfiguration()->freeze();
     }
 
     private function assertNotFrozen(): void
@@ -165,7 +167,7 @@ class DependencyFactory
         if ($this->connection === null) {
             $this->connection = $this->hasEntityManager()
                 ? $this->getEntityManager()->getConnection()
-                : $this->connectionLoader->getConnection();
+                : $this->connectionLoader->getConnection($this->getConfiguration()->getConnectionName());
             $this->freeze();
         }
 
@@ -179,7 +181,7 @@ class DependencyFactory
                 throw MissingDependency::noEntityManager();
             }
 
-            $this->em = $this->emLoader->getEntityManager();
+            $this->em = $this->emLoader->getEntityManager($this->getConfiguration()->getEntityManagerName());
             $this->freeze();
         }
 
@@ -246,10 +248,25 @@ class DependencyFactory
         });
     }
 
-    private function getSchemaProvider(): SchemaProvider
+    public function hasSchemaProvider(): bool
+    {
+        try {
+            $this->getSchemaProvider();
+        } catch (MissingDependency $exception) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getSchemaProvider(): SchemaProvider
     {
         return $this->getDependency(SchemaProvider::class, function (): SchemaProvider {
-            return new OrmSchemaProvider($this->getEntityManager());
+            if ($this->hasEntityManager()) {
+                return new OrmSchemaProvider($this->getEntityManager());
+            }
+
+            throw MissingDependency::noSchemaProvider();
         });
     }
 
@@ -476,8 +493,10 @@ class DependencyFactory
      */
     private function getDependency(string $id, callable $callback)
     {
-        if (array_key_exists($id, $this->factories) && ! array_key_exists($id, $this->dependencies)) {
+        if (! isset($this->inResolution[$id]) && array_key_exists($id, $this->factories) && ! array_key_exists($id, $this->dependencies)) {
+            $this->inResolution[$id] = true;
             $this->dependencies[$id] = call_user_func($this->factories[$id], $this);
+            unset($this->inResolution);
         }
 
         if (! array_key_exists($id, $this->dependencies)) {

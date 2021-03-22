@@ -28,44 +28,6 @@ class IoController extends AbstractController
         return new Response(Response::HTTP_OK);
     }
         
-    #[Route('/pearing', name: 'pearing')]
-    public function pearing($type=null, $id=null) {
-        
-        if(isset($_GET['type'], $_GET['id'])){
-            $idObj = hexdec($_GET['id']);
-            $typeObj = $_GET['type'];
-            
-        } else if (isset($type, $id)){
-            $idObj = $id;
-            $typeObj = $type;
-        
-        }else 
-            return new Response(Response::HTTP_NOT_FOUND);
-        
-        $newObj = null;
-        switch (intval($type))
-        {
-            case 0:
-                $newObj = new Piquet;
-                break;
-            case 1:
-                $newObj = new Station;
-                break;
-            case 2:
-                $newObj = new ElectroVanne;
-                break;
-        }
-        
-        $newObj->setId($idObj);
-        $newObj->setEtat(True);
-        
-        $doctrine = $this->getDoctrine()->getManager();
-        $doctrine->persist($newObj);
-        $doctrine->flush();
-        
-        return new Response(Response::HTTP_OK);
-    }
-    
     #[Route('/input', name: 'input')]
     public function input() : Response
     {
@@ -81,6 +43,7 @@ class IoController extends AbstractController
         else
             return new Response(Response::HTTP_I_AM_A_TEAPOT);
          
+        
         $doctrine = $this->getDoctrine()->getManager();
         $doctrine->persist($newData);
         $doctrine->flush();
@@ -89,7 +52,7 @@ class IoController extends AbstractController
     }
     
     #[Route('/extract', name: 'extract')]
-    public function extractEntity()
+    public function extract()
     {
         $doctrine = $this->getDoctrine()->getManager();
         
@@ -100,6 +63,35 @@ class IoController extends AbstractController
         return new JsonResponse(array("piquet" => $piquet,
                                       "station" => $station,
                                       "electrovanne" => $electrovanne));
+    }
+    
+    private function create($type=null, $id=null) {
+        
+        if(!isset($type, $id))
+            return -1;
+            
+            $newObj = null;
+            switch (intval($type))
+            {
+                case 0:
+                    $newObj = new Piquet;
+                    break;
+                case 1:
+                    $newObj = new Station;
+                    break;
+                case 2:
+                    $newObj = new ElectroVanne;
+                    break;
+            }
+            
+            $newObj->setId($id);
+            $newObj->setEtat(True);
+            
+            $doctrine = $this->getDoctrine()->getManager();
+            $doctrine->persist($newObj);
+            $doctrine->flush();
+            
+            return 0;
     }
     
     private function InputPiq() {
@@ -115,8 +107,10 @@ class IoController extends AbstractController
                            ->findOneById($idPiq);
         
         if(!isset($Piquet)){
-            $this->pearing(0, $idPiq);
+            $this->create(0, $idPiq) == -1;
         }
+        
+        
         $donneesPiq = new DonneesPiquet;
         $donneesPiq->setGps($gps);
         $donneesPiq->setHumidite($hum);
@@ -140,7 +134,7 @@ class IoController extends AbstractController
                             ->findOneById($idSta);
         
         if(!isset($Station)){
-            $this->pearing(1, $idSta);
+            $this->create(1, $idSta);
         }
         
         $donneesSta = new DonneesStation;
@@ -165,13 +159,13 @@ class IoController extends AbstractController
         ->findOneById($idVan);
         
         if(!isset($Station)){
-            $this->pearing(2, $idVan);
+            $this->create(2, $idVan);
         }
         
         $donneesVan = new DonneesVanne;
         $donneesVan->setGps($gps);
         $donneesVan->setDebit($deb);
-        $donneesVan->setHorodatage(date_create_from_format("H:i:s", $temps));
+        $donneesVan->setHorodatage(date_create_from_format("d:m:Y:H:i:s", $temps));
         $donneesVan->setIdVanne($doctrine->getRepository(ElectroVanne::class)
             ->findOneById($idVan));
         

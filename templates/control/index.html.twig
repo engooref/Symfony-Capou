@@ -6,68 +6,100 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
+<link rel="stylesheet" href="./css/map.css">
+
 <div class="example-wrapper">
-	<table>
-		<tr>
-    		<td>
-    			<div id="buttonElectrovanne" class="electrovanneButton"> <input type="checkbox" unchecked data-toggle="toggle" data-onstyle="success"></div>
-    				<div class="modal" tabindex="-1">
-  						<div class="modal-dialog">
-    						<div class="modal-content">
-      							<div class="modal-header">
-        							<h5 class="modal-title">Modal title</h5>
-        							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      							</div>
-      							<div class="modal-body">
-        							<p>Modal body text goes here.</p>
-      							</div>
-      							<div class="modal-footer">
-        							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        							<button type="button" class="btn btn-primary">Save changes</button>
-      							</div>
-    						</div>
-  						</div>
-					</div>
-    		</td>
-    		
-    		<td>
-    			<div class="stationPompageButton"> <input id="buttonStation" type="checkbox" unchecked data-toggle="toggle" data-onstyle="success"> </div>
-    		</td>
-		</tr>
-		<tr>
-			<td>
-    			<div class="eletrovanne">
-            		<h2> Electrovannes </br></h2>
-                    <form action="/home" method="GET">
-                        <select name="electrovanne" id="electrovanne">
-                        	<option> Selectionner </option>
-                            <option value="electrovanne1"> electrovanne 1 </option>
-                            <option value="electrovanne2"> electrovanne 2 </option>
-                            <option value="electrovanne3"> electrovanne 3 </option>
-                        </select>
-                    </form>
-    			</div>
-			</td>
-			
-			<td>
-    			<div class="stationPompage">
-            		<h2> Stations de pompage </br></h2>
-                    <form action="/home" method="GET">
-                        <select name="stationPompage" id="stationPompage">
-                        	<option> Selectionner </option>
-                            <option value="stationPompage1"> Station de pompage 1 </option>
-                            <option value="stationPompage2"> Station de pompage 2 </option>
-                            <option value="stationPompage3"> Station de pompage 3 </option>
-                        </select>
-                    </form>
-    			</div>
-			</td>
-		</tr>
-	</table>
+	<h2>My Map</h2>
+    <div id="map" class="map"></div>
+
+    <div id="popup" class="ol-popup">
+      <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+      <div id="popup-content"></div>
+    </div>
 </div>
-<script type="text/javascript">
-    				$( "#buttonElectrovanne" ).on( "click", function() {
- 						 alert('Ce code fonctionne !');
-					});
-				</script>
+{% endblock %}
+
+{% block script %}
+	<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+	<script language="javascript">
+        var tabX = []	
+        var layer = null;
+        act();
+        var intervalId = setInterval(act,10000);
+		
+	  	
+	 	function act(){
+			$.get({
+				url  : '{{ path('extract') }}',
+       			dataType : 'json',
+       			success : function(data){ 
+       				if(layer != null){layer.getSource().clear();}
+       				tabX.splice(0,tabX.length);
+   					for(let i = 0; i < data.length; i++){
+   						var long = data[i]['longitude'];
+   						var lat = data[i]['latitude']
+   						tabX.push(ol.proj.fromLonLat([long, lat]));
+   					}	
+				    layer = new ol.layer.Vector({
+                   		source: new ol.source.Vector({
+                  			features: [
+                				new ol.Feature({
+                      				geometry: new ol.geom.MultiPoint(tabX)
+                    			}),
+                  			]
+                		})
+                	});
+                	map.addLayer(layer);     			
+       			}	
+	        });
+		}
+			
+        var map = new ol.Map({
+            layers: [
+              new ol.layer.Tile({
+                source: new ol.source.OSM({ maxZoom: 19 })
+             })
+            ],
+            target: 
+            	'map',
+        		view: new ol.View({
+        			center: 
+        				ol.proj.fromLonLat([1.3149833, 44.0315281]),
+        				maxZoom: 19,
+        				zoom: 17
+        		})
+        });
+        
+        var container = document.getElementById('popup');
+        var content = document.getElementById('popup-content');
+        var closer = document.getElementById('popup-closer');
+        
+        var overlay = new ol.Overlay({
+        	element: container,
+            autoPan: true,
+            autoPanAnimation: {
+              duration: 250
+            }
+        });
+        
+        map.addOverlay(overlay);
+        
+        closer.onclick = function() {
+        	overlay.setPosition(undefined);
+            closer.blur();
+            return false;
+        };
+          
+        map.on('singleclick', function (event) {
+            if (map.hasFeatureAtPixel(event.pixel) === true) {
+            	var coordinate = event.coordinate;    
+            	content.innerHTML = '<b>Hello world!</b><br />I am a popup.';
+            	overlay.setPosition(coordinate);
+            } else {
+            	overlay.setPosition(undefined);
+            	closer.blur();
+        	}
+                });
+	</script>
 {% endblock %}

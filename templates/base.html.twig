@@ -5,6 +5,7 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Bootstrap CSS -->
+       		<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
         	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 			<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
@@ -22,8 +23,8 @@
     			</div>
     			{% if app.user %}
     				<ul class="nav navbar-nav">
-                        <li><a href="{{path('control')}}}"> Controle </a></li>
-                        <li><a href="{{path('logs')}}"> Logs </a></li>
+                        <li><a href="{{path('pilotage')}}}"> Pilotage </a></li>
+                        <li><a href="{{path('log')}}"> Logs </a></li>
     				</ul>
     				<ul class="nav navbar-nav navbar-right">
     					<li><a href="{{path('account')}}"><span class="glyphicon glyphicon-user"></span> Votre Compte </a></li>
@@ -44,9 +45,7 @@
         {% block body %}{% endblock %}
        	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
-      		
+      	
         {% block script %}{% endblock %}
     </body>
 </html>
-

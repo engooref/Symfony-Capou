@@ -7,17 +7,26 @@
 </style>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
-<link rel="stylesheet" href="./css/map.css">
+<link rel="stylesheet" href="./css/control.css">
 
-<div class="example-wrapper">
-	<h2>My Map</h2>
-    <div id="map" class="map"></div>
 
-    <div id="popup" class="ol-popup">
-      <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-      <div id="popup-content"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 left">
+        	<div id="map" class="map"></div>
+            <div id="popup" class="ol-popup">
+            	<a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        	    <div id="popup-content"></div>
+			</div>
+        </div>
+        <div class="col-md-6 right">
+        	<button type="button" class="btn btn-light" id="returnButton">Exit</button>
+        	<button type="button" class="btn btn-light" id="saveButton">Save</button>
+			        	
+        </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block script %}
@@ -25,9 +34,9 @@
 	<script language="javascript">
         var tabX = []	
         var layer = null;
-        act();
+       /* act();
         var intervalId = setInterval(act,10000);
-		
+		*/
 	  	
 	 	function act(){
 			$.get({
@@ -55,6 +64,18 @@
 	        });
 		}
 			
+		var x = ol.proj.fromLonLat([1.3149833, 44.0315281]);
+		
+		layer = new ol.layer.Vector({
+               		source: new ol.source.Vector({
+              			features: [
+            				new ol.Feature({
+                  				geometry: new ol.geom.Point(x)
+                			}),
+              			]
+            		})
+            	});
+            	
         var map = new ol.Map({
             layers: [
               new ol.layer.Tile({
@@ -71,35 +92,43 @@
         		})
         });
         
+        
+        map.addLayer(layer);
         var container = document.getElementById('popup');
         var content = document.getElementById('popup-content');
         var closer = document.getElementById('popup-closer');
         
-        var overlay = new ol.Overlay({
+        /*var overlay = new ol.Overlay({
         	element: container,
             autoPan: true,
             autoPanAnimation: {
               duration: 250
             }
-        });
+        });*/
         
-        map.addOverlay(overlay);
+        //map.addOverlay(overlay);
         
-        closer.onclick = function() {
+        /*closer.onclick = function() {
         	overlay.setPosition(undefined);
             closer.blur();
             return false;
-        };
+        };*/
           
         map.on('singleclick', function (event) {
             if (map.hasFeatureAtPixel(event.pixel) === true) {
-            	var coordinate = event.coordinate;    
-            	content.innerHTML = '<b>Hello world!</b><br />I am a popup.';
-            	overlay.setPosition(coordinate);
-            } else {
-            	overlay.setPosition(undefined);
-            	closer.blur();
-        	}
-                });
+                $(".left").animate({width:"toggle"},{queue:false, duration:700 });
+                $(".right").show();
+                $(".right").animate({width:"+=100%"},{queue:false, duration:800 });   
+          	} 
+       });
+       
+        $('#returnButton').click(function(event)
+        {
+       		$(".left").show();
+            $(".left").animate({width:"+=100%"},{queue:false, duration:800 });
+            $(".right").animate({width:"toggle"},{queue:false, duration:700 });
+            
+        });	
+	
 	</script>
 {% endblock %}

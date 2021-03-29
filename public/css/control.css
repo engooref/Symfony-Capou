@@ -1,5 +1,35 @@
+ html, body {
+    height:92%;
+}
+body {
+  margin: 0;
+}
+
+.container-fluid {
+    height: 100%;
+}
+
+.row {
+  height: 100%; 
+}
+
+
+.col-md-6 {
+  float:left;
+  min-height: 100%;
+}
+
+.left {
+background-color: #dbdbdb;
+width: 100%;
+}
+ 
+.right {
+background-color: #1D1D1D;
+display: none;
+}
  .map {
-        height: 500px;
+        height: 820px;
         width: 100%;
   }
 

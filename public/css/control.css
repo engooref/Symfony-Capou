@@ -19,13 +19,17 @@ body {
   min-height: 100%;
 }
 
+.graphDiv{
+	text-align: center;
+}
+
 .left {
-background-color: #dbdbdb;
+/* background-color: #dbdbdb; */
 width: 100%;
 }
  
 .right {
-background-color: #1D1D1D;
+/* background-color: #1D1D1D; */
 display: none;
 }
  .map {

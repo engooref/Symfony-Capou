@@ -40,10 +40,7 @@ class Operateur implements UserInterface
      */
     private $idGroupe;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isVerified;
+   
 
     public function getId(): ?int
     {
@@ -138,15 +135,4 @@ class Operateur implements UserInterface
         return $this;
     }
 
-    public function getIsVerified(): ?bool
-    {
-        return $this->isVerified;
-    }
-
-    public function setIsVerified(bool $isVerified): self
-    {
-        $this->isVerified = $isVerified;
-
-        return $this;
-    }
 }

@@ -74,9 +74,6 @@ class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements Pa
             throw new CustomUserMessageAuthenticationException("Email incorrect");
         }
 
-        if(!$user->getIsVerified()){
-            throw new CustomUserMessageAuthenticationException("Votre email n'est pas verifie");
-        }
         return $user;
     }
 

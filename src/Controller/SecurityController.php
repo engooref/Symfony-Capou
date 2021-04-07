@@ -45,23 +45,20 @@ class SecurityController extends AbstractController
                     $form->get('plainPassword')->getData()
                     )
                 );
-            $user->setIsVerified(false);
+            
+            if(!$entityManager->getRepository(Groupe::class)->findOneById('1')){
+                $groupe = new Groupe();
+                
+                $entityManager->persist($groupe);
+                $entityManager->flush();
+            }
+                
             $user->setIdGroupe($entityManager->getRepository(Groupe::class)->findOneById('1'));
             
             $entityManager->persist($user);
             $entityManager->flush();
             
-            // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('verify_email', $user,
-                (new TemplatedEmail())
-                ->from(new Address('inscription.lyceecapou@gmail.com', 'Confirmation d\'inscription'))
-                ->to($user->getEmail())
-                ->subject('Please Confirm your Email')
-                ->htmlTemplate('registration/confirmation_email.html.twig')
-                );
-            // do anything else you need here, like send an email
-            
-            return $this->render('security/emailVerification.html.twig');
+            return $this->redirectToRoute('login');
         }
         
         return $this->render('registration/register.html.twig', [

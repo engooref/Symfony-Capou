@@ -6,11 +6,12 @@ use App\Repository\PiquetRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=PiquetRepository::class)
  */
-class Piquet
+class Piquet implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -31,6 +32,14 @@ class Piquet
     public function __construct()
     {
         $this->idDonneesPiquet = new ArrayCollection();
+    }
+    
+    public function JsonSerialize() 
+    {
+        return array(
+            'id' => $this->getId(),
+            'etat' => $this->getEtat()
+        );
     }
 
     public function setId(int $id): self
@@ -59,12 +68,12 @@ class Piquet
     /**
      * @return Collection|donneespiquet[]
      */
-    public function getIdDonneesPiquet(): Collection
+    public function getIdDonnees(): Collection
     {
         return $this->idDonneesPiquet;
     }
 
-    public function addIdDonneesPiquet(donneespiquet $idDonneesPiquet): self
+    public function addIdDonnees(donneespiquet $idDonneesPiquet): self
     {
         if (!$this->idDonneesPiquet->contains($idDonneesPiquet)) {
             $this->idDonneesPiquet[] = $idDonneesPiquet;
@@ -74,7 +83,7 @@ class Piquet
         return $this;
     }
 
-    public function removeIdDonneesPiquet(donneespiquet $idDonneesPiquet): self
+    public function removeIdDonnees(donneespiquet $idDonneesPiquet): self
     {
         if ($this->idDonneesPiquet->removeElement($idDonneesPiquet)) {
             // set the owning side to null (unless already changed)
@@ -85,4 +94,6 @@ class Piquet
 
         return $this;
     }
+    
+    
 }

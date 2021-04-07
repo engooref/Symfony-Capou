@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use App\Repository\DonneesPiquetRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=DonneesPiquetRepository::class)
  */
-class DonneesPiquet
+class DonneesPiquet implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -20,12 +21,12 @@ class DonneesPiquet
     /**
      * @ORM\Column(type="datetime")
      */
-    private $Horodatage;
+    private $horodatage;
 
     /**
      * @ORM\Column(type="array")
      */
-    private $Humidite = [];
+    private $humidite = [];
 
     /**
      * @ORM\Column(type="float")
@@ -43,6 +44,21 @@ class DonneesPiquet
      */
     private $idPiquet;
 
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    private $batterie;
+
+    public function JsonSerialize()
+    {
+        return array(
+            'id' => $this->getId(),
+            'horodatage' => $this->getHorodatage()->format("Y-m-d H:i:s"),
+            'humidite' => $this->getHumidite(),
+            'temperature' => $this->getTemperature(),
+            'gps' => $this->getGps(),
+        );
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -50,19 +66,19 @@ class DonneesPiquet
 
     public function getHorodatage(): ?\DateTimeInterface
     {
-        return $this->Horodatage;
+        return $this->horodatage;
     }
 
     public function setHorodatage(\DateTimeInterface $Horodatage): self
     {
-        $this->Horodatage = $Horodatage;
+        $this->horodatage = $Horodatage;
 
         return $this;
     }
 
     public function getHumidite(): ?array
     {
-        return $this->Humidite;
+        return $this->humidite;
     }
 
     public function setHumidite(array $Humidite): self
@@ -104,6 +120,18 @@ class DonneesPiquet
     public function setIdPiquet(?Piquet $idPiquet): self
     {
         $this->idPiquet = $idPiquet;
+
+        return $this;
+    }
+
+    public function getBatterie(): ?int
+    {
+        return $this->batterie;
+    }
+
+    public function setBatterie(int $batterie): self
+    {
+        $this->batterie = $batterie;
 
         return $this;
     }

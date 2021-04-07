@@ -14,14 +14,70 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-
+use DateTime;
+use DateInterval;
 
 class IoController extends AbstractController
 {
+    
+    #[Route('/test', name: 'test')]
+    public function selectControl() : Response {
+        $doctrine = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $doctrine->getRepository(DonneesPiquet::class);
+        dump( $queryBuilder->findByDateBetween('2021-03-30 13:43:00', '2021-03-30 13:44:00'));
+        die();
+    }
+    
     #[Route('/control', name: 'control')]
     public function control() : Response {
         return $this->render("control/index.html.twig");
     }
+    
+    #[Route('/getData', name: 'getData')]
+    public function getData() : Response {
+        if(!isset($_GET['id'], $_GET['type']))
+            return new Response(Response::HTTP_ERROR);
+        
+        $id = $_GET['id'];
+        $type = $_GET['type'];
+        $dateMax = new DateTime();
+        $dateMin = new DateTime();
+        $dateMin->sub(new DateInterval("P1W"));
+        
+        $obj = null;
+        $doctrine = $this->getDoctrine()->getManager();
+        
+        switch (intval($type))
+        {
+            case 0:
+                $obj = $doctrine->getRepository(Piquet::class);
+                
+                break;
+            case 1:
+                $obj = $doctrine->getRepository(Station::class);
+                
+                break;
+            case 2:
+                $obj = $doctrine->getRepository(ElectroVanne::class);
+                
+                break;
+        }
+        
+        $obj = $obj->findOneById($id);
+        $dataObj = $obj->getIdDonnees()->getValues();
+        
+        $dataCount = count($dataObj);
+        for($i = 0; $i < $dataCount; $i++){
+            $dateObj = $dataObj[$i]->getHorodatage();
+            if(!(($dateObj->diff($dateMin)->invert) && !($dateObj->diff($dateMax)->invert)))
+                unset($dataObj[$i]);
+        }
+        
+        return new JsonResponse(array("Actually" => $obj,
+                                      "Data" => $dataObj));
+    }
+    
     
     #[Route('/ping', name: 'ping')]
     public function ping() : Response {
@@ -51,18 +107,53 @@ class IoController extends AbstractController
 
     }
     
-    #[Route('/extract', name: 'extract')]
-    public function extract()
+    #[Route('/mapsControl', name: 'mapsControl')]
+    public function mapsControl()
     {
         $doctrine = $this->getDoctrine()->getManager();
         
-        $piquet = $doctrine->getRepository(Piquet::class)->findAll();
-        $station = $doctrine->getRepository(Station::class)->findAll();
-        $electrovanne = $doctrine->getRepository(ElectroVanne::class)->findAll();
-    
-        return new JsonResponse(array("piquet" => $piquet,
-                                      "station" => $station,
-                                      "electrovanne" => $electrovanne));
+        $piquetDb = $doctrine->getRepository(Piquet::class)->findAll();
+        $stationDb = $doctrine->getRepository(Station::class)->findAll();
+        $electrovanneDb = $doctrine->getRepository(ElectroVanne::class)->findAll();
+        
+        $piquet = array();
+        $station = array();
+        $electroVanne = array();
+        
+        for($i = 0; $i < count($piquetDb); $i++){
+            if($piquetDb[$i]->getEtat()){
+                $data = $piquetDb[$i]->getIdDonnees()->GetValues();
+                if($data){
+                $gpsEnd = end($data)->getGps();
+                
+                $coordsPiq["id"] = $piquetDb[$i]->getId();
+                $coordsPiq["gps"] = $gpsEnd;
+                array_push($piquet, $coordsPiq);
+                }
+            }
+        }
+        
+        for($i = 0; $i < count($stationDb); $i++){
+            $data = $stationDb[$i]->getIdDonnees()->GetValues();
+            $gpsEnd = end($data)->getGps();
+            $coordsSta["id"] = $stationDb[$i]->getId();
+            $coordsSta["gps"] = $gpsEnd;
+            
+        }
+        
+        for($i = 0; $i < count($electrovanneDb); $i++){
+            $data = $electrovanneDb[$i]->getIdDonnees()->GetValues();
+            $gpsEnd = end($data)->getGps();
+            $coordsVan["id"] = $electrovanneDb[$i]->getId();
+            $coordsVan["gps"] = $gpsEnd;
+            
+        }
+        
+       return new JsonResponse(array("0" => $piquet,
+                                    "1" => $station,
+                                    "2" => $electroVanne
+                                   ));
+       
     }
     
     private function create($type=null, $id=null) {
@@ -115,7 +206,7 @@ class IoController extends AbstractController
         $donneesPiq->setGps($gps);
         $donneesPiq->setHumidite($hum);
         $donneesPiq->setTemperature($temp);
-        $donneesPiq->setHorodatage(date_create_from_format("H:i:s", $temps));
+        $donneesPiq->setHorodatage(date_create_from_format("d:m:Y:H:i:s", $temps));
         $donneesPiq->setIdPiquet($doctrine->getRepository(Piquet::class)
                                            ->findOneById($idPiq));
         
@@ -140,7 +231,7 @@ class IoController extends AbstractController
         $donneesSta = new DonneesStation;
         $donneesSta->setGps($gps);
         $donneesSta->setPression($press);
-        $donneesSta->setHorodatage(date_create_from_format("H:i:s", $temps));
+        $donneesSta->setHorodatage(date_create_from_format("d:m:Y:H:i:s", $temps));
         $donneesSta->setIdStation($doctrine->getRepository(Station::class)
                                            ->findOneById($idSta));
         

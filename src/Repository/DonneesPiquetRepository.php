@@ -35,7 +35,15 @@ class DonneesPiquetRepository extends ServiceEntityRepository
         ;
     }
     */
-
+    
+    public function findByDateBetween($dateBase, $dateFin, $offset=null, $limit=null){
+        return $this->createQueryBuilder('d')
+            ->andWhere('d.horodatage BETWEEN :debut AND :fin')
+            ->setParameter('debut', $dateBase)
+            ->setParameter('fin', $dateFin)
+            ->orderBy('d.horodatage', 'ASC')
+            ->getQuery()->getResult();
+    }
     /*
     public function findOneBySomeField($value): ?DonneesPiquet
     {
@@ -47,4 +55,6 @@ class DonneesPiquetRepository extends ServiceEntityRepository
         ;
     }
     */
+    
+    
 }

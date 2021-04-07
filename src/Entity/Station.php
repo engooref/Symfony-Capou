@@ -6,11 +6,12 @@ use App\Repository\StationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=StationRepository::class)
  */
-class Station
+class Station implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -33,6 +34,14 @@ class Station
         $this->idDonneesStation = new ArrayCollection();
     }
 
+    public function JsonSerialize()
+    {
+        return array(
+            'id' => $this->getId(),
+            'etat' => $this->getEtat()
+        );
+    }
+    
     public function setId(int $id): self
     {
         $this->id = $id;
@@ -59,12 +68,12 @@ class Station
     /**
      * @return Collection|DonneesStation[]
      */
-    public function getIdDonneesStation(): Collection
+    public function getIdDonnees(): Collection
     {
         return $this->idDonneesStation;
     }
 
-    public function addIdDonneesStation(DonneesStation $idDonneesStation): self
+    public function addIdDonnees(DonneesStation $idDonneesStation): self
     {
         if (!$this->idDonneesStation->contains($idDonneesStation)) {
             $this->idDonneesStation[] = $idDonneesStation;
@@ -74,7 +83,7 @@ class Station
         return $this;
     }
 
-    public function removeIdDonneesStation(DonneesStation $idDonneesStation): self
+    public function removeIdDonnees(DonneesStation $idDonneesStation): self
     {
         if ($this->idDonneesStation->removeElement($idDonneesStation)) {
             // set the owning side to null (unless already changed)

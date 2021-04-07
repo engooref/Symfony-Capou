@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210322135718 extends AbstractMigration
+final class Version20210407182637 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -21,7 +21,7 @@ final class Version20210322135718 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE centrale (id INT NOT NULL, ip VARCHAR(255) NOT NULL, connected TINYINT(1) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE donnees_piquet (id INT AUTO_INCREMENT NOT NULL, id_piquet_id INT NOT NULL, horodatage DATETIME NOT NULL, humidite LONGTEXT NOT NULL COMMENT \'(DC2Type:array)\', temperature DOUBLE PRECISION NOT NULL, gps VARCHAR(255) NOT NULL, INDEX IDX_29AB2F3C644444F5 (id_piquet_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE donnees_piquet (id INT AUTO_INCREMENT NOT NULL, id_piquet_id INT NOT NULL, horodatage DATETIME NOT NULL, humidite LONGTEXT NOT NULL COMMENT \'(DC2Type:array)\', temperature DOUBLE PRECISION NOT NULL, gps VARCHAR(255) NOT NULL, batterie SMALLINT NOT NULL, INDEX IDX_29AB2F3C644444F5 (id_piquet_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE donnees_station (id INT AUTO_INCREMENT NOT NULL, id_station_id INT NOT NULL, pression DOUBLE PRECISION NOT NULL, gps VARCHAR(255) NOT NULL, horodatage DATETIME NOT NULL, INDEX IDX_A19EBDBB843732E2 (id_station_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE donnees_vanne (id INT AUTO_INCREMENT NOT NULL, id_vanne_id INT NOT NULL, debit DOUBLE PRECISION NOT NULL, gps VARCHAR(255) NOT NULL, horodatage DATETIME NOT NULL, INDEX IDX_893426B3F30350AF (id_vanne_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE electro_vanne (id INT NOT NULL, etat TINYINT(1) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');

@@ -6,11 +6,12 @@ use App\Repository\ElectroVanneRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=ElectroVanneRepository::class)
  */
-class ElectroVanne
+class ElectroVanne implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -33,6 +34,14 @@ class ElectroVanne
         $this->idDonneesVanne = new ArrayCollection();
     }
 
+    public function JsonSerialize()
+    {
+        return array(
+            'id' => $this->getId(),
+            'etat' => $this->getEtat()
+        );
+    }
+    
     public function setId(int $id): self
     {
         $this->id = $id;
@@ -59,12 +68,12 @@ class ElectroVanne
     /**
      * @return Collection|DonneesVanne[]
      */
-    public function getIdDonneesVanne(): Collection
+    public function getIdDonnees(): Collection
     {
         return $this->idDonneesVanne;
     }
 
-    public function addIdDonneesVanne(DonneesVanne $idDonneesVanne): self
+    public function addIdDonnees(DonneesVanne $idDonneesVanne): self
     {
         if (!$this->idDonneesVanne->contains($idDonneesVanne)) {
             $this->idDonneesVanne[] = $idDonneesVanne;
@@ -74,7 +83,7 @@ class ElectroVanne
         return $this;
     }
 
-    public function removeIdDonneesVanne(DonneesVanne $idDonneesVanne): self
+    public function removeIdDonnees(DonneesVanne $idDonneesVanne): self
     {
         if ($this->idDonneesVanne->removeElement($idDonneesVanne)) {
             // set the owning side to null (unless already changed)

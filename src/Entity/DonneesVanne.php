@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use App\Repository\DonneesVanneRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=DonneesVanneRepository::class)
  */
-class DonneesVanne
+class DonneesVanne implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -38,6 +39,16 @@ class DonneesVanne
      */
     private $horodatage;
 
+    public function JsonSerialize()
+    {
+        return array(
+            'id' => $this->getId(),
+            'temperature' => $this->getTemperature(),
+            'gps' => $this->getGps(),
+            'debit' => $this->getDebit()    
+        );
+    }
+    
     public function getId(): ?int
     {
         return $this->id;

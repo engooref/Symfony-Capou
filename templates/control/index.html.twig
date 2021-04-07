@@ -3,8 +3,7 @@
 
 {% block body %}
 <style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+	.widthTest { width: 10%; }   
 </style>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
@@ -15,10 +14,6 @@
     <div class="row">
         <div class="col-md-6 left">
         	<div id="map" class="map"></div>
-            <div id="popup" class="ol-popup">
-            	<a href="#" id="popup-closer" class="ol-popup-closer"></a>
-        	    <div id="popup-content"></div>
-			</div>
         </div>
         <div class="col-md-6 right">
         	<button type="button" class="btn btn-light" id="returnButton">Exit</button>
@@ -27,19 +22,19 @@
         	<table class="table table-dark">
             	<tr>
               		<th scope="row">Identifiant : </th>
-              		<td>Larry</td>
+              		<td class="widthTest" id="Id"></td>
             	</tr>
             	<tr>
               		<th scope="row">Coordonnées GPS : </th>
-              		<td>Larry</td>
+              		<td class="widthTest" id="gps"></td>
             	</tr>
             	<tr>
               		<th scope="row">Niveau de batterie : </th>
-              		<td>Larry</td>
+              		<td class="widthTest" id="bat"></td>
             	</tr>
             	<tr>
               		<th scope="row">Date de la dernière donnée acquise : </th>
-              		<td>Larry</td>
+              		<td class="widthTest" id="dataEnd"></td>
             	</tr>
             </table>
         	
@@ -68,9 +63,8 @@
         		</td>
         		<td>
         			<div class="graphDiv">
-            			<img src="{{ asset('img/graphHumidTemp.png') }}" alt="graphHumidTemp" width="550px" height="340px">
-            			<img src="{{ asset('img/graphTemp.png') }}" alt="graphHumidTemp" width="550px" height="340px">
-                	</div>
+            			<div id="svg1" style="height: 75px;"></div>	
+            		</div>
         		</td>
         	</table>
         	
@@ -92,51 +86,54 @@
 
 {% block script %}
 	<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
-	<script language="javascript">
-        var tabX = []	
-        var layer = null;
-       /* act();
-        var intervalId = setInterval(act,10000);
-		*/
-	  	
-	 	function act(){
-			$.get({
-				url  : '{{ path('extract') }}',
+	<script src="https://d3js.org/d3.v5.js"></script>
+	<script type="text/javascript">
+    	
+        actMaps();
+        var intervalId = setInterval(actMaps,9000);
+    	
+      	
+     	function actMaps(){
+    		$.get({
+    			url  : '{{ path('mapsControl') }}',
        			dataType : 'json',
-       			success : function(data){ 
-       				if(layer != null){layer.getSource().clear();}
-       				tabX.splice(0,tabX.length);
-   					for(let i = 0; i < data.length; i++){
-   						var long = data[i]['longitude'];
-   						var lat = data[i]['latitude']
-   						tabX.push(ol.proj.fromLonLat([long, lat]));
-   					}	
-				    layer = new ol.layer.Vector({
-                   		source: new ol.source.Vector({
-                  			features: [
-                				new ol.Feature({
-                      				geometry: new ol.geom.MultiPoint(tabX)
-                    			}),
-                  			]
-                		})
-                	});
-                	map.addLayer(layer);     			
-       			}	
-	        });
-		}
+       			success : SuccessMaps
+            });
+    	};	
+
+    	function SuccessMaps(data){ 
+    		
+			if(map.getLayers().getLength() >= 2){
+				for(let i = 0; i+1 < map.getLayers().getLength() ; i++)
+					map.removeLayer(map.getLayers().item(i+1));
+				}
 			
-		var x = ol.proj.fromLonLat([1.3149833, 44.0315281]);
+			
+			AddToMap(data, 0);
+			
+		}
+
+    	function AddToMap(data, type){
+    		var dataSelect = data[type.toString()];
+    		for(let i = 0; i < dataSelect.length; i++){
+				var gps = dataSelect[i]["gps"].split(':');
+				var layer = new ol.layer.Vector({
+					id: dataSelect[i]["id"],
+					type: type,
+					gps:  "lat: " + gps[0] + " long: " + gps[1],
+	           		source: new ol.source.Vector({
+	          			features: [
+	        				new ol.Feature({
+	              				geometry: new ol.geom.Point(ol.proj.fromLonLat([gps[1], gps[0]]))
+	            			}),
+	          			]
+	        		})
+	        	});
+	        	//console.log(layer);
+				map.addLayer(layer);
+			}
+        }
 		
-		layer = new ol.layer.Vector({
-               		source: new ol.source.Vector({
-              			features: [
-            				new ol.Feature({
-                  				geometry: new ol.geom.Point(x)
-                			}),
-              			]
-            		})
-            	});
-            	
         var map = new ol.Map({
             layers: [
               new ol.layer.Tile({
@@ -147,39 +144,44 @@
             	'map',
         		view: new ol.View({
         			center: 
-        				ol.proj.fromLonLat([1.3149833, 44.0315281]),
+        				ol.proj.fromLonLat([1.371509, 44.02281]),
         				maxZoom: 19,
         				zoom: 17
         		})
         });
-        
-        
-        map.addLayer(layer);
-        var container = document.getElementById('popup');
-        var content = document.getElementById('popup-content');
-        var closer = document.getElementById('popup-closer');
-        
-        /*var overlay = new ol.Overlay({
-        	element: container,
-            autoPan: true,
-            autoPanAnimation: {
-              duration: 250
-            }
-        });*/
-        
-        //map.addOverlay(overlay);
-        
-        /*closer.onclick = function() {
-        	overlay.setPosition(undefined);
-            closer.blur();
-            return false;
-        };*/
-          
+
         map.on('singleclick', function (event) {
             if (map.hasFeatureAtPixel(event.pixel) === true) {
                 $(".left").animate({width:"toggle"},{queue:false, duration:700 });
                 $(".right").show();
-                $(".right").animate({width:"+=50%"},{queue:false, duration:800 });   
+                $(".right").animate({width:"+=50%"},{queue:false, duration:800 });
+
+				var id = map.forEachLayerAtPixel(event.pixel, function (layer) {
+				    										return layer;}).get('id');
+
+			    var type = map.forEachLayerAtPixel(event.pixel, function (layer) {
+			    											return layer;}).get('type');
+
+			    var gps = map.forEachLayerAtPixel(event.pixel, function (layer) {
+															return layer;}).get('gps');
+
+				if(type == 0) var nameType = "Piquet";
+				else if(type == 1) var nameType = "Station";
+				else if(type == 2) var nameType = "Electrovanne";
+					
+				$("#Id").text(id.toString(16).toUpperCase() + " : " + nameType);
+				$("#gps").text(gps);
+				var data = "id=" + id + "&type=" + type;
+				
+				console.log(data);
+                $.get({
+        			url  : '{{ path('getData') }}',
+           			dataType : 'json',
+           			data: data,
+           			success : AcquireData
+                });
+
+                
           	} 
        });
        
@@ -188,8 +190,23 @@
        		$(".left").show();
             $(".left").animate({width:"+=100%"},{queue:false, duration:800 });
             $(".right").animate({width:"toggle"},{queue:false, duration:700 });
-            
         });	
-	
+
+        function SerializeDate(date){
+			return date.getFullYear() + ':' + 
+    			   date.getDate()     + ':' +
+    			   date.getDay()      + ':' +
+    			   date.getHours()    + ':' +
+    			   date.getMinutes()  + ':' +
+    			   date.getSeconds();
+        }
+        
+        function AcquireData(data){
+			var object = data["Object"];
+			var data = data["Data"];
+
+			console.log(object);
+			console.log(data);
+        }
 	</script>
 {% endblock %}

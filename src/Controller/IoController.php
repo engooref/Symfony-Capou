@@ -41,10 +41,6 @@ class IoController extends AbstractController
         
         $id = $_GET['id'];
         $type = $_GET['type'];
-        $dateMax = new DateTime();
-        $dateMin = new DateTime();
-        $dateMin->sub(new DateInterval("P1W"));
-        
         $obj = null;
         $doctrine = $this->getDoctrine()->getManager();
         
@@ -66,15 +62,21 @@ class IoController extends AbstractController
         
         $obj = $obj->findOneById($id);
         $dataObj = $obj->getIdDonnees()->getValues();
+
+        $dateMax = DateTime::createFromInterface(end($dataObj)->getHorodatage());
+        $dateMin = DateTime::createFromInterface(end($dataObj)->getHorodatage());
+        $dateMin->sub(new DateInterval("P1W"));
+        
         
         $dataCount = count($dataObj);
+        
         for($i = 0; $i < $dataCount; $i++){
             $dateObj = $dataObj[$i]->getHorodatage();
             if(!(($dateObj->diff($dateMin)->invert) && !($dateObj->diff($dateMax)->invert)))
                 unset($dataObj[$i]);
         }
         
-        return new JsonResponse(array("Actually" => $obj,
+        return new JsonResponse(array("Object" => $obj,
                                       "Data" => $dataObj));
     }
     
@@ -87,7 +89,7 @@ class IoController extends AbstractController
     #[Route('/input', name: 'input')]
     public function input() : Response
     {
-        if(isset($_GET['Id'], $_GET['Gps'], $_GET['Time']))
+        if(isset($_GET['Id'], $_GET['Gps'], $_GET["Bat"], $_GET['Time']))
             if(isset($_GET['Hum'], $_GET['Temp']))
                 $newData = $this->InputPiq();
             else if(isset($_GET['Deb']))
@@ -189,7 +191,8 @@ class IoController extends AbstractController
         
         $idPiq = hexdec($_GET['Id']);
         $gps = $_GET['Gps'];
-        $hum = explode(":", $_GET['Hum'], 4);
+        $bat = $_GET["Bat"];
+        $hum = explode(":", $_GET['Hum']);
         $temp = $_GET['Temp'];
         $temps = $_GET['Time'];
         
@@ -209,7 +212,8 @@ class IoController extends AbstractController
         $donneesPiq->setHorodatage(date_create_from_format("d:m:Y:H:i:s", $temps));
         $donneesPiq->setIdPiquet($doctrine->getRepository(Piquet::class)
                                            ->findOneById($idPiq));
-        
+        $donneesPiq->setBatterie($bat);
+        ;
         return $donneesPiq;
     }
     

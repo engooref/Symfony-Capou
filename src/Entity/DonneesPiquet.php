@@ -57,6 +57,8 @@ class DonneesPiquet implements JsonSerializable
             'humidite' => $this->getHumidite(),
             'temperature' => $this->getTemperature(),
             'gps' => $this->getGps(),
+            'batterie' => $this->getBatterie(),
+            
         );
     }
     public function getId(): ?int
@@ -83,7 +85,7 @@ class DonneesPiquet implements JsonSerializable
 
     public function setHumidite(array $Humidite): self
     {
-        $this->Humidite = $Humidite;
+        $this->humidite = $Humidite;
 
         return $this;
     }

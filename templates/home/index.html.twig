@@ -1,21 +1,11 @@
 {% extends 'base.html.twig' %}
-
 {% block encoding %}<meta charset="UTF-8">{% endblock %}
-{% block title %}Hello HomeController!{% endblock %}
-
+{% block title %}Accueil{% endblock %}
 {% block body %}
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
     <link rel="stylesheet" href="./css/map.css">
-    <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    </style>
     
-    <div class="example-wrapper">
-    </div>
-
-	<div id="map" class="map"></div>
+	<div id="map" class="py-5 mt-5 map"></div>
 
     <div id="popup" class="ol-popup">
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
@@ -27,7 +17,7 @@
 
 {% block script %}
 	<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
 	<script type="text/javascript">
         var stylePiq = 
          new ol.style.Style({
@@ -143,4 +133,5 @@
                 });
 	
 	</script>
+
 {% endblock %}

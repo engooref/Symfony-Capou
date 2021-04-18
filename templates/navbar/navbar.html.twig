@@ -1,0 +1,36 @@
+{% block encoding %}<meta charset="UTF-8">{% endblock %}
+<nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark ">
+	<div class="container-fluid">
+        <a class="navbar-brand mb-0 h1" href="{{ path('home') }}">
+        	<img src="{{ asset('img/logo_capou.png') }}" alt="Logo Lycée Capou" width="57" height="64" class="d-inline-block">
+        	Lycée Capou
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      		<span class="navbar-toggler-icon"></span>
+    	</button>
+    	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                	{% if is_granted('ROLE_ADMIN') %}
+                	<span class="navbar-text mb-0 h5"><a href="{{ path('admin') }}"><i class="fas fa-user-circle mr-2"></i> Administrateur</a></span>
+                	{% endif %}
+                    {% if is_granted('ROLE_OPERATOR') and not is_granted('ROLE_ADMIN') %}
+                    <span class="navbar-text mb-0 h5"><i class="fas fa-user-circle mr-2"></i> Opérateur</span>
+          			{% endif %}
+                {#
+         	 		<span class="navbar-text mb-0 h5"><i class="fas fa-user-circle mr-2"></i> Administrateur</span>
+          		#}
+          		</li>
+            </ul>
+         	{% if not app.user %}
+			<form class="d-flex" action="{{ path('login') }}">
+				<button class="btn btn-outline-primary mb-0" type="submit"><i class="fas fa-user mr-2"></i> Se Connecter</button>
+ 			</form>
+ 			{% else %} 
+ 			<form class="d-flex" action="{{ path('logout') }}">
+				<button class="btn btn-outline-danger mb-0" type="submit"><i class="fas fa-power-off mr-2"></i> Déconnexion</button>
+ 			</form>
+ 			{% endif %}			
+         </div>
+	</div>
+</nav>

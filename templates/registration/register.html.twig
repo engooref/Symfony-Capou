@@ -1,14 +1,12 @@
 {% extends 'base.html.twig' %}
-
 {% block encoding %}<meta charset="UTF-8">{% endblock %}
 {% block title %}Register{% endblock %}
-
 {% block body %}
     {% for flashError in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
     {% endfor %}
 
-    <div class="cRegister">
+    <div class="py-5 mt-5 cRegister">
         <h1 class="textCenter">Register</h1>
     	<div class="centerForm">
             {{ form_start(registrationForm) }}

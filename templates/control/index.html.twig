@@ -1,21 +1,20 @@
 {% extends 'base.html.twig' %}
 {% block encoding %}<meta charset="UTF-8">{% endblock %}
-{% block title %}Pilotage{% endblock %}
+
 {% block body %}
 <style>
 	.widthTest { width: 11%; }   
 </style>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
 <link rel="stylesheet" href="./css/control.css">
 
 
-<div class="container-fluid">
+<div class="container-fluid" id="control">
     <div class="row">
-        <div class="col-md-6 left">
+        <div class="col-md-6 left" id="left" style="height:inherit;">
         	<div id="map" class="map"></div>
         </div>
-        <div class="col-md-6 right">
+        <div class="col-md-6 right" id="right" style="height:inherit;">
         	<button type="button" class="btn btn-light" id="returnButton">Exit</button>
         	<button type="button" class="btn btn-light" id="saveButton">Save</button>
         	
@@ -45,6 +44,8 @@
               		<td class="widthTest" id="temp"></td>
             	</tr>
             </table>
+        		<div id="chart"></div>
+        	
         	
         	<button type="button" class="btn btn-light" id="syncButton">Sync</button>
         	<button type="button" class="btn btn-light" id="pingButton">Ping</button>
@@ -60,129 +61,5 @@
 {% endblock %}
 
 {% block script %}
-	<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
-	<script src="https://d3js.org/d3.v5.js"></script>
-	<script type="text/javascript">
-    	
-        actMaps();
-        var intervalId = setInterval(actMaps,9000);
-    	
-      	
-     	function actMaps(){
-    		$.get({
-    			url  : '{{ path('mapsControl') }}',
-       			dataType : 'json',
-       			success : SuccessMaps
-            });
-    	};	
-
-    	function SuccessMaps(data){ 
-    		
-			if(map.getLayers().getLength() >= 2){
-				for(let i = 0; i+1 < map.getLayers().getLength() ; i++)
-					map.removeLayer(map.getLayers().item(i+1));
-				}
-			
-			
-			AddToMap(data, 0);
-			
-		}
-
-    	function AddToMap(data, type){
-    		var dataSelect = data[type.toString()];
-    		for(let i = 0; i < dataSelect.length; i++){
-        		console.log(dataSelect[i]);
-				var gps = dataSelect[i]["gps"].split(':');
-				var layer = new ol.layer.Vector({
-					id: dataSelect[i]["id"],
-					type: type,
-					gps:  "lat: " + gps[0] + " long: " + gps[1],
-					source: new ol.source.Vector({
-	          			features: [
-	        				new ol.Feature({
-	              				geometry: new ol.geom.Point(ol.proj.fromLonLat([gps[1], gps[0]]))
-	            			}),
-	          			]
-	        		})
-	        	});
-	        	//console.log(layer);
-				map.addLayer(layer);
-			}
-        }
-		
-        var map = new ol.Map({
-            layers: [
-              new ol.layer.Tile({
-                source: new ol.source.OSM({ maxZoom: 19 })
-             })
-            ],
-            target: 
-            	'map',
-        		view: new ol.View({
-        			center: 
-        				ol.proj.fromLonLat([1.371509, 44.02281]),
-        				maxZoom: 19,
-        				zoom: 17
-        		})
-        });
-
-        map.on('singleclick', function (event) {
-            if (map.hasFeatureAtPixel(event.pixel) === true) {
-                console.log(map.forEachLayerAtPixel(event.pixel, function (layer) {
-					return layer;}));
-				var id = map.forEachLayerAtPixel(event.pixel, function (layer) {
-				    										return layer;}).get('id');
-			    var type = map.forEachLayerAtPixel(event.pixel, function (layer) {
-			    											return layer;}).get('type');
-			    var gps = map.forEachLayerAtPixel(event.pixel, function (layer) {
-															return layer;}).get('gps');
-
-			    if(type == 0) var nameType = "Piquet";
-				else if(type == 1) var nameType = "Station";
-				else if(type == 2) var nameType = "Electrovanne";
-					
-				$("#id").text(id.toString(16).toUpperCase() + " : " + nameType);
-				$("#gps").text(gps);
-				
-				var data = "id=" + id + "&type=" + type;
-				
-                $.get({
-        			url  : '{{ path('getData') }}',
-           			dataType : 'json',
-           			data: data,
-           			success : AcquireData
-                });
-
-                $(".left").animate({width:"toggle"},{queue:false, duration:700 });
-                $(".right").show();
-                $(".right").animate({width:"+=50%"},{queue:false, duration:800 });
-                
-          	} 
-       });
-       
-        $('#returnButton').click(function(event)
-        {
-       		$(".left").show();
-            $(".left").animate({width:"+=100%"},{queue:false, duration:800 });
-            $(".right").animate({width:"toggle"},{queue:false, duration:700 });
-        });	
-
-        function AcquireData(data){
-			var object = data["Object"];
-			var dataObj = data["Data"];
-			var dataEnd = dataObj[dataObj.length - 1];
-			console.log(dataEnd);
-
-			$("#bat").text(dataEnd["batterie"] + "%");
-			$("#dataEnd").text(dataEnd["horodatage"]);
-			var hum = "";
-			console.log(dataEnd["humidite"]);
-			for(let i = 0; i < dataEnd["humidite"].length; i++){
-				hum = hum + dataEnd["humidite"][i] + "%, ";
-			}
-			console.log(hum);
-			$("#hum").text(hum);
-			$("#temp").text(dataEnd["temperature"] + "°C");
-        }
-	</script>
+	<script type="module" src="./js/maps.mjs"></script>
 {% endblock %}

@@ -22,10 +22,20 @@ class IoController extends AbstractController
     
     #[Route('/test', name: 'test')]
     public function selectControl() : Response {
-        $doctrine = $this->getDoctrine()->getManager();
-
-        $queryBuilder = $doctrine->getRepository(DonneesPiquet::class);
-        dump( $queryBuilder->findByDateBetween('2021-03-30 13:43:00', '2021-03-30 13:44:00'));
+        $opts = array(
+            'http' => array(
+                'method' => "GET",
+                'header' => "Host: 192.168.137.103:150000\r\n".
+                            "Connection: Keep-Alive\r\n",
+                'follow_location' => 0,
+                'protocol_version' => 1.1,
+                
+            )
+        );
+        
+        $context = stream_context_create($opts);
+        $fp = fopen('http://192.168.137.103:15000', 'r', false, $context);
+        dump($fp);
         die();
     }
     

@@ -22,44 +22,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
         
-    /* #[Route('/register', name: 'register')]
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, OperatorAuthenticator $authenticator): Response
-    {
-        $user = new Operateur();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
-        
-        if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            $entityManager = $this->getDoctrine()->getManager();
-            
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                    )
-                );
-            
-            if(!$entityManager->getRepository(Groupe::class)->findOneById('1')){
-                $groupe = new Groupe();
-                
-                $entityManager->persist($groupe);
-                $entityManager->flush();
-            }
-                
-            $user->setIdGroupe($entityManager->getRepository(Groupe::class)->findOneById('1'));
-            
-            $entityManager->persist($user);
-            $entityManager->flush();
-            
-            return $this->redirectToRoute('login');
-        }
-        
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
-    } */    
-    
     #[Route("/login", name: "login")]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {

@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+{% block encoding %}<meta charset="UTF-8">{% endblock %}
+
+{% block body %}
+<style>
+	.widthTest { width: 11%; }   
+</style>
+
+<link rel="stylesheet" href="./css/control.css">
+
+
+<div class="container-fluid" id="control">
+    <div class="row">
+        <div class="col-md-6 left" id="left" style="height:inherit;">
+        	<div id="map" class="map"></div>
+        </div>
+        <div class="col-md-6 right" id="right" style="height:inherit;">
+        	<button type="button" class="btn btn-light" id="returnButton">Exit</button>
+        	<button type="button" class="btn btn-light" id="saveButton">Save</button>
+        	
+        	<table class="table table-dark">
+            	<tr>
+              		<th scope="row">Identifiant : </th>
+              		<td class="widthTest" id="id"></td>
+            	</tr>
+            	<tr>
+              		<th scope="row">Coordonnées GPS : </th>
+              		<td class="widthTest" id="gps"></td>
+            	</tr>
+            	<tr>
+              		<th scope="row">Niveau de batterie : </th>
+              		<td class="widthTest" id="bat"></td>
+            	</tr>
+            	<tr>
+              		<th scope="row">Date de la dernière donnée acquise : </th>
+              		<td class="widthTest" id="dataEnd"></td>
+            	</tr>
+            	<tr>
+              		<th scope="row">Humidité : </th>
+              		<td class="widthTest" id="hum"></td>
+            	</tr>
+            	<tr>
+              		<th scope="row">Temperature : </th>
+              		<td class="widthTest" id="temp"></td>
+            	</tr>
+            </table>
+        		<div id="chart"></div>
+        	
+        	
+        	<button type="button" class="btn btn-light" id="syncButton">Sync</button>
+        	<button type="button" class="btn btn-light" id="pingButton">Ping</button>
+        	<!-- if(connected){
+        		<span class="connected">Connecté</span>
+        	}else{
+        		<span class="disconnected">Déconnecté</span>
+        	} -->
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+	<script type="module" src="./js/maps.mjs"></script>
+{% endblock %}

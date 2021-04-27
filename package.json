@@ -23,6 +23,8 @@
         "@popperjs/core": "^2.9.2",
         "autoprefixer": "^10.2.5",
         "bootstrap": "^5.0.0-beta3",
+        "jquery": "^3.6.0",
+        "ol": "^6.5.0",
         "postcss-loader": "^5.2.0"
     }
 }

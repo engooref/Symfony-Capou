@@ -101,10 +101,11 @@ class IoController extends AbstractController
         else
             return new Response(Response::HTTP_I_AM_A_TEAPOT);
          
-        
-        $doctrine = $this->getDoctrine()->getManager();
-        $doctrine->persist($newData);
-        $doctrine->flush();
+        if($newData) {
+            $doctrine = $this->getDoctrine()->getManager();
+            $doctrine->persist($newData);
+            $doctrine->flush();
+        }
         return new Response(Response::HTTP_OK);
 
     }
@@ -197,6 +198,16 @@ class IoController extends AbstractController
         $temps = $_GET['Time'];
         
         $doctrine = $this->getDoctrine()->getManager();
+        $result = $doctrine->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d:m:Y:H:i:s", $temps));
+        
+        if($result){
+            foreach($result as $val){
+                if($val->getIdPiquet()->getId() == $idPiq){
+                    return ;
+                }
+            }
+        }
+            
         $Piquet = $doctrine->getRepository(Piquet::class)
                            ->findOneById($idPiq);
         

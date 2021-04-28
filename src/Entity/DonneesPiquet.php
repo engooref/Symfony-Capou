@@ -8,6 +8,7 @@ use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=DonneesPiquetRepository::class)
+ * 
  */
 class DonneesPiquet implements JsonSerializable
 {

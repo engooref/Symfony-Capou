@@ -5,7 +5,8 @@ body {
   margin: 0;
 }
 
-.container-fluid {
+#control {
+	margin-top: 9%;
     height: 100%;
 }
 

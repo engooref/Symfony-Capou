@@ -383,9 +383,6 @@
     "symfony/polyfill-uuid": {
         "version": "v1.22.1"
     },
-    "symfony/process": {
-        "version": "v5.2.2"
-    },
     "symfony/profiler-pack": {
         "version": "v1.0.5"
     },
@@ -582,6 +579,9 @@
     },
     "symfonycasts/verify-email-bundle": {
         "version": "v1.2.0"
+    },
+    "textalk/websocket": {
+        "version": "1.5.3"
     },
     "twig/extra-bundle": {
         "version": "v3.2.1"

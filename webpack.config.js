@@ -77,4 +77,8 @@ Encore
     .autoProvidejQuery()
 ;
 
-module.exports = Encore.getWebpackConfig();
+const conf = Encore.getWebpackConfig();
+
+conf.resolve.mainFields = ['main', 'browser'];
+
+module.exports = conf;

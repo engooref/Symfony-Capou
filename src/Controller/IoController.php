@@ -22,30 +22,11 @@ use DateInterval;
 class IoController extends AbstractController
 {
     
-<<<<<<< HEAD
-    #[Route('/test', name: 'test')]
-    public function selectControl() : Response {
-        $opts = array(
-            'http' => array(
-                'method' => "GET",
-                'header' => "Host: 192.168.137.103:150000\r\n".
-                            "Connection: Keep-Alive\r\n",
-                'follow_location' => 0,
-                'protocol_version' => 1.1,
-                
-            )
-        );
-        
-        $context = stream_context_create($opts);
-        $fp = fopen('http://192.168.137.103:15000', 'r', false, $context);
-        dump($fp);
-=======
     #[Route('/PingCen', name: 'PingCen')]
     public function PingCen() : Response {
         $doctrine = $this->getDoctrine()->getManager();
         $Centrale = $doctrine->getRepository(Centrale::class)->finAll();
         
->>>>>>> branch 'main-dev' of https://github.com/engooref/Symfony-Capou
         die();
     }
     

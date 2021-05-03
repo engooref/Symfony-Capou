@@ -10,12 +10,11 @@
         "composer/package-versions-deprecated": "1.11.99.1",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.2",
-        "doctrine/doctrine-migrations-bundle": "^3.1",
+        "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.8",
         "easycorp/easyadmin-bundle": "^3.2",
         "phpdocumentor/reflection-docblock": "^5.2",
         "sensio/framework-extra-bundle": "^5.1",
-        "symfony/apache-pack": "^1.0",
         "symfony/asset": "5.2.*",
         "symfony/console": "5.2.*",
         "symfony/dotenv": "5.2.*",
@@ -33,7 +32,6 @@
         "symfony/property-access": "5.2.*",
         "symfony/property-info": "5.2.*",
         "symfony/proxy-manager-bridge": "5.2.*",
-        "symfony/requirements-checker": "^2.0",
         "symfony/security-bundle": "5.2.*",
         "symfony/serializer": "5.2.*",
         "symfony/string": "5.2.*",
@@ -53,7 +51,7 @@
         "symfony/browser-kit": "^5.2",
         "symfony/css-selector": "^5.2",
         "symfony/debug-bundle": "^5.2",
-        "symfony/maker-bundle": "^1.30",
+        "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^5.2",
         "symfony/stopwatch": "^5.2",
         "symfony/var-dumper": "^5.2",
@@ -82,12 +80,10 @@
         "symfony/polyfill-php72": "*"
     },
     "scripts": {
-      "auto-scripts": {
-        "vendor/bin/requirements-checker": "php-script",
-        "cache:clear": "symfony-cmd",
-        "assets:install %PUBLIC_DIR%": "symfony-cmd",
-        "requirements-checker": "script"
-      },
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
         "post-install-cmd": [
             "@auto-scripts"
         ],

@@ -20,7 +20,12 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
-    .addEntry('app', './assets/app.js')
+    .addEntry('app', './assets/js/main/app.js')
+    
+    .addEntry('map', './assets/js/control/map.js')
+    .addEntry('buttonAction', './assets/js/control/buttonAction.js')
+    
+    .addEntry('graph', './assets/js/analyse/graph.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
@@ -72,7 +77,11 @@ Encore
     //.enableIntegrityHashes(Encore.isProduction())
 
     // uncomment if you're having problems with a jQuery plugin
-    //.autoProvidejQuery()
+    .autoProvidejQuery()
 ;
 
-module.exports = Encore.getWebpackConfig();
+const conf = Encore.getWebpackConfig();
+
+conf.resolve.mainFields = ['main', 'browser'];
+
+module.exports = conf;

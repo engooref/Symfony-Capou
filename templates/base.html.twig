@@ -8,6 +8,7 @@
         {% block stylesheets %}{{ encore_entry_link_tags('app') }}{% endblock %}
     </head>
     <body>
+<<<<<<< HEAD
     
     	<!-- NavBar -->
     	{% include 'navbar/navbar.html.twig' %}
@@ -21,5 +22,13 @@
 		<!-- Javascript -->
 		{% block javascripts %}{{ encore_entry_script_tags('app') }}{% endblock %}
 		{% block script %}{% endblock %}
+=======
+    		{% include 'navbar/navbar.html.twig' %}
+    		<main style="padding-top: 90px;">
+    		    {% block body %}{% endblock %}
+            </main>
+    		{% include 'footer/footer.html.twig' %}
+       	    {% block javascripts %}{{ encore_entry_script_tags('app') }}{% endblock %}
+>>>>>>> branch 'main-dev' of https://github.com/engooref/Symfony-Capou
     </body>
 </html>

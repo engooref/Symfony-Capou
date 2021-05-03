@@ -23,7 +23,13 @@
         "@popperjs/core": "^2.9.2",
         "autoprefixer": "^10.2.5",
         "bootstrap": "^5.0.0-beta3",
+<<<<<<< HEAD
         "ol": "^5.1.2",
+=======
+        "canvasjs": "github:vasilrimar/canvasjs",
+        "jquery": "^3.6.0",
+        "ol": "^6.5.0",
+>>>>>>> branch 'main-dev' of https://github.com/engooref/Symfony-Capou
         "postcss-loader": "^5.2.0"
     }
 }

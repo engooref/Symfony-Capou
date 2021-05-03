@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Piquet;
 use App\Entity\Station; 
 use App\Entity\ElectroVanne;
+use App\Entity\Centrale;
+
 use App\Entity\DonneesStation;
 use App\Entity\DonneesPiquet;
 use App\Entity\DonneesVanne;
@@ -20,6 +22,7 @@ use DateInterval;
 class IoController extends AbstractController
 {
     
+<<<<<<< HEAD
     #[Route('/test', name: 'test')]
     public function selectControl() : Response {
         $opts = array(
@@ -36,6 +39,13 @@ class IoController extends AbstractController
         $context = stream_context_create($opts);
         $fp = fopen('http://192.168.137.103:15000', 'r', false, $context);
         dump($fp);
+=======
+    #[Route('/PingCen', name: 'PingCen')]
+    public function PingCen() : Response {
+        $doctrine = $this->getDoctrine()->getManager();
+        $Centrale = $doctrine->getRepository(Centrale::class)->finAll();
+        
+>>>>>>> branch 'main-dev' of https://github.com/engooref/Symfony-Capou
         die();
     }
     
@@ -99,7 +109,7 @@ class IoController extends AbstractController
     #[Route('/input', name: 'input')]
     public function input() : Response
     {
-        if(isset($_GET['Id'], $_GET['Gps'], $_GET["Bat"], $_GET['Time']))
+        if(isset($_GET['Id'], $_GET['Gps'], $_GET["Bat"], $_GET['Time'], $_GET['IdCen']))
             if(isset($_GET['Hum'], $_GET['Temp']))
                 $newData = $this->InputPiq();
             else if(isset($_GET['Deb']))
@@ -111,10 +121,11 @@ class IoController extends AbstractController
         else
             return new Response(Response::HTTP_I_AM_A_TEAPOT);
          
-        
-        $doctrine = $this->getDoctrine()->getManager();
-        $doctrine->persist($newData);
-        $doctrine->flush();
+        if($newData) {
+            $doctrine = $this->getDoctrine()->getManager();
+            $doctrine->persist($newData);
+            $doctrine->flush();
+        }
         return new Response(Response::HTTP_OK);
 
     }
@@ -168,9 +179,29 @@ class IoController extends AbstractController
        
     }
     
-    private function create($type=null, $id=null) {
+    #[Route('/registerCen', name: 'registerCen')]
+    public function registerCen() : Response
+    {
         
-        if(!isset($type, $id))
+        if(isset($_GET['Id'], $_GET['Ip']))
+            return new Response(Response::HTTP_I_AM_A_TEAPOT);
+            
+            $newObj = new Centrale;
+            
+            $newObj->setId(hexdec($_GET['Id']));
+            $newObj->setIp($_Get['Ip']);
+            
+            $doctrine = $this->getDoctrine()->getManager();
+            $doctrine->persist($newObj);
+            $doctrine->flush();
+            
+            return new Response(Response::HTTP_OK);
+            
+    }
+    
+    private function createEsc($type=null, $id=null, $idCen=null) {
+        
+        if(!isset($type, $id, $idCen))
             return -1;
             
             $newObj = null;
@@ -191,14 +222,18 @@ class IoController extends AbstractController
             $newObj->setEtat(True);
             
             $doctrine = $this->getDoctrine()->getManager();
+            $newObj->setIdCentrale($doctrine->getRepository(Centrale::class)->findById($idCen));
+            
             $doctrine->persist($newObj);
             $doctrine->flush();
             
             return 0;
     }
     
+    
     private function InputPiq() {
         
+        $idCen = hexdec($_GET['IdCen']);
         $idPiq = hexdec($_GET['Id']);
         $gps = $_GET['Gps'];
         $bat = $_GET["Bat"];
@@ -207,13 +242,29 @@ class IoController extends AbstractController
         $temps = $_GET['Time'];
         
         $doctrine = $this->getDoctrine()->getManager();
-        $Piquet = $doctrine->getRepository(Piquet::class)
+        $result = $doctrine->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d:m:Y:H:i:s", $temps));
+        
+        if($result){
+            foreach($result as $val){
+                if($val->getIdPiquet()->getId() == $idPiq){
+                    return -1;
+                }
+            }
+        }
+            
+        $piquet = $doctrine->getRepository(Piquet::class)
                            ->findOneById($idPiq);
         
-        if(!isset($Piquet)){
-            $this->create(0, $idPiq) == -1;
+        $centrale = $doctrine->getRepository(Piquet::class)
+                             ->findOneById($idCen);
+       
+        if(!isset($centrale)){
+               return -1;
         }
-        
+       
+        if(!isset($piquet)){
+            $this->createEsc(0, $idPiq, $idCen);
+        }
         
         $donneesPiq = new DonneesPiquet;
         $donneesPiq->setGps($gps);
@@ -239,7 +290,7 @@ class IoController extends AbstractController
                             ->findOneById($idSta);
         
         if(!isset($Station)){
-            $this->create(1, $idSta);
+            $this->createEsc(1, $idSta);
         }
         
         $donneesSta = new DonneesStation;
@@ -264,7 +315,7 @@ class IoController extends AbstractController
         ->findOneById($idVan);
         
         if(!isset($Station)){
-            $this->create(2, $idVan);
+            $this->createEsc(2, $idVan);
         }
         
         $donneesVan = new DonneesVanne;

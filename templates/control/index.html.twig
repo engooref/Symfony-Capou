@@ -1,9 +1,10 @@
 {% extends 'base.html.twig' %}
 {% block encoding %}<meta charset="UTF-8">{% endblock %}
+{% block title %}Control{% endblock %}
 
 {% block body %}
 <style>
-	.widthTest { width: 11%; }   
+	.data { width: 11%; }   
 </style>
 
 <link rel="stylesheet" href="./css/control.css">
@@ -22,27 +23,27 @@
         	<table class="table table-dark">
             	<tr>
               		<th scope="row">Identifiant : </th>
-              		<td class="widthTest" id="id"></td>
+              		<td class="data" id="id"></td>
             	</tr>
             	<tr>
               		<th scope="row">Coordonnées GPS : </th>
-              		<td class="widthTest" id="gps"></td>
+              		<td class="data" id="gps"></td>
             	</tr>
             	<tr>
               		<th scope="row">Niveau de batterie : </th>
-              		<td class="widthTest" id="bat"></td>
+              		<td class="data" id="bat"></td>
             	</tr>
             	<tr>
               		<th scope="row">Date de la dernière donnée acquise : </th>
-              		<td class="widthTest" id="dataEnd"></td>
+              		<td class="data" id="dataEnd"></td>
             	</tr>
             	<tr>
               		<th scope="row">Humidité : </th>
-              		<td class="widthTest" id="hum"></td>
+              		<td class="data" id="hum"></td>
             	</tr>
             	<tr>
               		<th scope="row">Temperature : </th>
-              		<td class="widthTest" id="temp"></td>
+              		<td class="data" id="temp"></td>
             	</tr>
             </table>
         		<div id="chart"></div>
@@ -60,4 +61,5 @@
 </div>
 {{ parent() }}
 {{ encore_entry_script_tags('map') }}
+{{ encore_entry_script_tags('buttonAction') }}
 {% endblock %}

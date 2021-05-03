@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CentraleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,9 +24,14 @@ class Centrale
     private $ip;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\OneToMany(targetEntity=Piquet::class, mappedBy="idCentrale")
      */
-    private $connected;
+    private $idPiquets;
+
+    public function __construct()
+    {
+        $this->idPiquets = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -51,6 +58,36 @@ class Centrale
     public function setConnected(bool $connected): self
     {
         $this->connected = $connected;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Piquet[]
+     */
+    public function getIdPiquets(): Collection
+    {
+        return $this->idPiquets;
+    }
+
+    public function addIdPiquet(Piquet $idPiquet): self
+    {
+        if (!$this->idPiquets->contains($idPiquet)) {
+            $this->idPiquets[] = $idPiquet;
+            $idPiquet->setIdCentrale($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIdPiquet(Piquet $idPiquet): self
+    {
+        if ($this->idPiquets->removeElement($idPiquet)) {
+            // set the owning side to null (unless already changed)
+            if ($idPiquet->getIdCentrale() === $this) {
+                $idPiquet->setIdCentrale(null);
+            }
+        }
 
         return $this;
     }

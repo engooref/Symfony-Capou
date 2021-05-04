@@ -46,6 +46,11 @@ class Operateur implements UserInterface
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $reset_token;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $verifiedbyadmin;
     
     public function getId(): ?int
     {
@@ -149,6 +154,18 @@ class Operateur implements UserInterface
     {
         $this->reset_token = $reset_token;
         
+        return $this;
+    }
+
+    public function getVerifiedbyadmin(): ?bool
+    {
+        return $this->verifiedbyadmin;
+    }
+
+    public function setVerifiedbyadmin(bool $verifiedbyadmin): self
+    {
+        $this->verifiedbyadmin = $verifiedbyadmin;
+
         return $this;
     }
 }

@@ -28,23 +28,20 @@ class SecurityController extends AbstractController
         $this->emailVerifier = $emailVerifier;
     }
     
-    #[Route('/register', name: 'register')]
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, OperatorAuthenticator $authenticator): Response
+    #[Route('/createaccount', name: 'createaccount')]
+    public function createAccount(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, OperatorAuthenticator $authenticator): Response
     {
         $user = new Operateur();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
             $entityManager = $this->getDoctrine()->getManager();
-            
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                    )
-                );
+            // mot de passe par défaut lors de la création de compte
+            $password = 'capou';
+            // on encode le mot de passe
+            $encoded = $passwordEncoder->encodePassword($user, $password);
+            $user->setPassword($encoded);
             
             if(!$entityManager->getRepository(Groupe::class)->findOneById('1')){
                 $groupe = new Groupe();

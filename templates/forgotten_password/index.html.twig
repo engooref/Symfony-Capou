@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block encoding %}<meta charset="UTF-8">{% endblock %}
+{% block title %}Mot de passe oublié{% endblock %}
+
+{% block body %}
+    <h1>Mot de passe oublié</h1>
+	<br>
+    {{ form_start(forgottenPassForm) }}
+    
+    {{ form_row(forgottenPassForm.email, {
+        	'label': 'Email :', 
+        	'attr': {'placeholder': 'Adresse e-mail'}
+        	})
+    }}
+    {{ form_end(forgottenPassForm) }}
+{% endblock %}

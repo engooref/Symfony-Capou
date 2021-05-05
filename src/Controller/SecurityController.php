@@ -29,7 +29,7 @@ class SecurityController extends AbstractController
     }
     
     #[Route('/createaccount', name: 'createaccount')]
-    public function createAccount(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, OperatorAuthenticator $authenticator): Response
+    public function createAccount(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, OperatorAuthenticator $authenticator, \Swift_Mailer $mailer): Response
     {
         $user = new Operateur();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -38,24 +38,43 @@ class SecurityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             // mot de passe par défaut lors de la création de compte
-            $password = 'capou';
+            $nbChar = 8;
+            $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
+            srand((double)microtime()*1000000);
+            $password = '';
+            for($i=0; $i<$nbChar; $i++){
+                $password .= $chaine[rand()%strlen($chaine)];
+            }
             // on encode le mot de passe
             $encoded = $passwordEncoder->encodePassword($user, $password);
             $user->setPassword($encoded);
-            
             if(!$entityManager->getRepository(Groupe::class)->findOneById('1')){
                 $groupe = new Groupe();
-                
                 $entityManager->persist($groupe);
                 $entityManager->flush();
             }
-                
             $user->setIdGroupe($entityManager->getRepository(Groupe::class)->findOneById('1'));
+            $user->setVerifiedbyadmin('0');
             
             $entityManager->persist($user);
             $entityManager->flush();
             
-            return $this->redirectToRoute('login');
+            $titreMail = "Lycée Capou - Demande de création de votre compte";
+            $message = (new \Swift_Message($titreMail))
+            ->setCharset('iso-8859-2')
+            ->setFrom('inscription.lyceecapou@gmail.com')
+            ->setTo($user->getEmail())
+            ->setBody(
+                $this->renderView(
+                    // templates/emails/registration.html.twig
+                    'registration/demande_creation_email.html.twig'
+                    ),
+                'text/html'
+                );
+            
+            $mailer->send($message);
+            
+            //return $this->redirectToRoute('login');
         }
         
         return $this->render('registration/register.html.twig', [

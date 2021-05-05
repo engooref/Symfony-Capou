@@ -159,12 +159,12 @@ class Operateur implements UserInterface
 
     public function getVerifiedbyadmin(): ?bool
     {
-        return $this->verifiedbyadmin;
+        return $this->verified_by_admin;
     }
 
-    public function setVerifiedbyadmin(bool $verifiedbyadmin): self
+    public function setVerifiedbyadmin(bool $verified_by_admin): self
     {
-        $this->verifiedbyadmin = $verifiedbyadmin;
+        $this->verified_by_admin = $verified_by_admin;
 
         return $this;
     }

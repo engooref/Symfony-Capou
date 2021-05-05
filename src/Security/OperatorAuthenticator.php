@@ -79,6 +79,8 @@ class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements Pa
 
     public function checkCredentials($credentials, UserInterface $user)
     {
+        // EN COURS DE CONSTRUCTION
+        //if($user->getVerifiedbyadmin())
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
 

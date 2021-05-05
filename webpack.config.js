@@ -22,6 +22,7 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('map', './assets/map.js')
+	.addEntry('graph', './assets/graph.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
@@ -76,4 +77,7 @@ Encore
     .autoProvidejQuery()
 ;
 
-module.exports = Encore.getWebpackConfig();
+const conf = Encore.getWebpackConfig();
+conf.resolve.mainFields = ['main', 'browser'];
+
+module.exports = conf;

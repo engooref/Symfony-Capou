@@ -50,7 +50,7 @@ class Operateur implements UserInterface
     /**
      * @ORM\Column(type="boolean")
      */
-    private $verifiedbyadmin;
+    private $verified_by_admin;
     
     public function getId(): ?int
     {

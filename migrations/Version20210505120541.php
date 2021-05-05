@@ -10,14 +10,14 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210407182637 extends AbstractMigration
+final class Version20210505120541 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE centrale (id INT NOT NULL, ip VARCHAR(255) NOT NULL, connected TINYINT(1) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
@@ -29,7 +29,7 @@ final class Version20210407182637 extends AbstractMigration
         $this->addSql('CREATE TABLE groupe_piquet (groupe_id INT NOT NULL, piquet_id INT NOT NULL, INDEX IDX_8BA702E17A45358C (groupe_id), INDEX IDX_8BA702E1E471F8D2 (piquet_id), PRIMARY KEY(groupe_id, piquet_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE groupe_electro_vanne (groupe_id INT NOT NULL, electro_vanne_id INT NOT NULL, INDEX IDX_42DEC137A45358C (groupe_id), INDEX IDX_42DEC13D9D043A7 (electro_vanne_id), PRIMARY KEY(groupe_id, electro_vanne_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE groupe_station (groupe_id INT NOT NULL, station_id INT NOT NULL, INDEX IDX_595E1FFF7A45358C (groupe_id), INDEX IDX_595E1FFF21BDB235 (station_id), PRIMARY KEY(groupe_id, station_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE operateur (id INT AUTO_INCREMENT NOT NULL, id_groupe_id INT NOT NULL, email VARCHAR(180) NOT NULL, roles LONGTEXT NOT NULL COMMENT \'(DC2Type:json)\', password VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_B4B7F99DE7927C74 (email), INDEX IDX_B4B7F99DFA7089AB (id_groupe_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE operateur (id INT AUTO_INCREMENT NOT NULL, id_groupe_id INT NOT NULL, email VARCHAR(180) NOT NULL, roles LONGTEXT NOT NULL COMMENT \'(DC2Type:json)\', password VARCHAR(255) NOT NULL, reset_token VARCHAR(50) DEFAULT NULL, verified_by_admin TINYINT(1) NOT NULL, UNIQUE INDEX UNIQ_B4B7F99DE7927C74 (email), INDEX IDX_B4B7F99DFA7089AB (id_groupe_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE piquet (id INT NOT NULL, etat TINYINT(1) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE station (id INT NOT NULL, etat TINYINT(1) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE donnees_piquet ADD CONSTRAINT FK_29AB2F3C644444F5 FOREIGN KEY (id_piquet_id) REFERENCES piquet (id)');
@@ -44,7 +44,7 @@ final class Version20210407182637 extends AbstractMigration
         $this->addSql('ALTER TABLE operateur ADD CONSTRAINT FK_B4B7F99DFA7089AB FOREIGN KEY (id_groupe_id) REFERENCES groupe (id)');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE donnees_vanne DROP FOREIGN KEY FK_893426B3F30350AF');

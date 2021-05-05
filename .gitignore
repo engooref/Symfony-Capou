@@ -24,3 +24,5 @@ composer.lock
 assets/js/main/app.js
 
 public/data.csv
+
+package-lock.json

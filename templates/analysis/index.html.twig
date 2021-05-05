@@ -3,8 +3,8 @@
 {% block title %}Analyse{% endblock %}
 
 {% block body %}
-	<div id="chartContainerTemp" style="height: 370px; width: 100%;"></div>
-	<div id="chartContainerHumi" style="height: 370px; width: 100%;"></div>
+	<canvas id="chartContainerTemp" width="100%" height="30%"></canvas>
+	<canvas id="chartContainerHumi" width="100%" height="30%"></canvas>
 {{ parent() }}
 {{ encore_entry_script_tags('graph') }}
 {% endblock %}

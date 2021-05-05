@@ -7,16 +7,13 @@
     {% endfor %}
 
     <div class="py-5 mt-5 cRegister">
-        <h1 class="textCenter">Register</h1>
+        <h1 class="textCenter">Demande de création de compte</h1>
     	<div class="centerForm">
             {{ form_start(registrationForm) }}
                 {{ form_row(registrationForm.email) }}
                 </br>
-                {{ form_row(registrationForm.plainPassword, {
-                    label: 'Password'
-                }) }}
         
-                <button type="submit" class="btn">Register</button>
+                <button type="submit" class="btn">Envoyer</button>
             {{ form_end(registrationForm) }}
         </div>
     </div>

@@ -6,7 +6,6 @@ use App\Entity\Operateur;
 use App\Entity\Groupe;
 
 use App\Form\RegistrationFormType;
-use App\Security\EmailVerifier;
 use App\Security\OperatorAuthenticator;
 
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -23,10 +22,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     
-    public function __construct(EmailVerifier $emailVerifier)
-    {
-        $this->emailVerifier = $emailVerifier;
-    }
+    
     
     #[Route('/createaccount', name: 'createaccount')]
     public function createAccount(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, OperatorAuthenticator $authenticator, \Swift_Mailer $mailer): Response
@@ -37,7 +33,7 @@ class SecurityController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
-            // mot de passe par défaut lors de la création de compte
+            // mot de passe par dï¿½faut lors de la crï¿½ation de compte
             $nbChar = 8;
             $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
             srand((double)microtime()*1000000);
@@ -59,7 +55,7 @@ class SecurityController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
             
-            $titreMail = "Lycée Capou - Demande de création de votre compte";
+            $titreMail = "Lycï¿½e Capou - Demande de crï¿½ation de votre compte";
             $message = (new \Swift_Message($titreMail))
             ->setCharset('iso-8859-2')
             ->setFrom('inscription.lyceecapou@gmail.com')

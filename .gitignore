@@ -14,3 +14,13 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+composer.lock
+
+.env.onlineBDD
+
+.env
+
+assets/js/main/app.js
+
+public/data.csv

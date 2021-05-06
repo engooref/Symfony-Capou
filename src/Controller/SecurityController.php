@@ -34,13 +34,14 @@ class SecurityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             // mot de passe par dï¿½faut lors de la crï¿½ation de compte
-            $nbChar = 8;
-            $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
-            srand((double)microtime()*1000000);
-            $password = '';
-            for($i=0; $i<$nbChar; $i++){
-                $password .= $chaine[rand()%strlen($chaine)];
-            }
+//             $nbChar = 8;
+//             $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
+//             srand((double)microtime()*1000000);
+//             $password = '';
+//             for($i=0; $i<$nbChar; $i++){
+//                 $password .= $chaine[rand()%strlen($chaine)];
+//             }
+            $password = "capou";
             // on encode le mot de passe
             $encoded = $passwordEncoder->encodePassword($user, $password);
             $user->setPassword($encoded);
@@ -55,7 +56,7 @@ class SecurityController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
             
-            $titreMail = "Lycï¿½e Capou - Demande de crï¿½ation de votre compte";
+            $titreMail = "Lycée Capou - Demande de création de votre compte";
             $message = (new \Swift_Message($titreMail))
             ->setCharset('iso-8859-2')
             ->setFrom('inscription.lyceecapou@gmail.com')

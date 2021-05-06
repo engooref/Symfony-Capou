@@ -26,3 +26,6 @@ assets/js/main/app.js
 public/data.csv
 
 package-lock.json
+
+/node_modules/
+/public/build/

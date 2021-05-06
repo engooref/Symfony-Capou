@@ -51,6 +51,11 @@ class Operateur implements UserInterface
      * @ORM\Column(type="boolean")
      */
     private $verified_by_admin;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isFirstConnexion;
     
     public function getId(): ?int
     {
@@ -165,6 +170,18 @@ class Operateur implements UserInterface
     public function setVerifiedbyadmin(bool $verified_by_admin): self
     {
         $this->verified_by_admin = $verified_by_admin;
+
+        return $this;
+    }
+
+    public function getIsFirstConnexion(): ?bool
+    {
+        return $this->isFirstConnexion;
+    }
+
+    public function setIsFirstConnexion(bool $isFirstConnexion): self
+    {
+        $this->isFirstConnexion = $isFirstConnexion;
 
         return $this;
     }

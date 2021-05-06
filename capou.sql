@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 22 mars 2021 à 14:59
+-- Généré le : jeu. 06 mai 2021 à 11:06
 -- Version du serveur :  10.4.17-MariaDB
 -- Version de PHP : 8.0.2
 
@@ -29,8 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `centrale` (
   `id` int(11) NOT NULL,
-  `ip` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `connected` tinyint(1) NOT NULL
+  `ip` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -50,7 +49,8 @@ CREATE TABLE `doctrine_migration_versions` (
 --
 
 INSERT INTO `doctrine_migration_versions` (`version`, `executed_at`, `execution_time`) VALUES
-('DoctrineMigrations\\Version20210322135718', '2021-03-22 14:57:32', 1437);
+('DoctrineMigrations\\Version20210505192221', '2021-05-06 08:45:38', 8549),
+('DoctrineMigrations\\Version20210506082422', '2021-05-06 10:31:38', 216);
 
 -- --------------------------------------------------------
 
@@ -64,7 +64,8 @@ CREATE TABLE `donnees_piquet` (
   `horodatage` datetime NOT NULL,
   `humidite` longtext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '(DC2Type:array)',
   `temperature` double NOT NULL,
-  `gps` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `gps` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batterie` smallint(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -168,8 +169,18 @@ CREATE TABLE `operateur` (
   `email` varchar(180) COLLATE utf8mb4_unicode_ci NOT NULL,
   `roles` longtext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '(DC2Type:json)',
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `is_verified` tinyint(1) NOT NULL
+  `reset_token` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `verified_by_admin` tinyint(1) NOT NULL,
+  `is_first_connexion` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `operateur`
+--
+
+INSERT INTO `operateur` (`id`, `id_groupe_id`, `email`, `roles`, `password`, `reset_token`, `verified_by_admin`, `is_first_connexion`) VALUES
+(1, 1, 'pakabounca@pakabounca.fr', '[\"ROLE_ADMIN\"]', '$argon2id$v=19$m=65536,t=4,p=1$VEcwbWVpcHFrcGVaYjVCcA$LGiCoEDsZQkIODjTqf4qTVlL1LBsNi/9Bg4wqVCIqt4', NULL, 1, 1),
+(2, 1, 'admin@admin.fr', '[]', '$argon2id$v=19$m=65536,t=4,p=1$VFdpQi5CS3p6bEhTQWxpWQ$14HkCrC0ufjFBmYzZgdOYk0bSVafyZSCX5RjA21QR/0', NULL, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -179,6 +190,7 @@ CREATE TABLE `operateur` (
 
 CREATE TABLE `piquet` (
   `id` int(11) NOT NULL,
+  `id_centrale_id` int(11) NOT NULL,
   `etat` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -278,7 +290,8 @@ ALTER TABLE `operateur`
 -- Index pour la table `piquet`
 --
 ALTER TABLE `piquet`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `IDX_E099FEDB40B31AE8` (`id_centrale_id`);
 
 --
 -- Index pour la table `station`
@@ -318,7 +331,7 @@ ALTER TABLE `groupe`
 -- AUTO_INCREMENT pour la table `operateur`
 --
 ALTER TABLE `operateur`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Contraintes pour les tables déchargées
@@ -368,6 +381,12 @@ ALTER TABLE `groupe_station`
 --
 ALTER TABLE `operateur`
   ADD CONSTRAINT `FK_B4B7F99DFA7089AB` FOREIGN KEY (`id_groupe_id`) REFERENCES `groupe` (`id`);
+
+--
+-- Contraintes pour la table `piquet`
+--
+ALTER TABLE `piquet`
+  ADD CONSTRAINT `FK_E099FEDB40B31AE8` FOREIGN KEY (`id_centrale_id`) REFERENCES `centrale` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

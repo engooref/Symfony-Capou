@@ -386,6 +386,9 @@
     "symfony/polyfill-uuid": {
         "version": "v1.22.1"
     },
+    "symfony/process": {
+        "version": "v5.2.7"
+    },
     "symfony/profiler-pack": {
         "version": "v1.0.5"
     },

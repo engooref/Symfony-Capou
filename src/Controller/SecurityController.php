@@ -52,6 +52,7 @@ class SecurityController extends AbstractController
             }
             $user->setIdGroupe($entityManager->getRepository(Groupe::class)->findOneById('1'));
             $user->setVerifiedbyadmin('0');
+            $user->setIsFirstConnexion('1');
             
             $entityManager->persist($user);
             $entityManager->flush();
@@ -79,35 +80,12 @@ class SecurityController extends AbstractController
         ]);
     }
     
-    #[Route('/verify/email', name: 'verify_email')]
-    public function verifyUserEmail(Request $request): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
-        // validate email confirmation link, sets User::isVerified=true and persists
-        try {
-            $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
-        } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', $exception->getReason());
-            
-            return $this->redirectToRoute('register');
-        }
-        
-        // @TODO Change the redirect on success and handle or remove the flash message in your templates
-        $this->addFlash('success', 'Your email address has been verified.');
-        
-        return $this->redirectToRoute('register');
-    }
-    
-    
     #[Route("/login", name: "login")]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
          if ($this->getUser()) {
-             
              return $this->redirectToRoute('home');
          }
-
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user

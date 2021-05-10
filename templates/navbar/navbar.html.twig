@@ -1,9 +1,9 @@
-{% block encoding %}<meta charset="UTF-8">{% endblock %}
+
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
 	<div class="container-fluid">
         <a class="navbar-brand mb-0 h1" href="{{ path('home') }}">
-        	<img src="{{ asset('img/logo_capou.png') }}" alt="Logo LycÃ©e Capou" width="57" height="64" class="d-inline-block">
-        	LycÃ©e Capou
+        	<img src="{{ asset('img/logo_capou.png') }}" alt="Logo Lycée Capou" width="57" height="64" class="d-inline-block">
+        	Lycée Capou
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       		<span class="navbar-toggler-icon"></span>
@@ -14,10 +14,10 @@
             		<a class="nav-link h5" href="{{ path('home') }}"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a>
             	</li>
             	<li class="nav-item">
-            		<a class="nav-link h5" href="{{ path('analysis') }}"><i class="fas fa-chart-line"></i> Analyse des donnÃ©es</a
+            		<a class="nav-link h5" href="{{ path('analysis') }}"><i class="fas fa-chart-line"></i> Analyse des données</a
             	</li>
             	<li class="nav-item">
-            		<a class="nav-link h5" href="{{ path('control') }}"><i class="fas fa-grip-horizontal"></i> ContrÃ´le du systÃ¨me</a>
+            		<a class="nav-link h5" href="{{ path('control') }}"><i class="fas fa-grip-horizontal"></i> Contrôle du système</a>
             	</li>
             </ul>
          	{% if not app.user %}
@@ -35,11 +35,11 @@
                     	<a class="dropdown-item" href="{{ path('admin') }}">Interface administrateur</a>
                     	{% endif %}
                     	{% if is_granted('ROLE_OPERATOR') and not is_granted('ROLE_ADMIN') %}
-                    	<a class="dropdown-item" href="#">OpÃ©rateur</a>
+                    	<a class="dropdown-item" href="#">Opérateur</a>
                     	{% endif %}
                     </li>
                     <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item text-danger" href="{{ path('logout') }}"><i class="fas fa-sign-out-alt"></i> DÃ©connexion</a></li>
+                    <li><a class="dropdown-item text-danger" href="{{ path('logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
       			</ul>
         	</li>
         	{% endif %}	

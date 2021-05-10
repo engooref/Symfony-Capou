@@ -69,8 +69,13 @@ class SecurityController extends AbstractController
                     ),
                 'text/html'
                 );
-            
-            $mailer->send($message);
+            try {
+                $mailer->send($message);
+                $this->addFlash('success', 'Votre demande de création de compte a bien été prise en compte, un administrateur va traiter votre demande.');
+                return $this->redirectToRoute('login');
+            } catch (TransportExceptionInterface $e) {
+                throw new CustomUserMessageAuthenticationException("L'envoi du mail a echoué.");
+            }
             
             //return $this->redirectToRoute('login');
         }

@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html> 
     <head>
-    	{% block encoding %}<meta charset="UTF-8">{% endblock %}
-        <meta charset="UTF-8">
-        <title>Connexion - LycÃ©e Capou</title>
+        <title>Connexion - Lycée Capou</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         {% block stylesheets %}{{ encore_entry_link_tags('app') }}{% endblock %}
     </head>
@@ -12,20 +10,25 @@
     		<nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark ">
             	<div class="container-fluid">
                     <a class="navbar-brand mb-0 h1" href="{{ path('home') }}">
-                    	<img src="{{ asset('img/logo_capou.png') }}" alt="Logo LycÃ©e Capou" width="57" height="64" class="d-inline-block">
-                    	LycÃ©e Capou
+                    	<img src="{{ asset('img/logo_capou.png') }}" alt="Logo Lycée Capou" width="57" height="64" class="d-inline-block">
+                    	Lycée Capou
                     </a>
                 </div>
             </nav>
             <main>
                 <form class="py-5 mt-5 text-center" method="post">
+                    {% for message in app.flashes('success') %}
+        			<div class="alert alert-success" role="alert">
+                        {{ message }}
+        			</div>
+                    {% endfor %}
                     {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                     {% endif %}
                 
                     {% if app.user %}
                     <div class="mb-3">
-                        Vous Ãªtes connectÃ© en tant que {{ app.user.username }}, <a href="{{ path('app_logout') }}">Se dÃ©connecter</a>
+                        Vous êtes connecté en tant que {{ app.user.username }}, <a href="{{ path('app_logout') }}">Se déconnecter</a>
                     </div>
                     {% endif %}
                     
@@ -53,8 +56,8 @@
                         </div>
            			</div>
             	</form>
-            	<a href="{{ path('forgottenpassword') }}"><button class="btn btn-secondary">Mot de passe oubliÃ©</button></a>
-            	<a href="{{ path('createaccount') }}"><button class="btn btn-secondary">Faire une demande de crÃ©ation de compte</button></a>
+            	<a href="{{ path('forgottenpassword') }}"><button class="btn btn-secondary">Mot de passe oublié</button></a>
+            	<a href="{{ path('createaccount') }}"><button class="btn btn-secondary">Faire une demande de création de compte</button></a>
             </main>
             
             {% include 'footer/footer.html.twig' %}

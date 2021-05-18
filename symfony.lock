@@ -508,7 +508,7 @@
         "version": "v1.0.1"
     },
     "symfony/uid": {
-        "version": "v5.2.4"
+        "version": "v5.2.6"
     },
     "symfony/validator": {
         "version": "4.3",

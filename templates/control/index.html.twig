@@ -1,5 +1,4 @@
 {% extends 'base.html.twig' %}
-{% block encoding %}<meta charset="UTF-8">{% endblock %}
 {% block title %}Control{% endblock %}
 
 {% block body %}
@@ -26,7 +25,7 @@
               		<td class="data" id="id"></td>
             	</tr>
             	<tr>
-              		<th scope="row">CoordonnÃ©es GPS : </th>
+              		<th scope="row">Coordonnées GPS : </th>
               		<td class="data" id="gps"></td>
             	</tr>
             	<tr>
@@ -34,11 +33,11 @@
               		<td class="data" id="bat"></td>
             	</tr>
             	<tr>
-              		<th scope="row">Date de la derniÃ¨re donnÃ©e acquise : </th>
+              		<th scope="row">Date de la dernière donnée acquise : </th>
               		<td class="data" id="dataEnd"></td>
             	</tr>
             	<tr>
-              		<th scope="row">HumiditÃ© : </th>
+              		<th scope="row">Humidité : </th>
               		<td class="data" id="hum"></td>
             	</tr>
             	<tr>
@@ -52,9 +51,9 @@
         	<button type="button" class="btn btn-light" id="syncButton">Sync</button>
         	<button type="button" class="btn btn-light" id="pingButton">Ping</button>
         	<!-- if(connected){
-        		<span class="connected">ConnectÃ©</span>
+        		<span class="connected">Connecté</span>
         	}else{
-        		<span class="disconnected">DÃ©connectÃ©</span>
+        		<span class="disconnected">Déconnecté</span>
         	} -->
         </div>
     </div>

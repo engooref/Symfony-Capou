@@ -35,4 +35,9 @@ class Kernel extends BaseKernel
             (require $path)($routes->withPath($path), $this);
         }
     }
+    
+    public function getCharset()
+    {
+        return 'ISO-8859-1';
+    }
 }

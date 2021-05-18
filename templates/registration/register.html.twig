@@ -1,20 +1,21 @@
 {% extends 'base.html.twig' %}
-{% block encoding %}<meta charset="UTF-8">{% endblock %}
 {% block title %}Register{% endblock %}
 {% block body %}
     {% for flashError in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
     {% endfor %}
 
-    <div class="py-5 mt-5 cRegister">
-        <h1 class="textCenter">Demande de crÃ©ation de compte</h1>
-    	<div class="centerForm">
-            {{ form_start(registrationForm) }}
-                {{ form_row(registrationForm.email) }}
-                </br>
-        
-                <button type="submit" class="btn">Envoyer</button>
+    <div class="pt-3 mt-3 cRegister">
+        <h1 class="textCenter">Demande de création de compte</h1>
+            {{ form_start(registrationForm, {'attr': {'class': 'form-group'}}) }}
+            {% if form_errors(registrationForm.email) is not empty %}
+            	<div class="alert alert-light" role="alert"><span class="badge bg-danger">Erreur</span>{{ form_errors(registrationForm.email) }}</div>
+            {% endif %}
+            <div class="mb-3">
+            	{{ form_label(registrationForm.email) }}
+                {{ form_widget(registrationForm.email, {'attr': {'class' : 'form-control', 'placeholder' : 'Saisir votre email'} }) }}
+            </div>
+            <button type="submit" class="btn btn-secondary">Envoyer</button>
             {{ form_end(registrationForm) }}
-        </div>
-    </div>
+    </div>            
 {% endblock %}

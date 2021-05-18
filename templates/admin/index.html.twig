@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 {% block title %}Administrateur{% endblock %}
 {% block body %}
+
+
+{#
     <div class="py-5 mt-5">
         <h1>Administration</h1>
         {{ form(form) }}
@@ -17,7 +20,7 @@
 		</thead>
 		<tbody>
 	        {% for operateur in operateurs %}
-            {# Contenu de la boucle #}
+            {# Contenu de la boucle #e}
         	<tr>
           		<th scope="row">{{ operateur.id }}</th>
           		<td>{{ operateur.email }}</td>
@@ -28,4 +31,5 @@
             {% endfor %}
 		</tbody>
 	</table>
+#}
 {% endblock %}

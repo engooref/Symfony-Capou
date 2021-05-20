@@ -7,10 +7,10 @@ var id = [];
 var heure = [];
 var temp = [];
 var humi = [];
-var humi1 = [];
-var humi2 = [];
-var humi3 = [];
-var humi4 = [];
+var humi1;
+var humi2;
+var humi3;
+var humi4;
 
 const ctx1 = document.getElementById('chartContainerTemp').getContext('2d');
 const ctx2 = document.getElementById('chartContainerHumi').getContext('2d');
@@ -101,7 +101,8 @@ var chartContainerHumi = new Chart(ctx2, {
   	options: {}
 });
 
-window.addEventListener('load', getData);
+getData();
+setInterval(getData,delay);
 
 function Setup() {
 
@@ -130,8 +131,6 @@ function Setup() {
 	chartContainerHumi.data.datasets[2].data = humi3;
 	chartContainerHumi.data.datasets[3].data = humi4;
 	chartContainerHumi.update();
-	
-	setTimeout(getData,delay);
 }
 
 function getData() {
@@ -148,9 +147,14 @@ function getData() {
 			temp = response["Temp"];
 			humi = response["Humi"];
 			
+			humi1=[];
+			humi2=[];
+			humi3=[];
+			humi4=[];
+			
 			for(var k=0; k<humi.length;k++){
 				var humik = [];
-				humik = humi[k];
+				humik = humi[k];	
 				
 				humi1.push(humik[0]);
 				humi2.push(humik[1]);
@@ -158,8 +162,9 @@ function getData() {
 				humi4.push(humik[3]);
 			}
 			
+			
 			console.log("id = ",id,"heure = ", heure,"temp = ", temp,"humi = ",humi);
-			console.log("humi1 = ",humi1,"humi1 = ",humi1,"humi2 = ",humi2,"humi3 = ",humi3,"humi4 = ",humi4)
+			console.log("humi1 = ",humi1,"humi2 = ",humi2,"humi3 = ",humi3,"humi4 = ",humi4)
 			
 			Setup();
 		},

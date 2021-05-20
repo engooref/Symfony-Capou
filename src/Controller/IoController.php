@@ -75,6 +75,7 @@ class IoController extends AbstractController
             $dateObj = $dataObj[$i]->getHorodatage();
             if(!(($dateObj->diff($dateMin)->invert) && !($dateObj->diff($dateMax)->invert)))
                 unset($dataObj[$i]);
+            
         }
         
         return new JsonResponse(array("Object" => $obj,
@@ -307,5 +308,22 @@ class IoController extends AbstractController
             ->findOneById($idVan));
         
         return $donneesVan;
+    }
+    
+    #[Route('/getDataPiquet', name: 'getDataPiquet')]
+    public function getDataPiquet() : Response {
+
+        $doctrine = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class);
+        
+        $obj = $doctrine->findAll();
+        foreach($obj as $article)
+        {
+            $id[] = $article->getId();
+            $Horodatage = $article->getHorodatage();
+            $horodatage[] = $Horodatage->format('Y/m/d H:i:s');
+            $temp[] = $article->getTemperature();
+            $humi[] = $article->getHumidite();
+        }
+        return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi));
     }
 }

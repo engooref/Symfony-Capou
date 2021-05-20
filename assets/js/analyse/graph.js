@@ -3,6 +3,8 @@ var Chart = require('chart.js');
 
 const delay = 10000;
 
+var HeureSplit = [];
+
 var id = [];
 var heure = [];
 var temp = [];
@@ -18,7 +20,7 @@ const ctx2 = document.getElementById('chartContainerHumi').getContext('2d');
 var chartContainerTemp = new Chart(ctx1, {
 	type: 'line',
   	data: {
-    	labels: heure,
+    	labels: HeureSplit,
     	datasets: [
 				{
 					label: 'Temperature Intérieure',
@@ -50,14 +52,17 @@ var chartContainerTemp = new Chart(ctx1, {
 			y: {
 				grid: {
 					display: true,
-					drawBorder : true,
 					drawOnChartArea: true,
 					drawTicks: true,
 					color: function(context){
 						if((context.tick.value < 0)||(context.tick.value > 0)) {return '#6c757d';}
 						return '#FFC501';
+					},
+					lineWidth:function(context){
+						if((context.tick.value < 0)||(context.tick.value > 0)) {return 1;}
+						return 2;
 					}
-				}
+				},
 			}
 		}
 	}
@@ -66,7 +71,7 @@ var chartContainerTemp = new Chart(ctx1, {
 var chartContainerHumi = new Chart(ctx2, {
 	type: 'line',
   	data: {
-    	labels: heure,
+    	labels: HeureSplit,
     	datasets: [
 			{
 				label: 'Humidité 1',
@@ -98,7 +103,14 @@ var chartContainerHumi = new Chart(ctx2, {
 			}
     	]
 	},
-  	options: {}
+  	options: {
+		scales: {
+			y: {
+				suggestedMin:0,
+				suggestedMax:100
+			}
+		}
+	}
 });
 
 getData();
@@ -121,11 +133,11 @@ function Setup() {
 		console.log("n°k = ",k,"humi[k] = ",humi[k] );
 	}
 	
-	chartContainerTemp.data.labels = heure;
+	chartContainerTemp.data.labels = HeureSplit;
 	chartContainerTemp.data.datasets[0].data = temp;
 	chartContainerTemp.update();
 	
-	chartContainerHumi.data.labels = heure;
+	chartContainerHumi.data.labels = HeureSplit;
 	chartContainerHumi.data.datasets[0].data = humi1;
 	chartContainerHumi.data.datasets[1].data = humi2;
 	chartContainerHumi.data.datasets[2].data = humi3;
@@ -151,6 +163,12 @@ function getData() {
 			humi2=[];
 			humi3=[];
 			humi4=[];
+			
+			for(var m=0; m<heure.length; m++){
+				HeureSplit[m] = heure[m].split(' ').slice(1);
+			}
+			
+			console.log(HeureSplit);
 			
 			for(var k=0; k<humi.length;k++){
 				var humik = [];

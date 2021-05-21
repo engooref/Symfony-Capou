@@ -48,11 +48,12 @@ class Piquet implements JsonSerializable
         );
     }
 
-    public function setId(int $id): self
+    public function setId(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
+    
     
     public function getId(): ?int
     {

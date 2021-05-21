@@ -25,7 +25,10 @@ class IoController extends AbstractController
     #[Route('/PingCen', name: 'PingCen')]
     public function PingCen() : Response {
         $doctrine = $this->getDoctrine()->getManager();
-        $Centrale = $doctrine->getRepository(Centrale::class)->finAll();
+        $doctrine->getConnection()->exec("SELECT horodatage FROM donnees_piquet ORDER BY horodatage");
+        $doctrine->flush();
+        
+        //$Centrale = $doctrine->getRepository(Centrale::class)->finAll();
         
         die();
     }

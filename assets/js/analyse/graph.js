@@ -55,7 +55,7 @@ var chartContainerTemp = new Chart(ctx1, {
 					drawOnChartArea: true,
 					drawTicks: true,
 					color: function(context){
-						if((context.tick.value < 0)||(context.tick.value > 0)) {return '#6c757d';}
+						if((context.tick.value < 0)||(context.tick.value > 0)) {return '#DCDCDC';}
 						return '#FFC501';
 					},
 					lineWidth:function(context){

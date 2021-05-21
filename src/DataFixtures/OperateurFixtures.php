@@ -36,11 +36,12 @@ class OperateurFixtures extends Fixture
         }
         
         // CREATION D'OPERATEURS
+        $manager->getConnection()->exec("ALTER TABLE Operateur AUTO_INCREMENT = 1;");
          for ($i = 0; $i < 20; $i++) {
              $user = new Operateur();
              $user->setRoles(array('ROLE_ADMIN'));
              $user->setEmail("googleMeVoleMesDonnees@MaisCestDesFixtures".$i.".fr");
-             $user->setPassword($this->encoder->encodePassword($user, "Admin"));
+             $user->setPassword($this->encoder->encodePassword($user, "Admin")); // Mot de passe défini : Admin
              $user->setVerifiedbyadmin(1);
              $user->setIsFirstConnexion(1);
              $user->setIdGroupe($manager->getRepository(Groupe::class)->findOneById(1));
@@ -58,7 +59,6 @@ class OperateurFixtures extends Fixture
             $manager->persist($centrale);
             $manager->flush();
         }
-        
         // CREATION DE PIQUETS
         for($i=0; $i<30; $i++){
             $manager->getConnection()->exec("ALTER TABLE Piquet AUTO_INCREMENT = 1;");
@@ -70,6 +70,7 @@ class OperateurFixtures extends Fixture
             $manager->flush();
         
             // CREATION DE DONNEES PIQUETS
+            $manager->getConnection()->exec("ALTER TABLE Donnees_Piquet AUTO_INCREMENT = 1;");
             $donneesPiquet = new DonneesPiquet();
             $donneesPiquet->setIdPiquet($manager->getRepository(Piquet::class)->findOneById($i));
             $donneesPiquet->setHorodatage($faker->dateTimeBetween($startDate = '-'.$i.' minutes', $endDate = 'now', $timezone = null)); // DateTime('2003-03-15 02:00:49', 'Africa/Lagos')
@@ -80,8 +81,6 @@ class OperateurFixtures extends Fixture
             $manager->persist($donneesPiquet);
             $manager->flush();
         }
-        $manager->getConnection()->exec("SELECT horodatage FROM `donnees_piquet` WHERE 1 ORDER BY horodatage");
-        $manager->flush();
     }
 }
 

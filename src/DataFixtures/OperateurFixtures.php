@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use \DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Operateur;
@@ -45,6 +46,7 @@ class OperateurFixtures extends Fixture
              $user->setVerifiedbyadmin(1);
              $user->setIsFirstConnexion(1);
              $user->setIdGroupe($manager->getRepository(Groupe::class)->findOneById(1));
+             $user->setCreatedAt(new DateTime());
              $manager->persist($user);
              $manager->flush();
         }

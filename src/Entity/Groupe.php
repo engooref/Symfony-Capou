@@ -56,6 +56,13 @@ class Groupe
     {
         return $this->id;
     }
+    
+    public function setId(?Groupe $id): self
+    {
+        $this->id = $id;
+        
+        return $this;
+    }
 
     /**
      * @return Collection|Operateur[]

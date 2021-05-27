@@ -36,6 +36,7 @@ class OperateurRepository extends ServiceEntityRepository implements PasswordUpg
         $this->_em->flush();
     }
 
+    
     // /**
     //  * @return Operateur[] Returns an array of Operateur objects
     //  */

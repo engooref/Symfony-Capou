@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\OperateurRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -56,6 +57,20 @@ class Operateur implements UserInterface
      * @ORM\Column(type="boolean")
      */
     private $isFirstConnexion;
+
+
+    /**
+     * @var \DameTime $created_at
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+    
+    public function __toString()
+    {
+        return $this->email;
+    }
     
     public function getId(): ?int
     {
@@ -185,4 +200,16 @@ class Operateur implements UserInterface
 
         return $this;
     }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    } 
 }

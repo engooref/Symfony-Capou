@@ -13,7 +13,7 @@ use App\Repository\OperateurRepository;
 
 class ResetPasswordController extends AbstractController
 {
-    #[Route('/resetpassword/{token}', name: 'resetpassword')]
+    #[Route('/resetpassword/{token}', name: 'resetpasswordtoken')]
     public function resetPasswordWithToken($token, Request $request, OperateurRepository $userRepo, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         $user = $userRepo->findOneBy(['reset_token'=>$token]);
@@ -38,23 +38,30 @@ class ResetPasswordController extends AbstractController
         ]);
     }
     
-    #[Route('/resetpassword}', name: 'resetpassword')]
+    #[Route('/resetpassword', name: 'resetpassword')]
     public function resetPasswordWithoutToken(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
-        $form = $this->createForm(ResetPasswordFormType::class);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                    )
-                );
-            $entityManager = $this->getDoctrine()->getManager();
-            $user->setResetToken(null);
-            $entityManager->persist($user);
-            $entityManager->flush();
+        if($this->getUser()){
+            $user = $this->getUser();
+            $form = $this->createForm(ResetPasswordFormType::class);
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                // encode the plain password
+                $user->setPassword(
+                    $passwordEncoder->encodePassword(
+                        $user,
+                        $form->get('plainPassword')->getData()
+                        )
+                    );
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+                $this->addFlash('danger', 'Votre mot de passe a bien été modifié');
+                return $this->redirectToRoute('home');
+            }
+        }
+        else{
+            return $this->redirectToRoute('login');
         }
         return $this->render('reset_password/index.html.twig', [
             'form' => $form->createView(),

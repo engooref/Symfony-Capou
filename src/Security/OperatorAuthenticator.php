@@ -73,15 +73,29 @@ class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements Pa
             // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException("Email incorrect");
         }
+        
+        if (!$user->getVerifiedbyadmin()) {
+            // fail authentication with a custom error
+            throw new CustomUserMessageAuthenticationException("Votre compte n'a pas été vérifié. Veuillez patienter qu'un administrateur confirme votre compte.");
+        }
+        
 
         return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        // EN COURS DE CONSTRUCTION
-        //if($user->getVerifiedbyadmin())
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        if(($user->getVerifiedbyadmin()==1)
+            &&
+            ($this->passwordEncoder->isPasswordValid($user, $credentials['password'])==true)
+            ){
+                $user->setIsFirstConnexion('0');
+                $this->entityManager->flush();
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     /**
@@ -97,7 +111,6 @@ class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements Pa
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
-
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
         //throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
         return new RedirectResponse($this->urlGenerator->generate('home'));

@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html> 
     <head>
-    	{% block encoding %}<meta charset="UTF-8">{% endblock %}
-        <meta charset="UTF-8">
-        <title>{% block title %}{% endblock %} - Lycée Capou</title>
+        <title>{% block title %}{% endblock %} - Lyc�e Capou</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         {% block stylesheets %}{{ encore_entry_link_tags('app') }}{% endblock %}
     </head>
@@ -12,8 +10,7 @@
     		<main style="padding-top: 90px;">
     		    {% block body %}{% endblock %}
             </main>
-            <p></p>
-    		{% include 'footer/footer.html.twig' %}
+		    {% include 'footer/footer.html.twig' %}
        	    {% block javascripts %}{{ encore_entry_script_tags('app') }}{% endblock %}
     </body>
 </html>

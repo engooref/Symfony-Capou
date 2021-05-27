@@ -46,10 +46,22 @@ class Groupe
         $this->idElectrovanne = new ArrayCollection();
         $this->idStation = new ArrayCollection();
     }
+    
+    public function __toString()
+    {
+        return $this->getId();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+    
+    public function setId(?Groupe $id): self
+    {
+        $this->id = $id;
+        
+        return $this;
     }
 
     /**

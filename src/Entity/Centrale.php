@@ -37,6 +37,12 @@ class Centrale
     {
         return $this->id;
     }
+    
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
 
     public function getIp(): ?string
     {
@@ -50,17 +56,6 @@ class Centrale
         return $this;
     }
 
-    public function getConnected(): ?bool
-    {
-        return $this->connected;
-    }
-
-    public function setConnected(bool $connected): self
-    {
-        $this->connected = $connected;
-
-        return $this;
-    }
 
     /**
      * @return Collection|Piquet[]

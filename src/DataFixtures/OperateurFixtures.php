@@ -28,7 +28,7 @@ class OperateurFixtures extends Fixture
         $faker = Faker\Factory::create('fr_FR');
         // CREATION DE GROUPES
         if(!$manager->getRepository(Groupe::class)->findOneById('1')){
-            $manager->getConnection()->exec("ALTER TABLE Groupe AUTO_INCREMENT = 1;");
+            $manager->getConnection()->exec("ALTER TABLE groupe AUTO_INCREMENT = 1;");
             
             $groupe = new Groupe();
             
@@ -38,7 +38,7 @@ class OperateurFixtures extends Fixture
         $user = new Operateur();
         $user->setRoles(array('ROLE_ADMIN'));
         $user->setEmail("admin@admin.fr");
-        $user->setPassword($this->encoder->encodePassword($user, "Admin")); // Mot de passe défini : Admin
+        $user->setPassword($this->encoder->encodePassword($user, "Admin")); // Mot de passe dÃ©fini : Admin
         $user->setVerifiedbyadmin(1);
         $user->setIsFirstConnexion(1);
         $user->setIdGroupe($manager->getRepository(Groupe::class)->findOneById(1));
@@ -50,7 +50,7 @@ class OperateurFixtures extends Fixture
          for ($i = 0; $i < 20; $i++) {
              $user = new Operateur();
              $user->setEmail("FakeData@FakeData".$i.".fr");
-             $user->setPassword($this->encoder->encodePassword($user, "capou")); // Mot de passe défini : Capou
+             $user->setPassword($this->encoder->encodePassword($user, "capou")); // Mot de passe dÃ©fini : Capou
              $user->setVerifiedbyadmin(1);
              $user->setIsFirstConnexion(1);
              $user->setIdGroupe($manager->getRepository(Groupe::class)->findOneById(1));
@@ -95,4 +95,3 @@ class OperateurFixtures extends Fixture
         }
     }
 }
-

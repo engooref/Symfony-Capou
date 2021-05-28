@@ -41,6 +41,7 @@ class OperateurFixtures extends Fixture
         $user->setPassword($this->encoder->encodePassword($user, "Admin")); // Mot de passe défini : Admin
         $user->setVerifiedbyadmin(1);
         $user->setIsFirstConnexion(1);
+        $user->setCreatedAt(new DateTime());
         $user->setIdGroupe($manager->getRepository(Groupe::class)->findOneById(1));
         $manager->persist($user);
         $manager->flush();

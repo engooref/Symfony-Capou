@@ -2,12 +2,11 @@
 
 namespace App\Controller;
 
+use \DateTime;
 use App\Entity\Operateur;
 use App\Entity\Groupe;
-
 use App\Form\RegistrationFormType;
 use App\Security\OperatorAuthenticator;
-
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mime\Address;
@@ -53,6 +52,7 @@ class SecurityController extends AbstractController
             $user->setIdGroupe($entityManager->getRepository(Groupe::class)->findOneById('1'));
             $user->setVerifiedbyadmin('0');
             $user->setIsFirstConnexion('1');
+            $user->setCreatedAt(new DateTime());
             
             $entityManager->persist($user);
             $entityManager->flush();

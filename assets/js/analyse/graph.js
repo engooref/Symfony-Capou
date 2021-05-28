@@ -116,23 +116,23 @@ var chartContainerHumi = new Chart(ctx2, {
 getData();
 setInterval(getData,delay);
 
-function Setup() {
-
-	console.log("lancement du setup");
+function Update() {
+	
+	console.log("Mise à jour des données");
 		
 	for(var k=0; k<id.length; k++){
-		console.log("n°k = ",k,"id[k] = ",id[k] );
+		console.log("id[",k,"] = ",id[k] );
 	}
 	for(var k=0; k<heure.length; k++){
-		console.log("n°k = ",k,"heure[k] = ",heure[k] );
+		console.log("heure[",k,"] = ",heure[k] );
 	}
 	for(var k=0; k<temp.length; k++){
-		console.log("n°k = ",k,"temp[k] = ",temp[k] );
+		console.log("temp[",k,"] = ",temp[k] );
 	}
 	for(var k=0; k<humi.length; k++){
-		console.log("n°k = ",k,"humi[k] = ",humi[k] );
+		console.log("humi[",k,"] = ",humi[k] );
 	}
-	
+
 	chartContainerTemp.data.labels = HeureSplit;
 	chartContainerTemp.data.datasets[0].data = temp;
 	chartContainerTemp.update();
@@ -146,13 +146,13 @@ function Setup() {
 }
 
 function getData() {
+	
 	console.log("recuperation des donnees piquet");
 	
 	$.ajax('/getDataPiquet', {
 		method: "POST",
 		dataType:'json',
 		success: function (response) {
-			console.log("ID = ", response["Id"], "HEURE = ", response["Heure"], "TEMP = ", response["Temp"]);
 			
 			id = response["Id"];
 			heure = response["Heure"];
@@ -168,8 +168,6 @@ function getData() {
 				HeureSplit[m] = heure[m].split(' ').slice(1);
 			}
 			
-			console.log(HeureSplit);
-			
 			for(var k=0; k<humi.length;k++){
 				var humik = [];
 				humik = humi[k];	
@@ -180,11 +178,9 @@ function getData() {
 				humi4.push(humik[3]);
 			}
 			
-			
 			console.log("id = ",id,"heure = ", heure,"temp = ", temp,"humi = ",humi);
-			console.log("humi1 = ",humi1,"humi2 = ",humi2,"humi3 = ",humi3,"humi4 = ",humi4)
 			
-			Setup();
+			Update();
 		},
 		error: function (response) {
 			$('#res').html("error ", response);

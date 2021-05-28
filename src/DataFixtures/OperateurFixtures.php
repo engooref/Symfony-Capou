@@ -28,7 +28,7 @@ class OperateurFixtures extends Fixture
         $faker = Faker\Factory::create('fr_FR');
         // CREATION DE GROUPES
         if(!$manager->getRepository(Groupe::class)->findOneById('1')){
-            $manager->getConnection()->exec("ALTER TABLE Groupe AUTO_INCREMENT = 1;");
+            $manager->getConnection()->exec("ALTER TABLE groupe AUTO_INCREMENT = 1;");
             
             $groupe = new Groupe();
             
@@ -41,6 +41,7 @@ class OperateurFixtures extends Fixture
         $user->setPassword($this->encoder->encodePassword($user, "Admin")); // Mot de passe défini : Admin
         $user->setVerifiedbyadmin(1);
         $user->setIsFirstConnexion(1);
+        $user->setCreatedAt(new DateTime());
         $user->setIdGroupe($manager->getRepository(Groupe::class)->findOneById(1));
         $manager->persist($user);
         $manager->flush();

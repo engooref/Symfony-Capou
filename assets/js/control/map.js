@@ -60,7 +60,7 @@ import VectorSource from 'ol/source/Vector';
             	'map',
         		view: new View({
         			center: 
-        				fromLonLat([1.371509, 44.02281]),
+        				fromLonLat([1.31, 44.05]),
         				maxZoom: 19,
         				zoom: 17
         		})

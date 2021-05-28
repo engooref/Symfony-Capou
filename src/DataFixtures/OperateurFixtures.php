@@ -34,25 +34,33 @@ class OperateurFixtures extends Fixture
             $manager->persist($groupe);
             $manager->flush();
         }
+        $user = new Operateur();
+        $user->setRoles(array('ROLE_ADMIN'));
+        $user->setEmail("admin@admin.fr");
+        $user->setPassword($this->encoder->encodePassword($user, "Admin")); // Mot de passe défini : Admin
+        $user->setVerifiedbyadmin(1);
+        $user->setIsFirstConnexion(1);
+        $user->setIdGroupe($manager->getRepository(Groupe::class)->findOneById(1));
+        $manager->persist($user);
+        $manager->flush();
         
         // CREATION D'OPERATEURS
-        $manager->getConnection()->exec("ALTER TABLE Operateur AUTO_INCREMENT = 1;");
+        $manager->getConnection()->exec("ALTER TABLE operateur AUTO_INCREMENT = 1;");
          for ($i = 0; $i < 20; $i++) {
              $user = new Operateur();
-             $user->setRoles(array('ROLE_ADMIN'));
-             $user->setEmail("googleMeVoleMesDonnees@MaisCestDesFixtures".$i.".fr");
-             $user->setPassword($this->encoder->encodePassword($user, "Admin")); // Mot de passe défini : Admin
+             $user->setEmail("FakeData@FakeData".$i.".fr");
+             $user->setPassword($this->encoder->encodePassword($user, "capou")); // Mot de passe défini : Capou
              $user->setVerifiedbyadmin(1);
              $user->setIsFirstConnexion(1);
              $user->setIdGroupe($manager->getRepository(Groupe::class)->findOneById(1));
              $manager->persist($user);
              $manager->flush();
         }
-        
+         
         
         // CREATION DE CENTRALE
         if(!$manager->getRepository(Centrale::class)->findOneById(1)){
-            $manager->getConnection()->exec("ALTER TABLE Centrale AUTO_INCREMENT = 1;");
+            $manager->getConnection()->exec("ALTER TABLE centrale AUTO_INCREMENT = 1;");
             $centrale = new Centrale();
             $centrale->setId(1);
             $centrale->setIp("192.120.0.5");
@@ -61,7 +69,7 @@ class OperateurFixtures extends Fixture
         }
         // CREATION DE PIQUETS
         for($i=0; $i<30; $i++){
-            $manager->getConnection()->exec("ALTER TABLE Piquet AUTO_INCREMENT = 1;");
+            $manager->getConnection()->exec("ALTER TABLE piquet AUTO_INCREMENT = 1;");
             $piquet = new Piquet();
             $piquet->setId($i);
             $piquet->setIdCentrale($manager->getRepository(Centrale::class)->findOneById('1'));
@@ -70,13 +78,15 @@ class OperateurFixtures extends Fixture
             $manager->flush();
         
             // CREATION DE DONNEES PIQUETS
-            $manager->getConnection()->exec("ALTER TABLE Donnees_Piquet AUTO_INCREMENT = 1;");
+            $manager->getConnection()->exec("ALTER TABLE donnees_piquet AUTO_INCREMENT = 1;");
             $donneesPiquet = new DonneesPiquet();
             $donneesPiquet->setIdPiquet($manager->getRepository(Piquet::class)->findOneById($i));
             $donneesPiquet->setHorodatage($faker->dateTimeBetween($startDate = '-'.$i.' minutes', $endDate = 'now', $timezone = null)); // DateTime('2003-03-15 02:00:49', 'Africa/Lagos')
             $donneesPiquet->setHumidite([$faker->numberBetween(0,35), $faker->numberBetween(0,35), $faker->numberBetween(0,35), $faker->numberBetween(0,35)]);
             $donneesPiquet->setTemperature($faker->numberBetween(0,35));
-            $donneesPiquet->setGps("50");
+            $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
+            $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);
+            $donneesPiquet->setGps(strval($longitude).":".strval($latitude));
             $donneesPiquet->setBatterie(50);
             $manager->persist($donneesPiquet);
             $manager->flush();

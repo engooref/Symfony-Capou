@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html> 
     <head>
-        <title>{% block title %}{% endblock %} - Lycée Capou</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}{% endblock %} - LycÃ©e Capou</title>
         {% block stylesheets %}{{ encore_entry_link_tags('app') }}{% endblock %}
     </head>
     <body>
     		{% include 'navbar/navbar.html.twig' %}
-    		<main style="padding-top: 90px;">
+    		<main>
     		    {% block body %}{% endblock %}
             </main>
 		    {% include 'footer/footer.html.twig' %}

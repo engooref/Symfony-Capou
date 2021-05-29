@@ -35,11 +35,6 @@ class DonneesPiquet implements JsonSerializable
     private $temperature;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $gps;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Piquet::class, inversedBy="idDonneesPiquet")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -50,6 +45,16 @@ class DonneesPiquet implements JsonSerializable
      */
     private $batterie;
 
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $latitude;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $longitude;
+
     public function JsonSerialize()
     {
         return array(
@@ -57,7 +62,8 @@ class DonneesPiquet implements JsonSerializable
             'horodatage' => $this->getHorodatage()->format("Y-m-d H:i:s"),
             'humidite' => $this->getHumidite(),
             'temperature' => $this->getTemperature(),
-            'gps' => $this->getGps(),
+            'latitude' => $this->getLatitude(),
+            'longitude' => $this->getLongitude(),
             'batterie' => $this->getBatterie(),
             
         );
@@ -103,18 +109,6 @@ class DonneesPiquet implements JsonSerializable
         return $this;
     }
 
-    public function getGps(): ?string
-    {
-        return $this->gps;
-    }
-
-    public function setGps(string $gps): self
-    {
-        $this->gps = $gps;
-
-        return $this;
-    }
-
     public function getIdPiquet(): ?Piquet
     {
         return $this->idPiquet;
@@ -135,6 +129,30 @@ class DonneesPiquet implements JsonSerializable
     public function setBatterie(int $batterie): self
     {
         $this->batterie = $batterie;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(float $latitude): self
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(float $longitude): self
+    {
+        $this->longitude = $longitude;
 
         return $this;
     }

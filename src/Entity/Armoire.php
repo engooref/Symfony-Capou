@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\StationRepository;
+use App\Repository\ArmoireRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 
 /**
- * @ORM\Entity(repositoryClass=StationRepository::class)
+ * @ORM\Entity(repositoryClass=ArmoireRepository::class)
  */
-class Station implements JsonSerializable
+class Armoire implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -25,13 +25,13 @@ class Station implements JsonSerializable
     private $etat;
 
     /**
-     * @ORM\OneToMany(targetEntity=DonneesStation::class, mappedBy="idStation", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=DonneesArmoire::class, mappedBy="idArmoire", orphanRemoval=true)
      */
-    private $idDonneesStation;
+    private $idDonneesArmoire;
 
     public function __construct()
     {
-        $this->idDonneesStation = new ArrayCollection();
+        $this->idDonneesArmoire = new ArrayCollection();
     }
 
     public function JsonSerialize()
@@ -66,29 +66,29 @@ class Station implements JsonSerializable
     }
 
     /**
-     * @return Collection|DonneesStation[]
+     * @return Collection|DonneesArmoire[]
      */
     public function getIdDonnees(): Collection
     {
-        return $this->idDonneesStation;
+        return $this->idDonneesArmoire;
     }
 
-    public function addIdDonnees(DonneesStation $idDonneesStation): self
+    public function addIdDonnees(DonneesArmoire $idDonneesArmoire): self
     {
-        if (!$this->idDonneesStation->contains($idDonneesStation)) {
-            $this->idDonneesStation[] = $idDonneesStation;
-            $idDonneesStation->setIdStation($this);
+        if (!$this->idDonneesArmoire->contains($idDonneesArmoire)) {
+            $this->idDonneesArmoire[] = $idDonneesArmoire;
+            $idDonneesArmoire->setIdArmoire($this);
         }
 
         return $this;
     }
 
-    public function removeIdDonnees(DonneesStation $idDonneesStation): self
+    public function removeIdDonnees(DonneesArmoire $idDonneesArmoire): self
     {
-        if ($this->idDonneesStation->removeElement($idDonneesStation)) {
+        if ($this->idDonneesArmoire->removeElement($idDonneesArmoire)) {
             // set the owning side to null (unless already changed)
-            if ($idDonneesStation->getIdStation() === $this) {
-                $idDonneesStation->setIdStation(null);
+            if ($idDonneesArmoire->getIdArmoire() === $this) {
+                $idDonneesArmoire->setIdArmoire(null);
             }
         }
 

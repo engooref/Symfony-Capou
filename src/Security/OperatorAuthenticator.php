@@ -89,8 +89,6 @@ class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements Pa
             &&
             ($this->passwordEncoder->isPasswordValid($user, $credentials['password'])==true)
             ){
-                $user->setIsFirstConnexion('0');
-                $this->entityManager->flush();
             return true;
         }
         else{
@@ -108,6 +106,10 @@ class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements Pa
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {
+        $user = $token->getUser();
+        if($user->getIsFirstConnexion()== 1 ){
+            return new RedirectResponse($this->urlGenerator->generate('resetPasswordWithoutToken'));
+        }
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }

@@ -7,6 +7,13 @@
                         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                     {% endif %}
                     
+                    {% for message in app.flashes('success') %}
+                        <div class="flash-notice">
+                            <p> Votre mot de passe a été modifié avec succès </p>
+                        </div>
+                    {% endfor %}
+
+                    
                 	<div class="container">
                     	<div class="row justify-content-center">
                             <h1 class="h3 mb-3 border border-info bg-secondary text-info rounded font-weight-normal textCenter">Veuillez vous connecter :</h1>

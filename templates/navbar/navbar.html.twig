@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 	<div class="container-fluid">
         <a class="navbar-brand mb-0 h1" href="{{ path('home') }}">
-        	<img src="{{ asset('img/logo_capou.png') }}" alt="Logo Lycée Capou" width="57" height="64" class="d-inline-block">
+        	<img src="{{ asset('img/logo_capou.png') }}" alt="Logo Lyc�e Capou" width="57" height="64" class="d-inline-block">
         	Lycée Capou
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,7 +25,7 @@
             </ul>
          	{% if not app.user %}
 			<form class="d-flex" action="{{ path('login') }}">
-				<button class="btn btn-outline-primary mb-0" type="submit"><i class="fas fa-user mr-2"></i> Se Connecter</button>
+				<button class="btn btn-outline-primary mb-0" type="submit"><i class="fas fa-user mr-2"></i> Se connecter</button>
  			</form>
  			{% else %}
  			<li class="nav-item dropdown d-flex">
@@ -41,6 +41,7 @@
                     	<a class="dropdown-item" href="#">Opérateur</a>
                     	{% endif %}
                     </li>
+                    <li><a class="dropdown-item text-primary" href="{{ path('resetPasswordWithoutToken') }}"><i class="fas fa-user-lock"></i> Changer de mot de passe</a></li>
                     <li><hr class="dropdown-divider" /></li>
                     <li><a class="dropdown-item text-danger" href="{{ path('logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
       			</ul>

@@ -1,6 +1,11 @@
 {% extends 'base.html.twig' %}
 {% block title %}Mot de passe oublié{% endblock %}
 {% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p> Votre mot de passe a été modifié avec succès </p>
+        </div>
+    {% endfor %}
 <div class="py-5 mt-5">
 <h1>Réinitialiser le mot de passe</h1>
 {{ form(form) }}

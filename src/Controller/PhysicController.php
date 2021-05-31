@@ -21,7 +21,7 @@ use DateInterval;
 
 class PhysicController extends AbstractController
 {    
-    #[Route('/control', name: 'control')]
+    #[Route('/controle', name: 'control')]
     public function control() : Response {
         return $this->render("control/index.html.twig");
     }

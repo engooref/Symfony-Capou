@@ -1,2 +1,66 @@
 {% extends 'base.html.twig' %}
 {% block title %}Accueil{% endblock %}
+{% block body %}
+
+<div class="row">
+    <div class="col-sm-4 jutify-content-center">
+        <div class="card border-dark">
+        	<div class="card-body">
+    			<center><u><h5 class="card-title">Piquets</h5></u></center>
+    			<p class="card-text"><i class="fas fa-circle text-success"></i> {{ nb_piquet }} piquets connectés</p>
+    			<p class="card-text">Date de la dernière donnée reçue : {{ donnees_piquet.horodatage.format('Y/m/d H:i:s') }}</p>
+    			<p class="card-text">Dernière température reçue : {{ donnees_piquet.temperature }} °C</p>
+    			<p class="card-text">Température minimale : {{ temperature_minimale.temperature }} °C</p>
+    			<p class="card-text">Température maximale : {{ temperature_maximale.temperature }} °C</p>
+    			<table class="table text-center table-borderless">
+    				<tr class="card-text">Derniers pourcentage d'humidité reçus : </tr>
+    				{% for humidite in donnees_piquet.humidite %}
+    					<td>{{ humidite }} %</td>
+					{% endfor %}
+	            </table>
+          	</div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card border-dark">
+          	<div class="card-body">
+            	<center><u><h5 class="card-title">Electrovannes</h5></u></center>
+            	<p class="card-text">Date de la dernière donnée reçue : {{ donnees_vanne.horodatage.format('Y/m/d H:i:s') }}</p>
+            	<p class="card-text">Dernières coordonnées : 
+            		<table class="table text-center">
+            				<tr>
+            					<th> Latitude </th>
+            					<th> Longitude </th>
+            				</tr>
+            				<tr>
+            					<td>{{ donnees_vanne.latitude }}</td>
+            					<td>{{ donnees_vanne.longitude }}</td>
+            				</tr>
+    	            </table>
+    	    	</p>
+          	</div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card border-dark">
+          	<div class="card-body">
+            	<center><u><h5 class="card-title">Armoire</h5></u></center>
+            	<p class="card-text">Date de la dernière donnée reçue : {{ donnees_armoire.horodatage.format('Y/m/d H:i:s') }}</p>
+            	<p class="card-text">Dernières coordonnées : 
+            		<table class="table text-center">
+            				<tr>
+            					<th> Latitude </th>
+            					<th> Longitude </th>
+            				</tr>
+            				<tr>
+            					<td>{{ donnees_armoire.latitude }}</td>
+            					<td>{{ donnees_armoire.longitude }}</td>
+            				</tr>
+    	            </table>
+    	    	</p>
+          	</div>
+    	</div>
+	</div>
+</div>
+<img src="{{ asset('img/herbe.png') }}" alt="Logo Lycée Capou" width="100%" height="20%" class="d-inline-block">
+{% endblock %}

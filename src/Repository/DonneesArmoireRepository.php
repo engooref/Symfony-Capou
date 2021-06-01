@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\DonneesStation;
+use App\Entity\DonneesArmoire;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method DonneesStation|null find($id, $lockMode = null, $lockVersion = null)
- * @method DonneesStation|null findOneBy(array $criteria, array $orderBy = null)
- * @method DonneesStation[]    findAll()
- * @method DonneesStation[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method DonneesArmoire|null find($id, $lockMode = null, $lockVersion = null)
+ * @method DonneesArmoire|null findOneBy(array $criteria, array $orderBy = null)
+ * @method DonneesArmoire[]    findAll()
+ * @method DonneesArmoire[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DonneesStationRepository extends ServiceEntityRepository
+class DonneesArmoireRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, DonneesStation::class);
+        parent::__construct($registry, DonneesArmoire::class);
     }
 
     // /**
-    //  * @return DonneesStation[] Returns an array of DonneesStation objects
+    //  * @return DonneesArmoire[] Returns an array of DonneesArmoire objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class DonneesStationRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?DonneesStation
+    public function findOneBySomeField($value): ?DonneesArmoire
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.exampleField = :val')

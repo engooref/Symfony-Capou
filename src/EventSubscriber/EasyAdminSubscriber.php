@@ -58,7 +58,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         $entity->setCreatedAt(new DateTime());
         
         
-        $titreMail = "Lycée Capou - Votre compte a bien était créé par un administrateur";
+        $titreMail = "Lycée Capou - Votre compte a bien été créé par un administrateur";
         $message = (new \Swift_Message($titreMail))
         ->setCharset('ISO-8859-1')
         ->setFrom('inscription.lyceecapou@gmail.com')
@@ -66,12 +66,12 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         ->setBody(
             '<h1>Bonjour ! Un administrateur vous a créé un compte sur le site Lycée Capou - Irrigation Connectée</h1>
             <br>
-            <p>Vous avez donc reçu un email détaillant les informations de connexion pour vous connecter à votre compte :</p>
+            <p>Informations de connexion pour vous connecter à votre compte :</p>
             <p><u>Identifiant :</u> <b>'. $entity->getEmail() . '</b></p>
             <p><u>Mot de passe :</u> <b> '. $password . '</b></p>
             </p>
             <br>
-            <p>Attention, vous avez reçu un mot de passe généré aléatoirement, il sera nécessaire de le changer suite à votre première connexion sur notre site.</p>
+            <p>Attention, vous avez reçu un mot de passe généré aléatoirement, toutefois, nous vous recommandons de le changer suite à votre première connexion sur notre site.</p>
             <br>
             <p>Merci de votre compréhension. Cordialement !</p>',
             'text/html'

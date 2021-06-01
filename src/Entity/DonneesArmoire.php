@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\DonneesVanneRepository;
+use App\Repository\DonneesArmoireRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 
 /**
- * @ORM\Entity(repositoryClass=DonneesVanneRepository::class)
+ * @ORM\Entity(repositoryClass=DonneesArmoireRepository::class)
  */
-class DonneesVanne implements JsonSerializable
+class DonneesArmoire implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -21,13 +21,13 @@ class DonneesVanne implements JsonSerializable
     /**
      * @ORM\Column(type="float")
      */
-    private $debit;
+    private $pression;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ElectroVanne::class, inversedBy="idDonneesVanne")
+     * @ORM\ManyToOne(targetEntity=Armoire::class, inversedBy="idDonneesArmoire")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $idVanne;
+    private $idArmoire;
 
     /**
      * @ORM\Column(type="datetime")
@@ -48,10 +48,11 @@ class DonneesVanne implements JsonSerializable
     {
         return array(
             'id' => $this->getId(),
-            'temperature' => $this->getTemperature(),
+            'horodatage' => $this->getHorodatage()->format("Y-m-d H:i:s"),
             'latitude' => $this->getLatitude(),
             'longitude' => $this->getLongitude(),
-            'debit' => $this->getDebit()    
+            'pression' => $this->getPression()
+            
         );
     }
     
@@ -60,26 +61,26 @@ class DonneesVanne implements JsonSerializable
         return $this->id;
     }
 
-    public function getDebit(): ?float
+    public function getPression(): ?float
     {
-        return $this->debit;
+        return $this->pression;
     }
 
-    public function setDebit(float $debit): self
+    public function setPression(float $pression): self
     {
-        $this->debit = $debit;
+        $this->pression = $pression;
 
         return $this;
     }
 
-    public function getIdVanne(): ?ElectroVanne
+    public function getIdArmoire(): ?Armoire
     {
-        return $this->idVanne;
+        return $this->idArmoire;
     }
 
-    public function setIdVanne(?ElectroVanne $idVanne): self
+    public function setIdArmoire(?Armoire $idArmoire): self
     {
-        $this->idVanne = $idVanne;
+        $this->idArmoire = $idArmoire;
 
         return $this;
     }

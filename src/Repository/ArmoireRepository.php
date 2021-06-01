@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Station;
+use App\Entity\Armoire;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Station|null find($id, $lockMode = null, $lockVersion = null)
- * @method Station|null findOneBy(array $criteria, array $orderBy = null)
- * @method Station[]    findAll()
- * @method Station[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Armoire|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Armoire|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Armoire[]    findAll()
+ * @method Armoire[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class StationRepository extends ServiceEntityRepository
+class ArmoireRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Station::class);
+        parent::__construct($registry, Armoire::class);
     }
 
     // /**
-    //  * @return Station[] Returns an array of Station objects
+    //  * @return Armoire[] Returns an array of Armoire objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class StationRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Station
+    public function findOneBySomeField($value): ?Armoire
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.exampleField = :val')

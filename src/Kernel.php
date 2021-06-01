@@ -38,6 +38,6 @@ class Kernel extends BaseKernel
     
     public function getCharset()
     {
-        return 'ISO-8859-1';
+        return 'UTF-8';
     }
 }

@@ -30,10 +30,11 @@ class OperateurFixtures extends Fixture
         if(!$manager->getRepository(Groupe::class)->findOneById('1')){
             $manager->getConnection()->exec("ALTER TABLE groupe AUTO_INCREMENT = 1;");
             
-            $groupe = new Groupe();
             
+            $groupe = new Groupe();
             $manager->persist($groupe);
             $manager->flush();
+
         }
         $user = new Operateur();
         $user->setRoles(array('ROLE_ADMIN'));
@@ -87,12 +88,21 @@ class OperateurFixtures extends Fixture
             $donneesPiquet->setHorodatage($faker->dateTimeBetween($startDate = '-'.$i.' minutes', $endDate = 'now', $timezone = null)); // DateTime('2003-03-15 02:00:49', 'Africa/Lagos')
             $donneesPiquet->setHumidite([$faker->numberBetween(0,35), $faker->numberBetween(0,35), $faker->numberBetween(0,35), $faker->numberBetween(0,35)]);
             $donneesPiquet->setTemperature($faker->numberBetween(0,35));
-            $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
-            $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);
-            $donneesPiquet->setGps(strval($longitude).":".strval($latitude));
+            $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
+            $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);
+            $donneesPiquet->setLatitude($latitude);
+            $donneesPiquet->setLongitude($longitude);
             $donneesPiquet->setBatterie(50);
             $manager->persist($donneesPiquet);
             $manager->flush();
         }
+
+        $groupe = new Groupe();
+        $piquets = $manager->getRepository(Piquet::class)->findAll();
+        foreach($piquets as $piquet){
+            $groupe->addIdPiquet($piquet);
+        }
+        $manager->persist($groupe);
+        $manager->flush();
     }
 }

@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ForgottenPasswordController extends AbstractController
 {
-    #[Route('/forgottenpassword', name: 'forgottenpassword')]
+    #[Route('/motDePasseOublie', name: 'forgottenpassword')]
     public function forgottenPassword(Request $request,  OperateurRepository $users, \Swift_Mailer $mailer, TokenGeneratorInterface $tokenGenerator): Response
     {
         // On initialise le formulaire

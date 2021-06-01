@@ -32,19 +32,19 @@ class Groupe
     /**
      * @ORM\ManyToMany(targetEntity=ElectroVanne::class)
      */
-    private $idElectrovanne;
+    private $idElectrovannes;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Station::class)
+     * @ORM\ManyToMany(targetEntity=Armoire::class)
      */
-    private $idStation;
+    private $idArmoires;
 
     public function __construct()
     {
         $this->idOperateur = new ArrayCollection();
         $this->idPiquets = new ArrayCollection();
-        $this->idElectrovanne = new ArrayCollection();
-        $this->idStation = new ArrayCollection();
+        $this->idElectrovannes = new ArrayCollection();
+        $this->idArmoires = new ArrayCollection();
     }
     
     public function __toString()
@@ -121,15 +121,15 @@ class Groupe
     /**
      * @return Collection|Electrovanne[]
      */
-    public function getIdElectrovanne(): Collection
+    public function getIdElectrovannes(): Collection
     {
-        return $this->idElectrovanne;
+        return $this->idElectrovannes;
     }
 
     public function addIdElectrovanne(electrovanne $idElectrovanne): self
     {
-        if (!$this->idElectrovanne->contains($idElectrovanne)) {
-            $this->idElectrovanne[] = $idElectrovanne;
+        if (!$this->idElectrovannes->contains($idElectrovanne)) {
+            $this->idElectrovannes[] = $idElectrovanne;
         }
 
         return $this;
@@ -137,31 +137,31 @@ class Groupe
 
     public function removeIdElectrovanne(electrovanne $idElectrovanne): self
     {
-        $this->idElectrovanne->removeElement($idElectrovanne);
+        $this->idElectrovannes->removeElement($idElectrovanne);
 
         return $this;
     }
 
     /**
-     * @return Collection|Station[]
+     * @return Collection|Armoire[]
      */
-    public function getIdStation(): Collection
+    public function getIdArmoires(): Collection
     {
-        return $this->idStation;
+        return $this->idArmoires;
     }
 
-    public function addIdStation(Station $idStation): self
+    public function addIdArmoire(Armoire $idArmoire): self
     {
-        if (!$this->idStation->contains($idStation)) {
-            $this->idStation[] = $idStation;
+        if (!$this->idArmoires->contains($idArmoire)) {
+            $this->idArmoires[] = $idArmoire;
         }
 
         return $this;
     }
 
-    public function removeIdStation(Station $idStation): self
+    public function removeIdArmoire(Armoire $idArmoire): self
     {
-        $this->idStation->removeElement($idStation);
+        $this->idArmoires->removeElement($idArmoire);
 
         return $this;
     }

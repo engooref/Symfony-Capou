@@ -13,7 +13,7 @@ use App\Repository\OperateurRepository;
 
 class ResetPasswordController extends AbstractController
 {
-    #[Route('/resetpassword/{token}', name: 'resetpasswordtoken')]
+    #[Route('/changerDeMotDePasse/{token}', name: 'resetpassword')]
     public function resetPasswordWithToken($token, Request $request, OperateurRepository $userRepo, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         $user = $userRepo->findOneBy(['reset_token'=>$token]);
@@ -27,10 +27,13 @@ class ResetPasswordController extends AbstractController
                     $form->get('plainPassword')->getData()
                     )
                 );
+            $user->setIsFirstConnexion(0);
             $entityManager = $this->getDoctrine()->getManager();
             $user->setResetToken(null);
             $entityManager->persist($user);
             $entityManager->flush();
+            $this->addFlash('success', 'Votre mot de passe a bien été modifié');
+            return $this->redirectToRoute('login');
         }
         return $this->render('reset_password/index.html.twig', [
             'form' => $form->createView(),
@@ -38,7 +41,7 @@ class ResetPasswordController extends AbstractController
         ]);
     }
     
-    #[Route('/resetpassword', name: 'resetpassword')]
+    #[Route('/changerDeMotDePasseSansToken', name: 'resetPasswordWithoutToken')]
     public function resetPasswordWithoutToken(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         if($this->getUser()){
@@ -53,11 +56,12 @@ class ResetPasswordController extends AbstractController
                         $form->get('plainPassword')->getData()
                         )
                     );
+                $user->setIsFirstConnexion(0);
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($user);
                 $entityManager->flush();
-                $this->addFlash('danger', 'Votre mot de passe a bien été modifié');
-                return $this->redirectToRoute('home');
+                $this->addFlash('success', 'Votre mot de passe a bien été modifié');
+                return $this->redirectToRoute('resetPasswordWithoutToken');
             }
         }
         else{

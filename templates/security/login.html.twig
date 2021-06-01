@@ -1,36 +1,18 @@
-<!DOCTYPE html>
-<html> 
-    <head>
-        <title>Connexion - Lycée Capou</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        {% block stylesheets %}{{ encore_entry_link_tags('app') }}{% endblock %}
-    </head>
-    <body>
-    	<div class="container">
-    		<nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark ">
-            	<div class="container-fluid">
-                    <a class="navbar-brand mb-0 h1" href="{{ path('home') }}">
-                    	<img src="{{ asset('img/logo_capou.png') }}" alt="Logo Lycée Capou" width="57" height="64" class="d-inline-block">
-                    	Lycée Capou
-                    </a>
-                </div>
-            </nav>
-            <main>
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+{% block body %}
                 <form class="py-5 mt-5 text-center" method="post">
-                    {% for message in app.flashes('success') %}
-        			<div class="alert alert-success" role="alert">
-                        {{ message }}
-        			</div>
-                    {% endfor %}
                     {% if error %}
-                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                     {% endif %}
-                
-                    {% if app.user %}
-                    <div class="mb-3">
-                        Vous êtes connecté en tant que {{ app.user.username }}, <a href="{{ path('app_logout') }}">Se déconnecter</a>
-                    </div>
-                    {% endif %}
+                    
+                    {% for message in app.flashes('success') %}
+                        <div class="flash-notice">
+                            <p> Votre mot de passe a Ã©tÃ© modifiÃ© avec succÃ¨s </p>
+                        </div>
+                    {% endfor %}
+
                     
                 	<div class="container">
                     	<div class="row justify-content-center">
@@ -40,28 +22,10 @@
                             <label class="mt-2 pt-2 h5 text-info" for="inputPassword">Mot de passe</label>
                             <input type="password" name="password" id="inputPassword" class="form-control" required>
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" >
-
-                            {#
-                            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-                            See https://symfony.com/doc/current/security/remember_me.html
-                    
-                            <div class="checkbox mb-3">
-                                <label>
-                                    <input type="checkbox" name="_remember_me"> Remember me
-                                </label>
-                            </div>
-                            #}
-                            
                             <button class="btn btn-lg btn-primary mt-3" type="submit">Se connecter</button>
                         </div>
            			</div>
             	</form>
-            	<a href="{{ path('forgottenpassword') }}"><button class="btn btn-secondary">Mot de passe oublié</button></a>
-            	<a href="{{ path('createaccount') }}"><button class="btn btn-secondary">Faire une demande de création de compte</button></a>
-            </main>
-            
-            {% include 'footer/footer.html.twig' %}
-        </div>
-       	    {% block javascripts %}{{ encore_entry_script_tags('app') }}{% endblock %}
-    </body>
-</html>
+            	<a href="{{ path('forgottenpassword') }}"><button class="btn btn-secondary">Mot de passe oubliÃ©</button></a>
+            	<a href="{{ path('createaccount') }}"><button class="btn btn-secondary">Faire une demande de crÃ©ation de compte</button></a>
+{% endblock %}

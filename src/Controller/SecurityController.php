@@ -23,7 +23,7 @@ class SecurityController extends AbstractController
     
     
     
-    #[Route('/createaccount', name: 'createaccount')]
+    #[Route('/creerCompte', name: 'createaccount')]
     public function createAccount(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, OperatorAuthenticator $authenticator, \Swift_Mailer $mailer): Response
     {
         $user = new Operateur();
@@ -88,9 +88,11 @@ class SecurityController extends AbstractController
     #[Route("/login", name: "login")]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-         if ($this->getUser()) {
+        $user = $this->getUser();
+         if ($user) {
              return $this->redirectToRoute('home');
          }
+         
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user

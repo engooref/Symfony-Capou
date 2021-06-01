@@ -9,8 +9,6 @@
     	</button>
     	<div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mx-auto">
-			{% if app.user %}
-
             	<li class="nav-item">
             		<a class="nav-link h5" href="{{ path('home') }}"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a>
             	</li>
@@ -20,8 +18,6 @@
             	<li class="nav-item">
             		<a class="nav-link h5" href="{{ path('control') }}"><i class="fas fa-grip-horizontal"></i> Contrôle du système</a>
             	</li>
-			{% endif %}
-
             </ul>
          	{% if not app.user %}
 			<form class="d-flex" action="{{ path('login') }}">

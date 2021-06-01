@@ -12,8 +12,14 @@
     			<p class="card-text">Dernière température reçue : {{ donnees_piquet.temperature }} °C</p>
     			<p class="card-text">Température minimale : {{ temperature_minimale.temperature }} °C</p>
     			<p class="card-text">Température maximale : {{ temperature_maximale.temperature }} °C</p>
-    			<table class="table text-center table-borderless">
+    			<table class="table text-center">
     				<tr class="card-text">Derniers pourcentage d'humidité reçus : </tr>
+    				<tr>
+    					<th> 1 </th>
+    					<th> 2 </th>
+    					<th> 3 </th>
+    					<th> 4 </th>
+    				</tr>
     				{% for humidite in donnees_piquet.humidite %}
     					<td>{{ humidite }} %</td>
 					{% endfor %}

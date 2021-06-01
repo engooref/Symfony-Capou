@@ -3,14 +3,30 @@
 {% block title %}Mot de passe oublié{% endblock %}
 
 {% block body %}
-    <h1>Mot de passe oublié</h1>
-	<br>
-    {{ form_start(forgottenPassForm) }}
+{# {{ form_start(forgottenPassForm) }}
     
     {{ form_row(forgottenPassForm.email, {
         	'label': 'Email :', 
         	'attr': {'placeholder': 'Adresse e-mail'}
         	})
     }}
-    {{ form_end(forgottenPassForm) }}
+    {{ form_end(forgottenPassForm) }} #}
+    {% for message in app.flashes('danger') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <div class="pt-3 mt-3 cRegister">
+        <h1 class="textCenter">Mot de passe oublié</h1>
+            {{ form_start(forgottenPassForm, {'attr': {'class': 'form-group'}}) }}
+            {% if form_errors(forgottenPassForm.email) is not empty %}
+            	<div class="alert alert-light" role="alert"><span class="badge bg-danger">Erreur</span>{{ form_errors(forgottenPassForm.email) }}</div>
+            {% endif %}
+            <div class="mb-3">
+            	{{ form_label(forgottenPassForm.email) }}
+                {{ form_widget(forgottenPassForm.email, {'attr': {'class' : 'form-control', 'placeholder' : 'Saisir votre email'} }) }}
+            </div>
+            <button type="submit" class="btn btn-secondary">Envoyer</button>
+            {{ form_end(forgottenPassForm) }}
+    </div>
 {% endblock %}

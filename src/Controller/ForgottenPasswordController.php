@@ -37,7 +37,7 @@ class ForgottenPasswordController extends AbstractController
                 $this->addFlash('danger', 'Cette adresse e-mail est inconnue');
                 
                 // On retourne sur la page de connexion
-                return $this->redirectToRoute('login');
+                return $this->redirectToRoute('forgottenpassword');
             }
             
             // On génère un token

@@ -32,7 +32,7 @@ class SecurityController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
-            // mot de passe par dï¿½faut lors de la crï¿½ation de compte
+            // mot de passe par dÃ©faut lors de la crÃ©ation de compte
 //             $nbChar = 8;
 //             $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
 //             srand((double)microtime()*1000000);
@@ -57,7 +57,7 @@ class SecurityController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
             
-            $titreMail = "Lycée Capou - Demande de création de votre compte";
+            $titreMail = "LycÃ©e Capou - Demande de crÃ©ation de votre compte";
             $message = (new \Swift_Message($titreMail))
             ->setCharset('iso-8859-2')
             ->setFrom('inscription.lyceecapou@gmail.com')
@@ -71,10 +71,10 @@ class SecurityController extends AbstractController
                 );
             try {
                 $mailer->send($message);
-                $this->addFlash('success', 'Votre demande de création de compte a bien été prise en compte, un administrateur va traiter votre demande.');
+                $this->addFlash('success', 'Votre demande de crÃ©ation de compte a bien Ã©tÃ© prise en compte, un administrateur va traiter votre demande.');
                 return $this->redirectToRoute('login');
             } catch (TransportExceptionInterface $e) {
-                throw new CustomUserMessageAuthenticationException("L'envoi du mail a echoué.");
+                throw new CustomUserMessageAuthenticationException("L'envoi du mail a echouÃ©.");
             }
             
             //return $this->redirectToRoute('login');

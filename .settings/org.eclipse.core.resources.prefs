@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+encoding//src/Controller/ForgottenPasswordController.php=UTF-8
+encoding//src/Controller/ResetPasswordController.php=UTF-8
+encoding//templates/registration/register.html.twig=UTF-8
+encoding//templates/reset_password/index.html.twig=UTF-8
+encoding//templates/security/login.html.twig=UTF-8

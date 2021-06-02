@@ -8,8 +8,8 @@
     <div class="pt-3 mt-3 cRegister">
         <h1 class="textCenter">Demande de création de compte</h1>
             {{ form_start(registrationForm, {'attr': {'class': 'form-group'}}) }}
-            {% if form_errors(registrationForm.email) is not empty %}
-            	<div class="alert alert-light" role="alert"><span class="badge bg-danger">Erreur</span>{{ form_errors(registrationForm.email) }}</div>
+            {% if form_errors(registrationForm.email) %}
+            	<div class="alert alert-light" role="alert"><span class="badge bg-danger">Erreur</span> Il y a déjà un utilisateur avec cet email, cliquez <a href="{{ path('forgottenpassword') }}">ici</a> si vous souhaitez modifier votre mot de passe</div>
             {% endif %}
             <div class="mb-3">
             	{{ form_label(registrationForm.email) }}

@@ -6,8 +6,30 @@
             <p> Votre mot de passe a été modifié avec succès </p>
         </div>
     {% endfor %}
-<div class="py-5 mt-5">
-<h1>Réinitialiser le mot de passe</h1>
-{{ form(form) }}
-</div>
+    {% if form_errors(resetPasswordform.plainPassword.first) %}
+    <div class="alert alert-danger text-center">
+    	<p>Les mots de passe doivent être identiques </p>
+	</div>
+    {% endif %}
+    
+    <div class="container">
+    		<div class="col-sm">
+                <div class="pt-3 mt-3">
+                    <h1 align="center" class="textCenter">Changer de mot de passe</h1>
+                        {{ form_start(resetPasswordform, {'attr': {'class': 'form-group'}}) }}
+                        <div class="mb-3">
+                        	{{ form_label(resetPasswordform.plainPassword.first) }}
+                            {{ form_widget(resetPasswordform.plainPassword.first, {'attr': {'class' : 'form-control', 'placeholder' : 'Saisir votre mot de passe'} }) }}
+                        </div>
+                        <div class="mb-3">
+                        	{{ form_label(resetPasswordform.plainPassword.second) }}
+                            {{ form_widget(resetPasswordform.plainPassword.second, {'attr': {'class' : 'form-control', 'placeholder' : 'Répéter le mot de passe'} }) }}
+                        </div>
+                        <div class="text-center">
+                        	<button type="submit" class="btn btn-secondary" align="center">Envoyer</button>
+                        </div>
+                        {{ form_end(resetPasswordform) }}
+                </div>
+        </div>
+    </div>
 {% endblock %}

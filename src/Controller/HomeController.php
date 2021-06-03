@@ -22,6 +22,11 @@ class HomeController extends AbstractController
         $piquet = $this->getDoctrine()->getManager()->getRepository(Piquet::class)->findAll();
         $nb_piquet = count($piquet);
         $donnees_piquet = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['horodatage' => 'desc']);
+//         if (!$donnees_piquet){
+//             $donnees_piquet->setHorodatage('0000-00-00 00:00:00');
+//             $donnees_piquet->setTemperature(0);
+//             $donnees_piquet->setHumidite([0,0,0,0]);
+//         }
         $temperature_min = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['temperature' => 'asc'],1);
         $temperature_max = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['temperature' => 'desc'],1);
         
@@ -29,7 +34,7 @@ class HomeController extends AbstractController
         $armoire = $this->getDoctrine()->getManager()->getRepository(Armoire::class)->findAll();
         $nb_armoire = count($armoire);
         $donnees_armoire = $this->getDoctrine()->getManager()->getRepository(DonneesArmoire::class)->findOneBy([],['horodatage' => 'desc']);
-        
+
         //Electrovanne
         $vanne = $this->getDoctrine()->getManager()->getRepository(ElectroVanne::class)->findAll();
         $nb_vanne = count($vanne);

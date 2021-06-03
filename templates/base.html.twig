@@ -2,7 +2,7 @@
 <html> 
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}{% endblock %} - LycÃ©e Capou</title>
+        <title>{% block title %}{% endblock %} - Lycée Capou</title>
         {% block stylesheets %}{{ encore_entry_link_tags('app') }}{% endblock %}
     </head>
     <body>
@@ -10,7 +10,7 @@
     		<main>
     		    {% block body %}{% endblock %}
             </main>
-		    
-       	    {% block javascripts %}{{ encore_entry_script_tags('app') }}{% endblock %}
-    </body>
+		    {% include 'footer/footer.html.twig' %}
+       	    {% block javascripts %}{{ encore_entry_script_tags('app') }}{% endblock %}  
+    </body >
 </html>

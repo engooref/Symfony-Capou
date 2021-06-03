@@ -297,7 +297,7 @@ class PhysicController extends AbstractController
 
         $doctrine = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class);
         
-        $obj = $doctrine->findAll();
+        $obj = $doctrine->findBy([],['horodatage' => 'asc']);
         foreach($obj as $article)
         {
             $id[] = $article->getId();

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% block title %}Accueil{% endblock %}
 {% block body %}
-<div class="container">
+<div class="container" style="padding-bottom:100px">
     <div class="row">
         <div class="col-sm-4 jutify-content-center">
             <div class="card border-dark">
@@ -12,17 +12,23 @@
         			<p class="card-text">Dernière température reçue : <b>{{ donnees_piquet.temperature }} °C</b></p>
         			<p class="card-text">Température minimale : <b>{{ temperature_minimale.temperature }} °C</b></p>
         			<p class="card-text">Température maximale : <b>{{ temperature_maximale.temperature }} °C</b></p>
-        			<table class="table text-center">
+        			<table class="card-table text-center">
         				<tr class="card-text">Derniers pourcentage d'humidité reçus : </tr>
         				<tr>
-        					<th> 1 </th>
-        					<th> 2 </th>
-        					<th> 3 </th>
-        					<th> 4 </th>
+        					<th class="card-text"> 1 </th>
+        					<th class="card-text"> 2 </th>
+        					<th class="card-text"> 3 </th>
+        					<th class="card-text"> 4 </th>
         				</tr>
         				{% for humidite in donnees_piquet.humidite %}
-        					<td>{{ humidite }} %</td>
+        					<td class="card-text">{{ humidite }} %</td>
     					{% endfor %}
+    	            </table>
+    	            <table class="table text-center">
+        				<tr class="card-text">idPiquet </tr>
+                        {% for idPiquet in donnees_piquet.idPiquet %}
+    						<td class="card-text">DUMP : {{ idPiquet }}</td>
+					    {% endfor %}
     	            </table>
               	</div>
             </div>
@@ -34,14 +40,14 @@
                 	<p class="card-text">Date de la dernière donnée reçue : <b>{{ donnees_vanne.horodatage.format('Y/m/d H:i:s') }}</b></p>
                 	<p class="card-text">Dernières coordonnées : 
                 		<table class="table text-center">
-                				<tr>
-                					<th> Latitude </th>
-                					<th> Longitude </th>
-                				</tr>
-                				<tr>
-                					<td>{{ donnees_vanne.latitude }}</td>
-                					<td>{{ donnees_vanne.longitude }}</td>
-                				</tr>
+            				<tr>
+            					<th class="card-text"> Latitude </th>
+            					<th class="card-text"> Longitude </th>
+            				</tr>
+            				<tr>
+            					<td class="card-text">{{ donnees_vanne.latitude }}</td>
+            					<td class="card-text">{{ donnees_vanne.longitude }}</td>
+            				</tr>
         	            </table>
         	    	</p>
               	</div>
@@ -54,14 +60,14 @@
                 	<p class="card-text">Date de la dernière donnée reçue : <b>{{ donnees_armoire.horodatage.format('Y/m/d H:i:s') }}</b></p>
                 	<p class="card-text">Dernières coordonnées : 
                 		<table class="table text-center">
-                				<tr>
-                					<th> Latitude </th>
-                					<th> Longitude </th>
-                				</tr>
-                				<tr>
-                					<td>{{ donnees_armoire.latitude }}</td>
-                					<td>{{ donnees_armoire.longitude }}</td>
-                				</tr>
+            				<tr>
+            					<th class="card-text"> Latitude </th>
+            					<th class="card-text"> Longitude </th>
+            				</tr>
+            				<tr>
+            					<td class="card-text">{{ donnees_armoire.latitude }}</td>
+            					<td class="card-text">{{ donnees_armoire.longitude }}</td>
+            				</tr>
         	            </table>
         	    	</p>
               	</div>
@@ -69,5 +75,5 @@
     	</div>
     </div>
 </div>
-    <img src="{{ asset('img/herbe.png') }}" width="100%" class="d-inline-block relative-bottom">
+<img src="{{ asset('img/herbe.png') }}" width="100%" class="d-inline-block fixed-bottom">
 {% endblock %}

@@ -12,6 +12,8 @@ use App\Entity\Piquet;
 use App\Entity\DonneesPiquet;
 use App\Entity\ElectroVanne;
 use App\Entity\DonneesVanne;
+use App\Entity\Armoire;
+use App\Entity\DonneesArmoire;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Zenstruck\Foundry\Factory;
 use Faker;
@@ -121,6 +123,30 @@ class OperateurFixtures extends Fixture
             $manager->persist($donneesVanne);
             $manager->flush();
         }
+        
+        // CREATION D'ARMOIRES
+        for($i=0; $i<30; $i++){
+            $manager->getConnection()->exec("ALTER TABLE armoire AUTO_INCREMENT = 1;");
+            $armoire = new Armoire();
+            $armoire->setId($i);
+            $armoire->setEtat(1);
+            $manager->persist($armoire);
+            $manager->flush();
+            
+            // CREATION DE DONNEES ARMOIRE
+            $manager->getConnection()->exec("ALTER TABLE donnees_armoire AUTO_INCREMENT = 1;");
+            $donneesArmoire = new DonneesArmoire();
+            $donneesArmoire->setIdArmoire($manager->getRepository(Armoire::class)->findOneById($i));
+            $donneesArmoire->setHorodatage($faker->dateTimeBetween($startDate = '-'.$i.' minutes', $endDate = 'now', $timezone = null)); // DateTime('2003-03-15 02:00:49', 'Africa/Lagos')
+            $donneesArmoire->setPression($faker->numberBetween(0,35));
+            $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
+            $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);
+            $donneesArmoire->setLatitude($latitude);
+            $donneesArmoire->setLongitude($longitude);
+            $manager->persist($donneesArmoire);
+            $manager->flush();
+        }
+        
         
         
         $groupe = new Groupe();

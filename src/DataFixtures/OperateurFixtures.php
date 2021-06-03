@@ -10,6 +10,8 @@ use App\Entity\Groupe;
 use App\Entity\Centrale;
 use App\Entity\Piquet;
 use App\Entity\DonneesPiquet;
+use App\Entity\ElectroVanne;
+use App\Entity\DonneesVanne;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Zenstruck\Foundry\Factory;
 use Faker;
@@ -96,7 +98,31 @@ class OperateurFixtures extends Fixture
             $manager->persist($donneesPiquet);
             $manager->flush();
         }
-
+        
+        // CREATION D'ELECTROVANNES
+        for($i=0; $i<30; $i++){
+            $manager->getConnection()->exec("ALTER TABLE electro_vanne AUTO_INCREMENT = 1;");
+            $electrovanne = new ElectroVanne();
+            $electrovanne->setId($i);
+            $electrovanne->setEtat(1);
+            $manager->persist($electrovanne);
+            $manager->flush();
+            
+            // CREATION DE DONNEES ELECTROVANNES
+            $manager->getConnection()->exec("ALTER TABLE donnees_vanne AUTO_INCREMENT = 1;");
+            $donneesVanne = new DonneesVanne();
+            $donneesVanne->setIdVanne($manager->getRepository(ElectroVanne::class)->findOneById($i));
+            $donneesVanne->setHorodatage($faker->dateTimeBetween($startDate = '-'.$i.' minutes', $endDate = 'now', $timezone = null)); // DateTime('2003-03-15 02:00:49', 'Africa/Lagos')
+            $donneesVanne->setDebit($faker->numberBetween(0,35));
+            $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
+            $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);
+            $donneesVanne->setLatitude($latitude);
+            $donneesVanne->setLongitude($longitude);
+            $manager->persist($donneesVanne);
+            $manager->flush();
+        }
+        
+        
         $groupe = new Groupe();
         $piquets = $manager->getRepository(Piquet::class)->findAll();
         foreach($piquets as $piquet){

@@ -28,9 +28,15 @@ class Centrale
      */
     private $idPiquets;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ElectroVanne::class, mappedBy="idCentrale")
+     */
+    private $idElectroVannes;
+
     public function __construct()
     {
         $this->idPiquets = new ArrayCollection();
+        $this->idElectroVannes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,6 +87,36 @@ class Centrale
             // set the owning side to null (unless already changed)
             if ($idPiquet->getIdCentrale() === $this) {
                 $idPiquet->setIdCentrale(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ElectroVanne[]
+     */
+    public function getIdElectroVannes(): Collection
+    {
+        return $this->$idElectroVannes;
+    }
+
+    public function addIdElectroVanne(ElectroVanne $idElectroVanne): self
+    {
+        if (!$this->idElectroVannes->contains($idElectroVanne)) {
+            $this->idElectroVannes[] = $idElectroVanne;
+            $idElectroVanne->setIdCentrale($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIdElectroVanne(ElectroVanne $idElectroVanne): self
+    {
+        if ($this->idElectroVannes->removeElement($idElectroVanne)) {
+            // set the owning side to null (unless already changed)
+            if ($idElectroVanne->getIdCentrale() === $this) {
+                $idElectroVanne->setIdCentrale(null);
             }
         }
 

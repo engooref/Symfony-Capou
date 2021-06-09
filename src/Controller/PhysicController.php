@@ -75,51 +75,25 @@ class PhysicController extends AbstractController
         
         return new JsonResponse(array("Object" => $obj, "Data" => $dataObj));
     }
+    
+    #[Route('/getDataPiquet', name: 'getDataPiquet')]
+    public function getDataPiquet() : Response {
         
-    #[Route('/input', name: 'input')]
-    public function input() : Response
-    {
-        // ==================== TRAME ==================
-        // M1=type;id;idMaitre;...&M2=type;id;idMaitre;...
+        $doctrine = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class);
         
-        // On traite le nombre de module envoyé à partir du GET 
-        $array_nb_module = array();   
-        for($i = 1; isset($_GET['M'.strval($i)]); $i++){
-            array_push($array_nb_module, $_GET['M'.strval($i)]);
+        $obj = $doctrine->findBy([],['horodatage' => 'asc']);
+        foreach($obj as $article)
+        {
+            $id[] = $article->getId();
+            $Horodatage = $article->getHorodatage();
+            $horodatage[] = $Horodatage->format('Y/m/d H:i:s');
+            $temp[] = $article->getTemperature();
+            $humi[] = $article->getHumidite();
         }
-        //dump($array_nb_module); die();
-        
-        // On traite les données du module envoyées
-        $newData = null;
-        foreach($array_nb_module as $module) {
-            $array_data_module = explode(';', $module);
-            $type = $array_data_module[0];  // Length : 0 -> type
-            // 0 -> Armoire | 1 -> Centrale | 2 -> Electrovanne | 3 -> Piquet
-            switch (intval($type))
-            {
-                case 0:
-                    $this->InputArmoire($array_data_module);
-                    break;
-                case 1:
-                    $this->InputCentrale($array_data_module);
-                    break;
-                case 2:
-                    $this->InputElectrovanne($array_data_module);
-                    break;
-                case 3:
-                    $newData = $this->InputPiquet($array_data_module);
-                    break;
-                default:
-                    return new Response(Response::HTTP_NOT_FOUND);
-            }
-            if($newData) {
-                $doctrine = $this->getDoctrine()->getManager();
-                $doctrine->persist($newData);
-                $doctrine->flush();
-            }
-        }   
-        return new Response(Response::HTTP_OK);
+        return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi));
     }
+        
+    
     
     #[Route('/mapsControl', name: 'mapsControl')]
     public function mapsControl()
@@ -170,6 +144,54 @@ class PhysicController extends AbstractController
        
     }
     
+    #[Route('/input', name: 'input')]
+    public function input() : Response
+    {
+        // ==================== TRAME ==================
+        // M1=type;id;idMaitre;...&M2=type;id;idMaitre;...
+        
+        
+        
+        // On traite le nombre de module envoyï¿½ ï¿½ partir du GET
+        $array_nb_module = array();
+        for($i = 1; isset($_GET['M'.strval($i)]); $i++){
+            array_push($array_nb_module, $_GET['M'.strval($i)]);
+        }
+        if(!isset($_GET['M1'])) return new Response(Response::HTTP_NOT_FOUND);
+        
+        // On traite les donnï¿½es du module envoyï¿½es
+        $newData = null;
+        foreach($array_nb_module as $module) {
+            $array_data_module = explode(';', $module);
+            $type = $array_data_module[0];  // Length : 0 -> type
+            // 0 -> Armoire | 1 -> Centrale | 2 -> Electrovanne | 3 -> Piquet
+            switch (intval($type))
+            {
+                case 0:
+                    $newData = $this->InputArmoire($array_data_module);
+                    break;
+                case 1:
+                    $this->InputCentrale($array_data_module);
+                    break;
+                case 2:
+                    $newData = $this->InputElectrovanne($array_data_module);
+                    break;
+                case 3:
+                    $newData = $this->InputPiquet($array_data_module);
+                    break;
+                default:
+                    return new Response(Response::HTTP_NOT_FOUND);
+            }
+            if((!$newData) || ($newData == -1)) {
+                return new Response(Response::HTTP_NOT_ACCEPTABLE);
+            }
+            $doctrine = $this->getDoctrine()->getManager();
+            $doctrine->persist($newData);
+            $doctrine->flush();
+        }
+        return new Response(Response::HTTP_OK);
+    }
+    
     private function createEsc($type=null, $id=null, $idCen=null, $ipCen=null) {
         
         if(!isset($type) && !isset($id) && !isset($idCen) && !isset($ipCen)) {
@@ -195,7 +217,7 @@ class PhysicController extends AbstractController
                 $newObj = new ElectroVanne;
                 $newObj->setId($id);
                 $newObj->setEtat(True);
-                $newObj->setIdCentrale($doctrine->getRepository(ElectroVanne::class)->findOneById($idCen));
+                $newObj->setIdCentrale($doctrine->getRepository(Centrale::class)->findOneById($idCen));
                 break;    
             case 3:
                 $newObj = new Piquet;
@@ -215,9 +237,10 @@ class PhysicController extends AbstractController
     
     private function InputPiquet($inputTramePiquet) {
         // ==================== TRAME PIQUET ==================
-        // [type;id;idMaitre;etat;batterie;horodate;temperature;longitude;latitude;[humidite1:humidite2:humidite3:...]]
+        // [type;id;idMaitre;batterie;horodate;temperature;longitude;latitude;[humidite1:humidite2:humidite3:...]]
         
-        dump($inputTramePiquet);
+        // Trame de 9 donnï¿½es pour le Piquet         
+        if(count($inputTramePiquet) !== 9) return -1; // Trame pas complï¿½te renvoie -1
         
         $idPiquet = hexdec($inputTramePiquet[1]);
         $idCentrale = hexdec($inputTramePiquet[2]);
@@ -227,8 +250,14 @@ class PhysicController extends AbstractController
         $longitude = $inputTramePiquet[6];
         $latitude = $inputTramePiquet[7];
         $humidite = explode(':', $inputTramePiquet[8]);
+<<<<<<<
         
         $result = $this->manager->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+=======
+         
+        $doctrine = $this->getDoctrine()->getManager();
+        $result = $doctrine->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+>>>>>>>
         
         if($result){
             foreach($result as $val){
@@ -257,33 +286,53 @@ class PhysicController extends AbstractController
     }
     
     private function InputElectrovanne($inputTrameElectrovanne) {
-        dump($inputTrameElectrovanne);
+        // ==================== TRAME ELECTROVANNE ==================
+        // [type;id;idMaitre;debit;horodate;longitude;latitude]
         
-//         $idSta = hexdec($_GET['Id']);
-//         $gps = $_GET['Gps'];
-//         $temps = $_GET['Time'];
-//         $press = $_GET['Press'];
+        // Trame de 7 donnï¿½es pour l'ElectroVanne
+        if(count($inputTrameElectrovanne) !== 7) return -1; // Trame pas complï¿½te renvoie -1
         
-//         $doctrine = $this->getDoctrine()->getManager();
-//         $Armoire = $doctrine->getRepository(Armoire::class)
-//                             ->findOneById($idSta);
+        $idElectroVanne = hexdec($inputTrameElectrovanne[1]);
+        $idCentrale = hexdec($inputTrameElectrovanne[2]);
+        $debit =  $inputTrameElectrovanne[3];
+        $horodatage = $inputTrameElectrovanne[4];
+        $longitude = $inputTrameElectrovanne[5];
+        $latitude = $inputTrameElectrovanne[6];
         
-//         if(!isset($Armoire)){
-//             $this->createEsc(1, $idSta);
-//         }
+        $doctrine = $this->getDoctrine()->getManager();
+        $result = $doctrine->getRepository(DonneesVanne::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         
-//         $donneesSta = new DonneesArmoire;
-//         $donneesSta->setGps($gps);
-//         $donneesSta->setPression($press);
-//         $donneesSta->setHorodatage(date_create_from_format("d:m:Y:H:i:s", $temps));
-//         $donneesSta->setIdArmoire($doctrine->getRepository(Armoire::class)
-//                                            ->findOneById($idSta));
+        if($result){
+            foreach($result as $val){
+                if($val->getIdVanne()->getId() === $idElectroVanne){
+                    return -1;
+                }
+            }
+        }
         
-//         return $donneesSta;
+        $electrovanne = $doctrine->getRepository(ElectroVanne::class)->findOneById($idElectroVanne);
+        
+        if(!isset($electrovanne)){
+            $this->createEsc(2, $idElectroVanne, $idCentrale, null);
+        }
+        
+        $donneesVanne = new DonneesVanne;
+        $donneesVanne->setIdVanne($doctrine->getRepository(ElectroVanne::class)->findOneById($idElectroVanne));
+        $donneesVanne->setDebit($debit);
+        $donneesVanne->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+        $donneesVanne->setLatitude($latitude);
+        $donneesVanne->setLongitude($longitude);
+        
+        return $donneesVanne;
     }
     
     private function InputCentrale($inputTrameCentrale) {
-        dump($inputTrameCentrale);
+        // ==================== TRAME CENTRALE ==================
+        // [type;id;ip]
+        
+        // Trame de 3 donnï¿½es pour la Centrale
+        if(count($inputTrameCentrale) !== 3) return -1; // Trame pas complï¿½te renvoie -1
+        
         
         $idCentrale = hexdec($inputTrameCentrale[1]);
         $ipCentrale = $inputTrameCentrale[2];
@@ -295,12 +344,36 @@ class PhysicController extends AbstractController
          }
     }
     private function InputArmoire($inputTrameArmoire) {
-        dump($inputTrameArmoire);
+        // ==================== TRAME ARMOIRE ==================
+        // [type;id;pression;horodate;longitude;latitude]
+
+        // Trame de 6 donnï¿½es pour l'Armoire
+        if(count($inputTrameArmoire) !== 6) return -1; // Trame pas complï¿½te renvoie -1
         
         $idArmoire = hexdec($inputTrameArmoire[1]);
+        $pression = $inputTrameArmoire[2];
+        $horodatage = $inputTrameArmoire[3];
+        $longitude = $inputTrameArmoire[4];
+        $latitude = $inputTrameArmoire[5];
         
+<<<<<<<
+
+=======
+        $doctrine = $this->getDoctrine()->getManager();
+        $result = $doctrine->getRepository(DonneesArmoire::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+>>>>>>>
         
         $armoire = $this->manager->getRepository(Armoire::class)->findOneById($idCentrale);
+        
+        if($result){
+            foreach($result as $val){
+                if($val->getIdArmoire()->getId() === $idArmoire){
+                    return -1;
+                }
+            }
+        }
+        
+        $armoire = $doctrine->getRepository(Armoire::class)->findOneById($idArmoire);
         
         if(!isset($armoire)){
             $this->createEsc(0, $idArmoire, null, null);
@@ -322,5 +395,13 @@ class PhysicController extends AbstractController
             $humi[] = $article->getHumidite();
         }
         return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi));
+        $donneesArmoire = new DonneesArmoire;
+        $donneesArmoire->setIdArmoire($doctrine->getRepository(Armoire::class)->findOneById($idArmoire));
+        $donneesArmoire->setPression($pression);
+        $donneesArmoire->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+        $donneesArmoire->setLatitude($latitude);
+        $donneesArmoire->setLongitude($longitude);
+        
+        return $donneesArmoire;
     }
 }

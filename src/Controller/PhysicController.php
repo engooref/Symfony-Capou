@@ -16,11 +16,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use DateTime;
 use DateInterval;
 
 class PhysicController extends AbstractController
 {    
+    private $manager;
+
+    public function __construct(EntityManagerInterface $manager)
+    {
+        $this->manager = $manager;
+    }
+    
     #[Route('/controle', name: 'control')]
     public function control() : Response {
         return $this->render("control/index.html.twig");
@@ -33,20 +42,19 @@ class PhysicController extends AbstractController
         $id = $_GET['id'];
         $type = $_GET['type'];
         $obj = null;
-        $doctrine = $this->getDoctrine()->getManager();
         
         switch (intval($type))
         {
             case 0:
-                $obj = $doctrine->getRepository(Piquet::class);
+                $obj = $this->manager->getRepository(Piquet::class);
                 
                 break;
             case 1:
-                $obj = $doctrine->getRepository(Armoire::class);
+                $obj = $this->manager->getRepository(Armoire::class);
                 
                 break;
             case 2:
-                $obj = $doctrine->getRepository(ElectroVanne::class);
+                $obj = $this->manager->getRepository(ElectroVanne::class);
                 
                 break;
         }
@@ -116,8 +124,6 @@ class PhysicController extends AbstractController
     #[Route('/mapsControl', name: 'mapsControl')]
     public function mapsControl()
     {
-        $doctrine = $this->getDoctrine()->getManager();
-
         $groupe = $this->getUser()->getIdGroupe();
         $piquetDb = $groupe->getIdPiquets();
         $armoireDb = $groupe->getIdArmoires();
@@ -171,7 +177,6 @@ class PhysicController extends AbstractController
         }
 
         $newObj = null;
-        $doctrine = $this->getDoctrine()->getManager();
         
         // 0 -> Armoire | 1 -> Centrale | 2 -> Electrovanne | 3 -> Piquet
         switch (intval($type))
@@ -201,8 +206,8 @@ class PhysicController extends AbstractController
                   
         }
 
-        $doctrine->persist($newObj);
-        $doctrine->flush();
+        $this->manager->persist($newObj);
+        $this->manager->flush();
         
         return 0;
     }
@@ -223,8 +228,7 @@ class PhysicController extends AbstractController
         $latitude = $inputTramePiquet[7];
         $humidite = explode(':', $inputTramePiquet[8]);
         
-        $doctrine = $this->getDoctrine()->getManager();
-        $result = $doctrine->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+        $result = $this->manager->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         
         if($result){
             foreach($result as $val){
@@ -234,14 +238,14 @@ class PhysicController extends AbstractController
             }
         }
             
-         $piquet = $doctrine->getRepository(Piquet::class)->findOneById($idPiquet);
+         $piquet = $this->manager->getRepository(Piquet::class)->findOneById($idPiquet);
        
          if(!isset($piquet)){
              $this->createEsc(3, $idPiquet, $idCentrale, null);
          }
          
         $donneesPiquet = new DonneesPiquet;
-        $donneesPiquet->setIdPiquet($doctrine->getRepository(Piquet::class)->findOneById($idPiquet));
+        $donneesPiquet->setIdPiquet($this->manager->getRepository(Piquet::class)->findOneById($idPiquet));
         $donneesPiquet->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         $donneesPiquet->setHumidite($humidite);
         $donneesPiquet->setTemperature($temperature);
@@ -284,8 +288,7 @@ class PhysicController extends AbstractController
         $idCentrale = hexdec($inputTrameCentrale[1]);
         $ipCentrale = $inputTrameCentrale[2];
 
-        $doctrine = $this->getDoctrine()->getManager();
-        $centrale = $doctrine->getRepository(Centrale::class)->findOneById($idCentrale);
+        $centrale = $this->manager->getRepository(Centrale::class)->findOneById($idCentrale);
         
          if(!isset($centrale)){
              $this->createEsc(1, $idCentrale, null, $ipCentrale);
@@ -296,8 +299,8 @@ class PhysicController extends AbstractController
         
         $idArmoire = hexdec($inputTrameArmoire[1]);
         
-        $doctrine = $this->getDoctrine()->getManager();
-        $armoire = $doctrine->getRepository(Armoire::class)->findOneById($idCentrale);
+        
+        $armoire = $this->manager->getRepository(Armoire::class)->findOneById($idCentrale);
         
         if(!isset($armoire)){
             $this->createEsc(0, $idArmoire, null, null);
@@ -307,9 +310,9 @@ class PhysicController extends AbstractController
     #[Route('/getDataPiquet', name: 'getDataPiquet')]
     public function getDataPiquet() : Response {
 
-        $doctrine = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class);
+        $dataPiquet = $this->manager->getRepository(DonneesPiquet::class);
         
-        $obj = $doctrine->findBy([],['horodatage' => 'asc']);
+        $obj = $dataPiquet->findBy([],['horodatage' => 'asc']);
         foreach($obj as $article)
         {
             $id[] = $article->getId();

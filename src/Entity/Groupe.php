@@ -39,6 +39,11 @@ class Groupe
      */
     private $idArmoires;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $label;
+
     public function __construct()
     {
         $this->idOperateur = new ArrayCollection();
@@ -69,7 +74,7 @@ class Groupe
      */
     public function getIdOperateur(): Collection
     {
-        return $this->idOperateur;
+        return $this->idOperateur;  
     }
 
     public function addIdOperateur(operateur $idOperateur): self
@@ -162,6 +167,18 @@ class Groupe
     public function removeIdArmoire(Armoire $idArmoire): self
     {
         $this->idArmoires->removeElement($idArmoire);
+
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
 
         return $this;
     }

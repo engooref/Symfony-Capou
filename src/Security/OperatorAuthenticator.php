@@ -19,6 +19,8 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\HttpFoundation\Session\Session;
+
 
 class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
 {
@@ -76,7 +78,7 @@ class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements Pa
         
         if (!$user->getVerifiedbyadmin()) {
             // fail authentication with a custom error
-            throw new CustomUserMessageAuthenticationException("Votre compte n'a pas �t� v�rifi�. Veuillez patienter qu'un administrateur confirme votre compte.");
+            throw new CustomUserMessageAuthenticationException("Votre compte n'a pas été vérifié. Veuillez patienter qu'un administrateur confirme votre compte.");
         }
         
 
@@ -108,6 +110,10 @@ class OperatorAuthenticator extends AbstractFormLoginAuthenticator implements Pa
     {
         $user = $token->getUser();
         if($user->getIsFirstConnexion()== 1 ){
+            // Retrieve flashbag from the controller
+            $flashbag = $request->getSession()->getFlashBag();
+            // Add flash message
+            $flashbag->add('warning', 'Attention, le mot de passe actuellement utilisé est un mot de passe généré aléatoirement par notre système. Nous vous recommandons de le changer par un mot de passe d\'au moins 6 caractères.');
             return new RedirectResponse($this->urlGenerator->generate('resetPasswordWithoutToken'));
         }
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {

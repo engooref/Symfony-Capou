@@ -4,20 +4,31 @@ namespace App\EventSubscriber;
 
 use \DateTime;
 use App\Entity\Operateur;
+use App\Entity\Groupe;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
+use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
+use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityDeletedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 //use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class EasyAdminSubscriber implements EventSubscriberInterface
+
+class EasyAdminSubscriber implements EventSubscriberInterface 
 {
     private $passwordEncoder;
     private $mailer;
+    private $doctrineManager;
     
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer, EntityManagerInterface $manager, SessionInterface $session)
     {
         $this->passwordEncoder = $passwordEncoder;
         $this->mailer = $mailer;
+        $this->doctrineManager = $manager;
+        $this->session = $session;
     }
     
     
@@ -25,7 +36,8 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     {
         return [
             BeforeEntityPersistedEvent::class => ['createUser'],
-            //BeforeEntityUpdatedEvent::class => ['updateUser'],
+            BeforeEntityPersistedEvent::class => ['createGroup'],
+            BeforeEntityUpdatedEvent::class => ['updateGroupe'],
         ];
     }
     
@@ -98,17 +110,38 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         return $generatedPassword;
     }
     
-/*    
-    public function updateUser(BeforeEntityPersistedEvent $event)
+    public function createGroup(BeforeEntityPersistedEvent $event)
     {
         $entity = $event->getEntityInstance();
         
-        if (!($entity instanceof Operator)) {
+        if (!($entity instanceof Groupe)) {
             return;
         }
-        
-        $slug = $this->slugger->slugify($entity->getTitle());
-        $entity->setSlug($slug);
+        foreach($entity->getIdOperateur() as $idOperateur){
+            $idOperateur->setIdGroupe($entity);
+            $entity->addIdOperateur($idOperateur);
+        }
     }
-*/
+  
+    public function updateGroupe(BeforeEntityUpdatedEvent $event)
+    {
+        $entity = $event->getEntityInstance(); // On récupère l'instance de l'entité
+        
+        if (!($entity instanceof Groupe)) { // On test si l'entité est bien une instance de Groupe
+            return;
+        }
+   
+        $defaultGroup = $this->doctrineManager->getRepository(Groupe::class)->findOneById('1'); // Le groupe considéré "par défaut" est le groupe avec comme id=1
+        $GroupAct = $this->doctrineManager->getRepository(Groupe::class)->findOneById($entity->getId()); // Le groupe actuel est l'id de l'entité
+        
+        foreach($GroupAct->getIdOperateur() as $idOperateur){ // Pour chaque opérateurs contenus dans le groupe actuel, on les transfere dans le groupe par défaut (1)
+            $idOperateur->setIdGroupe($defaultGroup);
+        }
+        foreach($entity->getIdOperateur() as $idOperateur){ // Pour chaque opérateurs contenus dans l'entité, on assigne aux nouveaux groupes les clés étrangères
+            $idOperateur->getIdGroupe()->removeIdOperateur($idOperateur);
+            $idOperateur->setIdGroupe($entity);
+            $entity->addIdOperateur($idOperateur);
+        }
+    }
+
 }

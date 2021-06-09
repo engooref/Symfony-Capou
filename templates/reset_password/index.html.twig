@@ -6,9 +6,16 @@
             <p> Votre mot de passe a été modifié avec succès </p>
         </div>
     {% endfor %}
+    
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning text-center">
+            <p> {{ message }} </p>
+        </div>
+    {% endfor %}
+    
     {% if form_errors(resetPasswordform.plainPassword.first) %}
     <div class="alert alert-danger text-center">
-    	<p>Les mots de passe doivent être identiques </p>
+    	<p>Les mots de passe doivent être identiques et doivent contenir 6 caractères minimum</p>
 	</div>
     {% endif %}
     

@@ -36,6 +36,7 @@ class OperateurFixtures extends Fixture
             
             
             $groupe = new Groupe();
+            $groupe->setLabel("default");
             $manager->persist($groupe);
             $manager->flush();
 
@@ -150,6 +151,7 @@ class OperateurFixtures extends Fixture
         
         
         $groupe = new Groupe();
+        $groupe->setLabel("All");
         $piquets = $manager->getRepository(Piquet::class)->findAll();
         foreach($piquets as $piquet){
             $groupe->addIdPiquet($piquet);

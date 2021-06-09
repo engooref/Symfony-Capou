@@ -40,6 +40,11 @@ class Piquet implements JsonSerializable
         $this->idDonneesPiquet = new ArrayCollection();
     }
     
+    public function __toString()
+    {
+        return $this->getId();
+    }
+    
     public function JsonSerialize() 
     {
         return array(

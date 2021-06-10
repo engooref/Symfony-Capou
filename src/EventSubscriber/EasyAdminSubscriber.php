@@ -122,6 +122,11 @@ class EasyAdminSubscriber implements EventSubscriberInterface
             $idOperateur->setIdGroupe($entity);
             $entity->addIdOperateur($idOperateur);
         }
+        
+        foreach($entity->getIdPiquets() as $idPiquet){
+            $idPiquet->setIdGroupe($entity);
+            $entity->addIdPiquet($idPiquet);
+        }
     }
   
     public function updateGroupe(BeforeEntityUpdatedEvent $event)

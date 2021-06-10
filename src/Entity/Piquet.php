@@ -29,6 +29,14 @@ class Piquet implements JsonSerializable
      */
     private $idDonneesPiquet;
 
+    
+    /**
+     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idPiquet")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $idGroupe;
+    
+    
     /**
      * @ORM\ManyToOne(targetEntity=Centrale::class, inversedBy="idPiquets")
      * @ORM\JoinColumn(nullable=false)
@@ -107,6 +115,19 @@ class Piquet implements JsonSerializable
         return $this;
     }
 
+    
+    public function getIdGroupe(): ?Groupe
+    {
+        return $this->idGroupe;
+    }
+    
+    public function setIdGroupe(?Groupe $idGroupe): self
+    {
+        $this->idGroupe = $idGroupe;
+        
+        return $this;
+    }
+    
     public function getIdCentrale(): ?Centrale
     {
         return $this->idCentrale;

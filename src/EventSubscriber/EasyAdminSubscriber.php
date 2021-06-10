@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use \DateTime;
 use App\Entity\Operateur;
+use App\Entity\Piquet;
 use App\Entity\Groupe;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
@@ -52,7 +53,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
             return;
         }
 
-        /* Génération de mot de passe */
+        /* Gï¿½nï¿½ration de mot de passe */
         $password = $this->_generateRandomPassword();
         
         /* Cryptage de mot de passe */
@@ -70,36 +71,36 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         $entity->setCreatedAt(new DateTime());
         
         
-        $titreMail = "Lycée Capou - Votre compte a bien été créé par un administrateur";
+        $titreMail = "Lycï¿½e Capou - Votre compte a bien ï¿½tï¿½ crï¿½ï¿½ par un administrateur";
         $message = (new \Swift_Message($titreMail))
         ->setCharset('ISO-8859-1')
         ->setFrom('inscription.lyceecapou@gmail.com')
         ->setTo($entity->getEmail())
         ->setBody(
-            '<h1>Bonjour ! Un administrateur vous a créé un compte sur le site Lycée Capou - Irrigation Connectée</h1>
+            '<h1>Bonjour ! Un administrateur vous a crï¿½ï¿½ un compte sur le site Lycï¿½e Capou - Irrigation Connectï¿½e</h1>
             <br>
-            <p>Informations de connexion pour vous connecter à votre compte :</p>
+            <p>Informations de connexion pour vous connecter ï¿½ votre compte :</p>
             <p><u>Identifiant :</u> <b>'. $entity->getEmail() . '</b></p>
             <p><u>Mot de passe :</u> <b> '. $password . '</b></p>
             </p>
             <br>
-            <p>Attention, vous avez reçu un mot de passe généré aléatoirement, toutefois, nous vous recommandons de le changer suite à votre première connexion sur notre site.</p>
+            <p>Attention, vous avez reï¿½u un mot de passe gï¿½nï¿½rï¿½ alï¿½atoirement, toutefois, nous vous recommandons de le changer suite ï¿½ votre premiï¿½re connexion sur notre site.</p>
             <br>
-            <p>Merci de votre compréhension. Cordialement !</p>',
+            <p>Merci de votre comprï¿½hension. Cordialement !</p>',
             'text/html'
             );
         
         try {
             $this->mailer->send($message);
         } catch (TransportExceptionInterface $e) {
-            throw new CustomUserMessageAuthenticationException("L'envoi du mail a echoué.");
+            throw new CustomUserMessageAuthenticationException("L'envoi du mail a echouï¿½.");
         }
         
     }
     
     private function _generateRandomPassword() : ?string
     {
-        // Génération mot de passe crypté
+        // Gï¿½nï¿½ration mot de passe cryptï¿½
         $nbChar = 8;
         $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
         srand((double)microtime()*1000000);
@@ -125,23 +126,42 @@ class EasyAdminSubscriber implements EventSubscriberInterface
   
     public function updateGroupe(BeforeEntityUpdatedEvent $event)
     {
-        $entity = $event->getEntityInstance(); // On récupère l'instance de l'entité
-        
-        if (!($entity instanceof Groupe)) { // On test si l'entité est bien une instance de Groupe
+        $entity = $event->getEntityInstance(); // On rï¿½cupï¿½re l'instance de l'entitï¿½
+        if (!($entity instanceof Groupe)) { // On test si l'entitï¿½ est bien une instance de Groupe
             return;
         }
-   
-        $defaultGroup = $this->doctrineManager->getRepository(Groupe::class)->findOneById('1'); // Le groupe considéré "par défaut" est le groupe avec comme id=1
-        $GroupAct = $this->doctrineManager->getRepository(Groupe::class)->findOneById($entity->getId()); // Le groupe actuel est l'id de l'entité
         
-        foreach($GroupAct->getIdOperateur() as $idOperateur){ // Pour chaque opérateurs contenus dans le groupe actuel, on les transfere dans le groupe par défaut (1)
-            $idOperateur->setIdGroupe($defaultGroup);
+        //dump($entity);die();    
+        
+        $defaultGroup = $this->doctrineManager->getRepository(Groupe::class)->findOneById('1'); // Le groupe considï¿½rï¿½ "par dï¿½faut" est le groupe avec comme id=1
+        
+        //gestion des opÃ©rateurs
+        $GroupAct = $this->doctrineManager->getRepository(Groupe::class)->findOneById($entity->getId()); // Le groupe actuel est l'id de l'entitï¿½
+        
+        $operatorTab = $this->doctrineManager->getRepository(Operateur::class)->findBy(['idGroupe'=>$GroupAct->getId()]); 
+        
+        foreach($operatorTab as $Operator){ // Pour chaque opï¿½rateurs contenus dans le groupe actuel, on les transfere dans le groupe par dï¿½faut (1)
+            $Operator->setIdGroupe($defaultGroup);
+            $this->doctrineManager->flush();
         }
-        foreach($entity->getIdOperateur() as $idOperateur){ // Pour chaque opérateurs contenus dans l'entité, on assigne aux nouveaux groupes les clés étrangères
-            $idOperateur->getIdGroupe()->removeIdOperateur($idOperateur);
+       
+        foreach($entity->getIdOperateur() as $idOperateur){ // Pour chaque opï¿½rateurs contenus dans l'entitï¿½, on assigne aux nouveaux groupes les clï¿½s ï¿½trangï¿½res
             $idOperateur->setIdGroupe($entity);
             $entity->addIdOperateur($idOperateur);
         }
+        
+        
+        //gestion des piquets
+        $piquetTab = $this->doctrineManager->getRepository(Piquet::class)->findBy(['idGroupe'=>$GroupAct->getId()]);
+        
+        foreach($piquetTab as $Piquet){ // Pour chaque opï¿½rateurs contenus dans le groupe actuel, on les transfere dans le groupe par dï¿½faut (1)
+            $Piquet->setIdGroupe(null);
+            $this->doctrineManager->flush();
+        }
+        
+        foreach($entity->getIdPiquets() as $idPiquet){ // Pour chaque opï¿½rateurs contenus dans l'entitï¿½, on assigne aux nouveaux groupes les clï¿½s ï¿½trangï¿½res
+            $idPiquet->setIdGroupe($entity);
+            $entity->addIdPiquet($idPiquet);
+        }
     }
-
 }

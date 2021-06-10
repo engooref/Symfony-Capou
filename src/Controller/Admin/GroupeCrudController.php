@@ -35,27 +35,43 @@ class GroupeCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('label'),
-            AssociationField::new('idOperateur', 'Operateur')->setHelp('Choisir les opérateurs appartenant à ce groupe'),
-            AssociationField::new('idPiquets', 'Piquets')->setHelp('Choisir les piquets appartenant à ce groupe'),
+            AssociationField::new('idOperateur', 'Operateur')->setHelp('Choisir les opÃ©rateurs appartenant Ã  ce groupe'),
+            AssociationField::new('idPiquets', 'Piquets')->setHelp('Choisir les piquets appartenant Ã  ce groupe'),
         ];
     }
     
+
     public function configureActions(Actions $actions): Actions
-    {        
+    {
         //$GroupAct = $this->manager->getRepository(Groupe::class)->findOneById($entity->getId());
-//         $buttonDelete = Action::DELETE('sendInvoice', 'Send invoice', 'fa fa-envelope');
-       
+        //         $buttonDelete = Action::DELETE('sendInvoice', 'Send invoice', 'fa fa-envelope');
+        
         
         $newDelete = Action::new('Supprimer')
+        ->addCssClass('action-Supprimer text-danger')
         ->linkToRoute('deleteCrud', function (Groupe $order) : Array {
             return [
-            'entity' => $order->getId()
+                'entity' => $order->getId()
             ];
         });
-       
-        return $actions
+        
+        
+            
+            
+            
+            return $actions
             ->disable(Action::DELETE)
             ->add(Crud::PAGE_INDEX, $newDelete)
-        ;
+            ->reorder(Crud::PAGE_INDEX, [Action::EDIT])
+            ;
+    }
+    
+    
+    
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+        ->setEntityLabelInSingular('Parcelle')
+        ->setEntityLabelInPlural('Parcelles');
     }
 }

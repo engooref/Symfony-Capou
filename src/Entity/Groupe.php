@@ -25,7 +25,7 @@ class Groupe
     private $idOperateur;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Piquet::class)
+     * @ORM\OneToMany(targetEntity=Piquet::class, mappedBy="idGroupe")
      */
     private $idPiquets;
 

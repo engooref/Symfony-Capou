@@ -147,9 +147,7 @@ class PhysicController extends AbstractController
     {
         // ==================== TRAME ==================
         // M1=type;id;idMaitre;...&M2=type;id;idMaitre;...
-        
-        
-        
+
         // On traite le nombre de module envoyé à partir du GET
         $array_nb_module = array();
         for($i = 1; isset($_GET['M'.strval($i)]); $i++){
@@ -180,12 +178,11 @@ class PhysicController extends AbstractController
                 default:
                     return new Response(Response::HTTP_NOT_FOUND);
             }
-            if((!$newData) || ($newData == -1)) {
+            if((!$newData) || ($newData === -1)) {
                 return new Response(Response::HTTP_NOT_ACCEPTABLE);
             }
-            $doctrine = $this->getDoctrine()->getManager();
-            $doctrine->persist($newData);
-            $doctrine->flush();
+            $this->manager->persist($newData);
+            $this->manager->flush();
         }
         return new Response(Response::HTTP_OK);
     }
@@ -215,13 +212,13 @@ class PhysicController extends AbstractController
                 $newObj = new ElectroVanne;
                 $newObj->setId($id);
                 $newObj->setEtat(True);
-                $newObj->setIdCentrale($doctrine->getRepository(Centrale::class)->findOneById($idCen));
+                $newObj->setIdCentrale($this->manager->getRepository(Centrale::class)->findOneById($idCen));
                 break;    
             case 3:
                 $newObj = new Piquet;
                 $newObj->setId($id);
                 $newObj->setEtat(True);
-                $newObj->setIdCentrale($doctrine->getRepository(Centrale::class)->findOneById($idCen));
+                $newObj->setIdCentrale($this->manager->getRepository(Centrale::class)->findOneById($idCen));
                 break;
                   
         }
@@ -291,8 +288,7 @@ class PhysicController extends AbstractController
         $longitude = $inputTrameElectrovanne[5];
         $latitude = $inputTrameElectrovanne[6];
         
-        $doctrine = $this->getDoctrine()->getManager();
-        $result = $doctrine->getRepository(DonneesVanne::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+        $result = $this->manager->getRepository(DonneesVanne::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         
         if($result){
             foreach($result as $val){
@@ -302,14 +298,14 @@ class PhysicController extends AbstractController
             }
         }
         
-        $electrovanne = $doctrine->getRepository(ElectroVanne::class)->findOneById($idElectroVanne);
+        $electrovanne = $this->manager->getRepository(ElectroVanne::class)->findOneById($idElectroVanne);
         
         if(!isset($electrovanne)){
             $this->createEsc(2, $idElectroVanne, $idCentrale, null);
         }
         
         $donneesVanne = new DonneesVanne;
-        $donneesVanne->setIdVanne($doctrine->getRepository(ElectroVanne::class)->findOneById($idElectroVanne));
+        $donneesVanne->setIdVanne($this->manager->getRepository(ElectroVanne::class)->findOneById($idElectroVanne));
         $donneesVanne->setDebit($debit);
         $donneesVanne->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         $donneesVanne->setLatitude($latitude);
@@ -358,14 +354,14 @@ class PhysicController extends AbstractController
             }
         }
         
-        $armoire = $doctrine->getRepository(Armoire::class)->findOneById($idArmoire);
+        $armoire = $this->manager->getRepository(Armoire::class)->findOneById($idArmoire);
         
         if(!isset($armoire)){
             $this->createEsc(0, $idArmoire, null, null);
         }
         
         $donneesArmoire = new DonneesArmoire;
-        $donneesArmoire->setIdArmoire($doctrine->getRepository(Armoire::class)->findOneById($idArmoire));
+        $donneesArmoire->setIdArmoire($this->manager->getRepository(Armoire::class)->findOneById($idArmoire));
         $donneesArmoire->setPression($pression);
         $donneesArmoire->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         $donneesArmoire->setLatitude($latitude);

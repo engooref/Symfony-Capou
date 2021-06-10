@@ -81,7 +81,7 @@ class OperateurFixtures extends Fixture
             $manager->getConnection()->exec("ALTER TABLE piquet AUTO_INCREMENT = 1;");
             $piquet = new Piquet();
             $piquet->setId($i);
-            $piquet->setIdCentrale($manager->getRepository(Centrale::class)->findOneById('1'));
+            $piquet->setIdCentrale($manager->getRepository(Centrale::class)->findOneById(1));
             $piquet->setEtat(1);
             $manager->persist($piquet);
             $manager->flush();
@@ -93,11 +93,11 @@ class OperateurFixtures extends Fixture
             $donneesPiquet->setHorodatage($faker->dateTimeBetween($startDate = '-'.$i.' minutes', $endDate = 'now', $timezone = null)); // DateTime('2003-03-15 02:00:49', 'Africa/Lagos')
             $donneesPiquet->setHumidite([$faker->numberBetween(0,35), $faker->numberBetween(0,35), $faker->numberBetween(0,35), $faker->numberBetween(0,35)]);
             $donneesPiquet->setTemperature($faker->numberBetween(0,35));
+            $donneesPiquet->setBatterie(50);
             $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
             $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);
             $donneesPiquet->setLatitude($latitude);
             $donneesPiquet->setLongitude($longitude);
-            $donneesPiquet->setBatterie(50);
             $manager->persist($donneesPiquet);
             $manager->flush();
         }
@@ -108,6 +108,7 @@ class OperateurFixtures extends Fixture
             $electrovanne = new ElectroVanne();
             $electrovanne->setId($i);
             $electrovanne->setEtat(1);
+            $electrovanne->setIdCentrale($manager->getRepository(Centrale::class)->findOneById(1));
             $manager->persist($electrovanne);
             $manager->flush();
             
@@ -115,8 +116,8 @@ class OperateurFixtures extends Fixture
             $manager->getConnection()->exec("ALTER TABLE donnees_vanne AUTO_INCREMENT = 1;");
             $donneesVanne = new DonneesVanne();
             $donneesVanne->setIdVanne($manager->getRepository(ElectroVanne::class)->findOneById($i));
-            $donneesVanne->setHorodatage($faker->dateTimeBetween($startDate = '-'.$i.' minutes', $endDate = 'now', $timezone = null)); // DateTime('2003-03-15 02:00:49', 'Africa/Lagos')
             $donneesVanne->setDebit($faker->numberBetween(0,35));
+            $donneesVanne->setHorodatage($faker->dateTimeBetween($startDate = '-'.$i.' minutes', $endDate = 'now', $timezone = null)); // DateTime('2003-03-15 02:00:49', 'Africa/Lagos');
             $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
             $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);
             $donneesVanne->setLatitude($latitude);
@@ -138,8 +139,8 @@ class OperateurFixtures extends Fixture
             $manager->getConnection()->exec("ALTER TABLE donnees_armoire AUTO_INCREMENT = 1;");
             $donneesArmoire = new DonneesArmoire();
             $donneesArmoire->setIdArmoire($manager->getRepository(Armoire::class)->findOneById($i));
-            $donneesArmoire->setHorodatage($faker->dateTimeBetween($startDate = '-'.$i.' minutes', $endDate = 'now', $timezone = null)); // DateTime('2003-03-15 02:00:49', 'Africa/Lagos')
             $donneesArmoire->setPression($faker->numberBetween(0,35));
+            $donneesArmoire->setHorodatage($faker->dateTimeBetween($startDate = '-'.$i.' minutes', $endDate = 'now', $timezone = null)); // DateTime('2003-03-15 02:00:49', 'Africa/Lagos');
             $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
             $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);
             $donneesArmoire->setLatitude($latitude);
@@ -155,6 +156,10 @@ class OperateurFixtures extends Fixture
         $piquets = $manager->getRepository(Piquet::class)->findAll();
         foreach($piquets as $piquet){
             $groupe->addIdPiquet($piquet);
+        }
+        $vannes = $manager->getRepository(ElectroVanne::class)->findAll();
+        foreach($vannes as $vanne){
+            $groupe->addIdElectrovanne($vanne);
         }
         $manager->persist($groupe);
         $manager->flush();

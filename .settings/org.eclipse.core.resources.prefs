@@ -1,13 +1,3 @@
-=\=\=\=\=\=\=
-<<<<<<<=Updated upstream
->>>>>>>=Stashed changes
 eclipse.preferences.version=1
-encoding//src/Controller/ForgottenPasswordController.php=UTF-8
-encoding//src/Controller/ResetPasswordController.php=UTF-8
-encoding//src/Controller/SecurityController.php=UTF-8
-encoding//src/Security/OperatorAuthenticator.php=UTF-8
-encoding//templates/footer/footer.html.twig=UTF-8
-encoding//templates/home/index.html.twig=UTF-8
-encoding//templates/registration/register.html.twig=UTF-8
-encoding//templates/reset_password/index.html.twig=UTF-8
-encoding//templates/security/login.html.twig=UTF-8
+encoding/<project>=UTF-8
+separateDerivedEncodings=true

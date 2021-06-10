@@ -75,13 +75,13 @@ class PhysicController extends AbstractController
         
         return new JsonResponse(array("Object" => $obj, "Data" => $dataObj));
     }
-    
+
     #[Route('/getDataPiquet', name: 'getDataPiquet')]
     public function getDataPiquet() : Response {
         
-        $doctrine = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class);
+        $dataPiquet = $this->manager->getRepository(DonneesPiquet::class);
         
-        $obj = $doctrine->findBy([],['horodatage' => 'asc']);
+        $obj = $dataPiquet->findBy([],['horodatage' => 'asc']);
         foreach($obj as $article)
         {
             $id[] = $article->getId();
@@ -92,8 +92,6 @@ class PhysicController extends AbstractController
         }
         return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi));
     }
-        
-    
     
     #[Route('/mapsControl', name: 'mapsControl')]
     public function mapsControl()
@@ -152,14 +150,14 @@ class PhysicController extends AbstractController
         
         
         
-        // On traite le nombre de module envoy� � partir du GET
+        // On traite le nombre de module envoyé à partir du GET
         $array_nb_module = array();
         for($i = 1; isset($_GET['M'.strval($i)]); $i++){
             array_push($array_nb_module, $_GET['M'.strval($i)]);
         }
         if(!isset($_GET['M1'])) return new Response(Response::HTTP_NOT_FOUND);
         
-        // On traite les donn�es du module envoy�es
+        // On traite les données du module envoyées
         $newData = null;
         foreach($array_nb_module as $module) {
             $array_data_module = explode(';', $module);
@@ -239,8 +237,8 @@ class PhysicController extends AbstractController
         // ==================== TRAME PIQUET ==================
         // [type;id;idMaitre;batterie;horodate;temperature;longitude;latitude;[humidite1:humidite2:humidite3:...]]
         
-        // Trame de 9 donn�es pour le Piquet         
-        if(count($inputTramePiquet) !== 9) return -1; // Trame pas compl�te renvoie -1
+        // Trame de 9 données pour le Piquet         
+        if(count($inputTramePiquet) !== 9) return -1; // Trame pas complète renvoie -1
         
         $idPiquet = hexdec($inputTramePiquet[1]);
         $idCentrale = hexdec($inputTramePiquet[2]);
@@ -250,14 +248,8 @@ class PhysicController extends AbstractController
         $longitude = $inputTramePiquet[6];
         $latitude = $inputTramePiquet[7];
         $humidite = explode(':', $inputTramePiquet[8]);
-<<<<<<<
         
         $result = $this->manager->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
-=======
-         
-        $doctrine = $this->getDoctrine()->getManager();
-        $result = $doctrine->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
->>>>>>>
         
         if($result){
             foreach($result as $val){
@@ -289,8 +281,8 @@ class PhysicController extends AbstractController
         // ==================== TRAME ELECTROVANNE ==================
         // [type;id;idMaitre;debit;horodate;longitude;latitude]
         
-        // Trame de 7 donn�es pour l'ElectroVanne
-        if(count($inputTrameElectrovanne) !== 7) return -1; // Trame pas compl�te renvoie -1
+        // Trame de 7 données pour l'ElectroVanne
+        if(count($inputTrameElectrovanne) !== 7) return -1; // Trame pas complète renvoie -1
         
         $idElectroVanne = hexdec($inputTrameElectrovanne[1]);
         $idCentrale = hexdec($inputTrameElectrovanne[2]);
@@ -330,8 +322,8 @@ class PhysicController extends AbstractController
         // ==================== TRAME CENTRALE ==================
         // [type;id;ip]
         
-        // Trame de 3 donn�es pour la Centrale
-        if(count($inputTrameCentrale) !== 3) return -1; // Trame pas compl�te renvoie -1
+        // Trame de 3 données pour la Centrale
+        if(count($inputTrameCentrale) !== 3) return -1; // Trame pas complète renvoie -1
         
         
         $idCentrale = hexdec($inputTrameCentrale[1]);
@@ -347,22 +339,15 @@ class PhysicController extends AbstractController
         // ==================== TRAME ARMOIRE ==================
         // [type;id;pression;horodate;longitude;latitude]
 
-        // Trame de 6 donn�es pour l'Armoire
-        if(count($inputTrameArmoire) !== 6) return -1; // Trame pas compl�te renvoie -1
+        // Trame de 6 données pour l'Armoire
+        if(count($inputTrameArmoire) !== 6) return -1; // Trame pas complète renvoie -1
         
         $idArmoire = hexdec($inputTrameArmoire[1]);
         $pression = $inputTrameArmoire[2];
         $horodatage = $inputTrameArmoire[3];
         $longitude = $inputTrameArmoire[4];
         $latitude = $inputTrameArmoire[5];
-        
-<<<<<<<
 
-=======
-        $doctrine = $this->getDoctrine()->getManager();
-        $result = $doctrine->getRepository(DonneesArmoire::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
->>>>>>>
-        
         $armoire = $this->manager->getRepository(Armoire::class)->findOneById($idCentrale);
         
         if($result){
@@ -378,23 +363,7 @@ class PhysicController extends AbstractController
         if(!isset($armoire)){
             $this->createEsc(0, $idArmoire, null, null);
         }
-    }
-    
-    #[Route('/getDataPiquet', name: 'getDataPiquet')]
-    public function getDataPiquet() : Response {
-
-        $dataPiquet = $this->manager->getRepository(DonneesPiquet::class);
         
-        $obj = $dataPiquet->findBy([],['horodatage' => 'asc']);
-        foreach($obj as $article)
-        {
-            $id[] = $article->getId();
-            $Horodatage = $article->getHorodatage();
-            $horodatage[] = $Horodatage->format('Y/m/d H:i:s');
-            $temp[] = $article->getTemperature();
-            $humi[] = $article->getHumidite();
-        }
-        return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi));
         $donneesArmoire = new DonneesArmoire;
         $donneesArmoire->setIdArmoire($doctrine->getRepository(Armoire::class)->findOneById($idArmoire));
         $donneesArmoire->setPression($pression);
@@ -404,4 +373,5 @@ class PhysicController extends AbstractController
         
         return $donneesArmoire;
     }
+    
 }

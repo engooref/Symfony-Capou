@@ -48,10 +48,10 @@ class DonneesVanne implements JsonSerializable
     {
         return array(
             'id' => $this->getId(),
-            'temperature' => $this->getTemperature(),
+            'debit' => $this->getDebit(),
+            'horodatage' => $this->getHorodatage()->format("Y-m-d H:i:s"),
             'latitude' => $this->getLatitude(),
-            'longitude' => $this->getLongitude(),
-            'debit' => $this->getDebit()    
+            'longitude' => $this->getLongitude(), 
         );
     }
     

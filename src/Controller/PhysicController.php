@@ -37,25 +37,21 @@ class PhysicController extends AbstractController
     
     #[Route('/getData', name: 'getData')]
     public function getData() : Response {
-        if(!isset($_GET['id'], $_GET['type'])) return new Response(Response::HTTP_ERROR);
-        
-        $id = $_GET['id'];
+        if(!isset($_GET['type'], $_GET['id'])) return new Response(Response::HTTP_ERROR);
         $type = $_GET['type'];
+        $id = $_GET['id'];
         $obj = null;
-        
+        // 1 -> Armoire | 2 -> Electrovanne | 3 -> Piquet
         switch (intval($type))
         {
-            case 0:
-                $obj = $this->manager->getRepository(Piquet::class);
-                
-                break;
             case 1:
                 $obj = $this->manager->getRepository(Armoire::class);
-                
                 break;
             case 2:
                 $obj = $this->manager->getRepository(ElectroVanne::class);
-                
+                break;
+            case 3:
+                $obj = $this->manager->getRepository(Piquet::class);
                 break;
         }
         

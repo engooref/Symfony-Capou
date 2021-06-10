@@ -45,10 +45,10 @@ class HomeController extends AbstractController
             'temperature_minimale' => $temperature_min,
             'temperature_maximale' => $temperature_max,
             'donnees_piquet' => $donnees_piquet,
-            'nb_armoire' => $nb_armoire,
-            'donnees_armoire' => $donnees_armoire,
             'nb_vanne' => $nb_vanne,
             'donnees_vanne' => $donnees_vanne,
+            'nb_armoire' => $nb_armoire,
+            'donnees_armoire' => $donnees_armoire,
         ]);
         
     }

@@ -1,3 +1,5 @@
 eclipse.preferences.version=1
+encoding//templates/home/index.html.twig=UTF-8
+encoding//templates/navbar/navbar.html.twig=UTF-8
 encoding/<project>=UTF-8
 separateDerivedEncodings=true

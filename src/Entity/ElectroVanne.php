@@ -29,6 +29,13 @@ class ElectroVanne implements JsonSerializable
      */
     private $idDonneesVanne;
 
+    
+    /**
+     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idElectroVannes")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $idGroupe;
+    
     /**
      * @ORM\ManyToOne(targetEntity=Centrale::class, inversedBy="idElectroVannes")
      * @ORM\JoinColumn(nullable=false)
@@ -40,6 +47,11 @@ class ElectroVanne implements JsonSerializable
         $this->idDonneesVanne = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->getId();
+    }
+    
     public function JsonSerialize()
     {
         return array(
@@ -101,6 +113,19 @@ class ElectroVanne implements JsonSerializable
         return $this;
     }
 
+    public function getIdGroupe(): ?Groupe
+    {
+        return $this->idGroupe;
+    }
+    
+    public function setIdGroupe(?Groupe $idGroupe): self
+    {
+        $this->idGroupe = $idGroupe;
+        
+        return $this;
+    }
+   
+    
     public function getIdCentrale(): ?Centrale
     {
         return $this->idCentrale;

@@ -109,6 +109,7 @@ class OperateurFixtures extends Fixture
             $electrovanne->setId($i);
             $electrovanne->setEtat(1);
             $electrovanne->setIdCentrale($manager->getRepository(Centrale::class)->findOneById(1));
+            $electrovanne->setIdGroupe($manager->getRepository(Groupe::class)->findOneById(1));
             $manager->persist($electrovanne);
             $manager->flush();
             

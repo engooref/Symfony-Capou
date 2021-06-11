@@ -31,7 +31,7 @@ class Piquet implements JsonSerializable
 
     
     /**
-     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idPiquet")
+     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idPiquets")
      * @ORM\JoinColumn(nullable=true)
      */
     private $idGroupe;

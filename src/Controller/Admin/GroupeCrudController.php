@@ -37,6 +37,7 @@ class GroupeCrudController extends AbstractCrudController
             TextField::new('label'),
             AssociationField::new('idOperateur', 'Operateur')->setHelp('Choisir les opérateurs appartenant à ce groupe'),
             AssociationField::new('idPiquets', 'Piquets')->setHelp('Choisir les piquets appartenant à ce groupe'),
+            AssociationField::new('idElectrovannes', 'Electrovannes')->setHelp('Choisir les electrovannes appartenant à ce groupe'),
         ];
     }
     

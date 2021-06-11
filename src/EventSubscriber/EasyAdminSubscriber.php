@@ -6,6 +6,7 @@ use \DateTime;
 use App\Entity\Operateur;
 use App\Entity\Piquet;
 use App\Entity\Groupe;
+use App\Entity\ElectroVanne;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityDeletedEvent;
@@ -100,7 +101,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     
     private function _generateRandomPassword() : ?string
     {
-        // G�n�ration mot de passe crypt�
+        // Génération mot de passe crypté
         $nbChar = 8;
         $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
         srand((double)microtime()*1000000);
@@ -118,14 +119,20 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         if (!($entity instanceof Groupe)) {
             return;
         }
+        // creation operateurs
         foreach($entity->getIdOperateur() as $idOperateur){
             $idOperateur->setIdGroupe($entity);
             $entity->addIdOperateur($idOperateur);
         }
-        
+        // creation piquets
         foreach($entity->getIdPiquets() as $idPiquet){
             $idPiquet->setIdGroupe($entity);
             $entity->addIdPiquet($idPiquet);
+        }
+        // création electrovannes
+        foreach($entity->getIdElectrovannes() as $idElectrovanne){
+            $idElectrovanne->setIdGroupe($entity);
+            $entity->addIdElectrovanne($idElectrovanne);
         }
     }
   
@@ -168,5 +175,19 @@ class EasyAdminSubscriber implements EventSubscriberInterface
             $idPiquet->setIdGroupe($entity);
             $entity->addIdPiquet($idPiquet);
         }
+        
+        //gestion des electrovannes
+        $electrovanneTab = $this->doctrineManager->getRepository(ElectroVanne::class)->findBy(['idGroupe'=>$GroupAct->getId()]);
+        
+        foreach($electrovanneTab as $Electrovanne){ // Pour chaque op�rateurs contenus dans le groupe actuel, on les transfere dans le groupe par d�faut (1)
+            $Electrovanne->setIdGroupe(null);
+            $this->doctrineManager->flush();
+        }
+        
+        foreach($entity->getIdElectrovannes() as $idElectrovanne){ // Pour chaque op�rateurs contenus dans l'entit�, on assigne aux nouveaux groupes les cl�s �trang�res
+            $idElectrovanne->setIdGroupe($entity);
+            $entity->addIdElectrovanne($idElectrovanne);
+        }
+        
     }
 }

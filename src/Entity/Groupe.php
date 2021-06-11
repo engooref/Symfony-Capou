@@ -30,7 +30,7 @@ class Groupe
     private $idPiquets;
 
     /**
-     * @ORM\ManyToMany(targetEntity=ElectroVanne::class)
+     * @ORM\OneToMany(targetEntity=ElectroVanne::class, mappedBy="idGroupe")
      */
     private $idElectrovannes;
 

@@ -19,19 +19,19 @@ class HomeController extends AbstractController
     {
 
         //Piquet
-        $piquet = $this->getDoctrine()->getManager()->getRepository(Piquet::class)->findAll();
+        $piquet = $this->getDoctrine()->getManager()->getRepository(Piquet::class)->findByEtat(1);
         $nb_piquet = count($piquet);
         $donnees_piquet = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['horodatage' => 'desc']);
         $temperature_min = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['temperature' => 'asc'],1);
         $temperature_max = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['temperature' => 'desc'],1);
         
         //Armoire
-        $armoire = $this->getDoctrine()->getManager()->getRepository(Armoire::class)->findAll();
+        $armoire = $this->getDoctrine()->getManager()->getRepository(Armoire::class)->findByEtat(1);
         $nb_armoire = count($armoire);
         $donnees_armoire = $this->getDoctrine()->getManager()->getRepository(DonneesArmoire::class)->findOneBy([],['horodatage' => 'desc']);
-        
+
         //Electrovanne
-        $vanne = $this->getDoctrine()->getManager()->getRepository(ElectroVanne::class)->findAll();
+        $vanne = $this->getDoctrine()->getManager()->getRepository(ElectroVanne::class)->findByEtat(1);
         $nb_vanne = count($vanne);
         $donnees_vanne = $this->getDoctrine()->getManager()->getRepository(DonneesVanne::class)->findOneBy([],['horodatage' => 'desc']);
 
@@ -40,10 +40,10 @@ class HomeController extends AbstractController
             'temperature_minimale' => $temperature_min,
             'temperature_maximale' => $temperature_max,
             'donnees_piquet' => $donnees_piquet,
-            'nb_armoire' => $nb_armoire,
-            'donnees_armoire' => $donnees_armoire,
             'nb_vanne' => $nb_vanne,
             'donnees_vanne' => $donnees_vanne,
+            'nb_armoire' => $nb_armoire,
+            'donnees_armoire' => $donnees_armoire,
         ]);
         
     }

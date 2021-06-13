@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+
 class SecurityController extends AbstractController
 {
     
@@ -32,15 +33,15 @@ class SecurityController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
-            // mot de passe par d�faut lors de la cr�ation de compte
-//             $nbChar = 8;
-//             $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
-//             srand((double)microtime()*1000000);
-//             $password = '';
-//             for($i=0; $i<$nbChar; $i++){
-//                 $password .= $chaine[rand()%strlen($chaine)];
-//             }
-            $password = "capou";
+//             mot de passe par défaut lors de la création de compte
+            $nbChar = 8;
+            $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
+            srand((double)microtime()*1000000);
+            $password = '';
+            for($i=0; $i<$nbChar; $i++){
+                $password .= $chaine[rand()%strlen($chaine)];
+            }
+//             $password = "capou";
             // on encode le mot de passe
             $encoded = $passwordEncoder->encodePassword($user, $password);
             $user->setPassword($encoded);
@@ -57,24 +58,31 @@ class SecurityController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
             
-            $titreMail = "Lyc�e Capou - Demande de cr�ation de votre compte";
+            $titreMail = "Lycée Capou - Votre compte a bien été crée";
             $message = (new \Swift_Message($titreMail))
-            ->setCharset('iso-8859-2')
+            ->setCharset('UTF-8')
             ->setFrom('inscription.lyceecapou@gmail.com')
             ->setTo($user->getEmail())
             ->setBody(
-                $this->renderView(
-                    // templates/emails/registration.html.twig
-                    'registration/demande_creation_email.html.twig'
-                    ),
+                '<h1>Bonjour ! Votre demande de création de compte a bien été prise en compte</h1>
+            <br>
+            <p>Informations de connexion pour vous connecter à votre compte :</p>
+            <p><u>Identifiant :</u> <b>'. $user->getEmail() . '</b></p>
+            <p><u>Mot de passe :</u> <b> '. $password . '</b></p>
+            </p>
+            <br>
+            <p>Attention, vous avez reçu un mot de passe généré aléatoirement, toutefois, nous vous recommandons de le changer suite à votre première connexion sur notre site. Vous devez attendre qu\'un administrateur confirme votre demande pour pouvoir vous connecter.</p>
+            <br>
+            <p>Merci de votre compréhension. Cordialement !</p>',
                 'text/html'
                 );
+            
             try {
                 $mailer->send($message);
-                $this->addFlash('success', 'Votre demande de cr�ation de compte a bien �t� prise en compte, un administrateur va traiter votre demande.');
+                $this->addFlash('success', 'Votre demande de création de compte a bien été prise en compte. Veuillez consulter vos mails.');
                 return $this->redirectToRoute('login');
             } catch (TransportExceptionInterface $e) {
-                throw new CustomUserMessageAuthenticationException("L'envoi du mail a echou�.");
+                throw new CustomUserMessageAuthenticationException("L'envoi du mail a echoué.");
             }
             
             //return $this->redirectToRoute('login');

@@ -7,10 +7,9 @@
     </head>
     <body>
     		{% include 'navbar/navbar.html.twig' %}
-    		<main>
+    		<main >
     		    {% block body %}{% endblock %}
             </main>
-		    
-       	    {% block javascripts %}{{ encore_entry_script_tags('app') }}{% endblock %}
-    </body>
+       	    {% block javascripts %}{{ encore_entry_script_tags('app') }}{% endblock %}  
+    </body >
 </html>

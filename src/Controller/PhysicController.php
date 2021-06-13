@@ -16,11 +16,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use DateTime;
 use DateInterval;
 
 class PhysicController extends AbstractController
 {    
+    private $manager;
+
+    public function __construct(EntityManagerInterface $manager)
+    {
+        $this->manager = $manager;
+    }
+    
     #[Route('/controle', name: 'control')]
     public function control() : Response {
         return $this->render("control/index.html.twig");
@@ -28,26 +37,21 @@ class PhysicController extends AbstractController
     
     #[Route('/getData', name: 'getData')]
     public function getData() : Response {
-        if(!isset($_GET['id'], $_GET['type'])) return new Response(Response::HTTP_ERROR);
-        
-        $id = $_GET['id'];
+        if(!isset($_GET['type'], $_GET['id'])) return new Response(Response::HTTP_ERROR);
         $type = $_GET['type'];
+        $id = $_GET['id'];
         $obj = null;
-        $doctrine = $this->getDoctrine()->getManager();
-        
+        // 1 -> Armoire | 2 -> Electrovanne | 3 -> Piquet
         switch (intval($type))
         {
-            case 0:
-                $obj = $doctrine->getRepository(Piquet::class);
-                
-                break;
             case 1:
-                $obj = $doctrine->getRepository(Armoire::class);
-                
+                $obj = $this->manager->getRepository(Armoire::class);
                 break;
             case 2:
-                $obj = $doctrine->getRepository(ElectroVanne::class);
-                
+                $obj = $this->manager->getRepository(ElectroVanne::class);
+                break;
+            case 3:
+                $obj = $this->manager->getRepository(Piquet::class);
                 break;
         }
         
@@ -67,36 +71,27 @@ class PhysicController extends AbstractController
         
         return new JsonResponse(array("Object" => $obj, "Data" => $dataObj));
     }
-        
-    #[Route('/input', name: 'input')]
-    public function input() : Response
-    {
-        if(isset($_GET['Id'], $_GET['Gps'], $_GET["Bat"], $_GET['Time'], $_GET['IdCen']))
-            if(isset($_GET['Hum'], $_GET['Temp']))
-                $newData = $this->InputPiq();
-            else if(isset($_GET['Deb']))
-                $newData = $this->InputVan();
-            else if(isset($_GET['Press']))
-                $newData = $this->InputSta();
-            else 
-                return new Response(Response::HTTP_ERROR);
-        else
-            return new Response(Response::HTTP_ERROR);
-         
-        if($newData) {
-            $doctrine = $this->getDoctrine()->getManager();
-            $doctrine->persist($newData);
-            $doctrine->flush();
-        }
-        return new Response(Response::HTTP_OK);
 
+    #[Route('/getDataPiquet', name: 'getDataPiquet')]
+    public function getDataPiquet() : Response {
+        
+        $dataPiquet = $this->manager->getRepository(DonneesPiquet::class);
+        
+        $obj = $dataPiquet->findBy([],['horodatage' => 'asc']);
+        foreach($obj as $article)
+        {
+            $id[] = $article->getId();
+            $Horodatage = $article->getHorodatage();
+            $horodatage[] = $Horodatage->format('Y/m/d H:i:s');
+            $temp[] = $article->getTemperature();
+            $humi[] = $article->getHumidite();
+        }
+        return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi));
     }
     
     #[Route('/mapsControl', name: 'mapsControl')]
     public function mapsControl()
     {
-        $doctrine = $this->getDoctrine()->getManager();
-
         $groupe = $this->getUser()->getIdGroupe();
         $piquetDb = $groupe->getIdPiquets();
         $armoireDb = $groupe->getIdArmoires();
@@ -143,169 +138,232 @@ class PhysicController extends AbstractController
        
     }
     
-    #[Route('/registerCen', name: 'registerCen')]
-    public function registerCen() : Response
+    #[Route('/input', name: 'input')]
+    public function input() : Response
     {
+        // ==================== TRAME ==================
+        // M1=type;id;idMaitre;...&M2=type;id;idMaitre;...
+
+        // On traite le nombre de module envoyé à partir du GET
+        $array_nb_module = array();
+        for($i = 1; isset($_GET['M'.strval($i)]); $i++){
+            array_push($array_nb_module, $_GET['M'.strval($i)]);
+        }
+        if(!isset($_GET['M1'])) return new Response(Response::HTTP_NOT_FOUND);
         
-        if(isset($_GET['Id'], $_GET['Ip']))
-            return new Response(Response::HTTP_I_AM_A_TEAPOT);
-            
-            $newObj = new Centrale;
-            
-            $newObj->setId(hexdec($_GET['Id']));
-            $newObj->setIp($_Get['Ip']);
-            
-            $doctrine = $this->getDoctrine()->getManager();
-            $doctrine->persist($newObj);
-            $doctrine->flush();
-            
-            return new Response(Response::HTTP_OK);
-            
-    }
-    
-    private function createEsc($type=null, $id=null, $idCen=null) {
-        
-        if(!isset($type, $id, $idCen))
-            return -1;
-            
-            $newObj = null;
+        // On traite les données du module envoyées
+        $newData = null;
+        foreach($array_nb_module as $module) {
+            $array_data_module = explode(';', $module);
+            $type = $array_data_module[0];  // Length : 0 -> type
+            // 0 -> Armoire | 1 -> Centrale | 2 -> Electrovanne | 3 -> Piquet
             switch (intval($type))
             {
                 case 0:
-                    $newObj = new Piquet;
+                    $newData = $this->InputArmoire($array_data_module);
                     break;
                 case 1:
-                    $newObj = new Armoire;
+                    $this->InputCentrale($array_data_module);
                     break;
                 case 2:
-                    $newObj = new ElectroVanne;
+                    $newData = $this->InputElectrovanne($array_data_module);
                     break;
+                case 3:
+                    $newData = $this->InputPiquet($array_data_module);
+                    break;
+                default:
+                    return new Response(Response::HTTP_NOT_FOUND);
             }
-            
-            $newObj->setId($id);
-            $newObj->setEtat(True);
-            
-            $doctrine = $this->getDoctrine()->getManager();
-            $newObj->setIdCentrale($doctrine->getRepository(Centrale::class)->findById($idCen));
-            
-            $doctrine->persist($newObj);
-            $doctrine->flush();
-            
-            return 0;
+            if((!$newData) || ($newData === -1)) {
+                return new Response(Response::HTTP_NOT_ACCEPTABLE);
+            }
+            $this->manager->persist($newData);
+            $this->manager->flush();
+        }
+        return new Response(Response::HTTP_OK);
+    }
+    
+    private function createEsc($type=null, $id=null, $idCen=null, $ipCen=null) {
+        
+        if(!isset($type) && !isset($id) && !isset($idCen) && !isset($ipCen)) {
+            return -1;
+        }
+
+        $newObj = null;
+        
+        // 0 -> Armoire | 1 -> Centrale | 2 -> Electrovanne | 3 -> Piquet
+        switch (intval($type))
+        {
+            case 0:
+                $newObj = new Armoire;
+                $newObj->setId($id);
+                $newObj->setEtat(True);
+                break;    
+            case 1:
+                $newObj = new Centrale;
+                $newObj->setId($id);
+                $newObj->setIp($ipCen);
+                break;    
+            case 2:
+                $newObj = new ElectroVanne;
+                $newObj->setId($id);
+                $newObj->setEtat(True);
+                $newObj->setIdCentrale($this->manager->getRepository(Centrale::class)->findOneById($idCen));
+                break;    
+            case 3:
+                $newObj = new Piquet;
+                $newObj->setId($id);
+                $newObj->setEtat(True);
+                $newObj->setIdCentrale($this->manager->getRepository(Centrale::class)->findOneById($idCen));
+                break;
+                  
+        }
+
+        $this->manager->persist($newObj);
+        $this->manager->flush();
+        
+        return 0;
     }
     
     
-    private function InputPiq() {
+    private function InputPiquet($inputTramePiquet) {
+        // ==================== TRAME PIQUET ==================
+        // [type;id;idMaitre;batterie;horodate;temperature;longitude;latitude;[humidite1:humidite2:humidite3:...]]
         
-        $idCen = hexdec($_GET['IdCen']);
-        $idPiq = hexdec($_GET['Id']);
-        $gps = $_GET['Gps'];
-        $bat = $_GET["Bat"];
-        $hum = explode(":", $_GET['Hum']);
-        $temp = $_GET['Temp'];
-        $temps = $_GET['Time'];
+        // Trame de 9 données pour le Piquet         
+        if(count($inputTramePiquet) !== 9) return -1; // Trame pas complète renvoie -1
         
-        $doctrine = $this->getDoctrine()->getManager();
-        $result = $doctrine->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d:m:Y:H:i:s", $temps));
+        $idPiquet = hexdec($inputTramePiquet[1]);
+        $idCentrale = hexdec($inputTramePiquet[2]);
+        $batterie =  $inputTramePiquet[3];
+        $horodatage = $inputTramePiquet[4];
+        $temperature = $inputTramePiquet[5];
+        $longitude = $inputTramePiquet[6];
+        $latitude = $inputTramePiquet[7];
+        $humidite = explode(':', $inputTramePiquet[8]);
+        
+        $result = $this->manager->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         
         if($result){
             foreach($result as $val){
-                if($val->getIdPiquet()->getId() == $idPiq){
+                if($val->getIdPiquet()->getId() === $idPiquet){
                     return -1;
                 }
             }
         }
             
-        $piquet = $doctrine->getRepository(Piquet::class)
-                           ->findOneById($idPiq);
-        
-        $centrale = $doctrine->getRepository(Piquet::class)
-                             ->findOneById($idCen);
+         $piquet = $this->manager->getRepository(Piquet::class)->findOneById($idPiquet);
        
-        if(!isset($centrale)){
-               return -1;
-        }
-       
-        if(!isset($piquet)){
-            $this->createEsc(0, $idPiq, $idCen);
-        }
+         if(!isset($piquet)){
+             $this->createEsc(3, $idPiquet, $idCentrale, null);
+         }
+         
+        $donneesPiquet = new DonneesPiquet;
+        $donneesPiquet->setIdPiquet($this->manager->getRepository(Piquet::class)->findOneById($idPiquet));
+        $donneesPiquet->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+        $donneesPiquet->setHumidite($humidite);
+        $donneesPiquet->setTemperature($temperature);
+        $donneesPiquet->setBatterie($batterie);
+        $donneesPiquet->setLatitude($latitude);
+        $donneesPiquet->setLongitude($longitude);
         
-        $donneesPiq = new DonneesPiquet;
-        $donneesPiq->setGps($gps);
-        $donneesPiq->setHumidite($hum);
-        $donneesPiq->setTemperature($temp);
-        $donneesPiq->setHorodatage(date_create_from_format("d:m:Y:H:i:s", $temps));
-        $donneesPiq->setIdPiquet($doctrine->getRepository(Piquet::class)
-                                           ->findOneById($idPiq));
-        $donneesPiq->setBatterie($bat);
-        ;
-        return $donneesPiq;
+        return $donneesPiquet;
     }
     
-    private function InputSta() {
+    private function InputElectrovanne($inputTrameElectrovanne) {
+        // ==================== TRAME ELECTROVANNE ==================
+        // [type;id;idMaitre;debit;horodate;longitude;latitude]
         
-        $idSta = hexdec($_GET['Id']);
-        $gps = $_GET['Gps'];
-        $temps = $_GET['Time'];
-        $press = $_GET['Press'];
+        // Trame de 7 données pour l'ElectroVanne
+        if(count($inputTrameElectrovanne) !== 7) return -1; // Trame pas complète renvoie -1
         
-        $doctrine = $this->getDoctrine()->getManager();
-        $Armoire = $doctrine->getRepository(Armoire::class)
-                            ->findOneById($idSta);
+        $idElectroVanne = hexdec($inputTrameElectrovanne[1]);
+        $idCentrale = hexdec($inputTrameElectrovanne[2]);
+        $debit =  $inputTrameElectrovanne[3];
+        $horodatage = $inputTrameElectrovanne[4];
+        $longitude = $inputTrameElectrovanne[5];
+        $latitude = $inputTrameElectrovanne[6];
         
-        if(!isset($Armoire)){
-            $this->createEsc(1, $idSta);
+        $result = $this->manager->getRepository(DonneesVanne::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+        
+        if($result){
+            foreach($result as $val){
+                if($val->getIdVanne()->getId() === $idElectroVanne){
+                    return -1;
+                }
+            }
         }
         
-        $donneesSta = new DonneesArmoire;
-        $donneesSta->setGps($gps);
-        $donneesSta->setPression($press);
-        $donneesSta->setHorodatage(date_create_from_format("d:m:Y:H:i:s", $temps));
-        $donneesSta->setIdArmoire($doctrine->getRepository(Armoire::class)
-                                           ->findOneById($idSta));
+        $electrovanne = $this->manager->getRepository(ElectroVanne::class)->findOneById($idElectroVanne);
         
-        return $donneesSta;
-    }
-    
-    private function InputVan() {
-        
-        $idVan = hexdec($_GET['Id']);
-        $gps = $_GET['Gps'];
-        $temps = $_GET['Time'];
-        $deb = $_GET['Deb'];
-        
-        $doctrine = $this->getDoctrine()->getManager();
-        $Armoire = $doctrine->getRepository(ElectroVanne::class)
-        ->findOneById($idVan);
-        
-        if(!isset($Armoire)){
-            $this->createEsc(2, $idVan);
+        if(!isset($electrovanne)){
+            $this->createEsc(2, $idElectroVanne, $idCentrale, null);
         }
         
-        $donneesVan = new DonneesVanne;
-        $donneesVan->setGps($gps);
-        $donneesVan->setDebit($deb);
-        $donneesVan->setHorodatage(date_create_from_format("d:m:Y:H:i:s", $temps));
-        $donneesVan->setIdVanne($doctrine->getRepository(ElectroVanne::class)
-            ->findOneById($idVan));
+        $donneesVanne = new DonneesVanne;
+        $donneesVanne->setIdVanne($this->manager->getRepository(ElectroVanne::class)->findOneById($idElectroVanne));
+        $donneesVanne->setDebit($debit);
+        $donneesVanne->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+        $donneesVanne->setLatitude($latitude);
+        $donneesVanne->setLongitude($longitude);
         
-        return $donneesVan;
+        return $donneesVanne;
     }
     
-    #[Route('/getDataPiquet', name: 'getDataPiquet')]
-    public function getDataPiquet() : Response {
+    private function InputCentrale($inputTrameCentrale) {
+        // ==================== TRAME CENTRALE ==================
+        // [type;id;ip]
+        
+        // Trame de 3 données pour la Centrale
+        if(count($inputTrameCentrale) !== 3) return -1; // Trame pas complète renvoie -1
+        
+        
+        $idCentrale = hexdec($inputTrameCentrale[1]);
+        $ipCentrale = $inputTrameCentrale[2];
 
-        $doctrine = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class);
+        $centrale = $this->manager->getRepository(Centrale::class)->findOneById($idCentrale);
         
-        $obj = $doctrine->findAll();
-        foreach($obj as $article)
-        {
-            $id[] = $article->getId();
-            $Horodatage = $article->getHorodatage();
-            $horodatage[] = $Horodatage->format('Y/m/d H:i:s');
-            $temp[] = $article->getTemperature();
-            $humi[] = $article->getHumidite();
-        }
-        return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi));
+         if(!isset($centrale)){
+             $this->createEsc(1, $idCentrale, null, $ipCentrale);
+         }
     }
+    private function InputArmoire($inputTrameArmoire) {
+        // ==================== TRAME ARMOIRE ==================
+        // [type;id;pression;horodate;longitude;latitude]
+
+        // Trame de 6 données pour l'Armoire
+        if(count($inputTrameArmoire) !== 6) return -1; // Trame pas complète renvoie -1
+        
+        $idArmoire = hexdec($inputTrameArmoire[1]);
+        $pression = $inputTrameArmoire[2];
+        $horodatage = $inputTrameArmoire[3];
+        $longitude = $inputTrameArmoire[4];
+        $latitude = $inputTrameArmoire[5];
+
+        $armoire = $this->manager->getRepository(Armoire::class)->findOneById($idCentrale);
+        
+        if($result){
+            foreach($result as $val){
+                if($val->getIdArmoire()->getId() === $idArmoire){
+                    return -1;
+                }
+            }
+        }
+        
+        $armoire = $this->manager->getRepository(Armoire::class)->findOneById($idArmoire);
+        
+        if(!isset($armoire)){
+            $this->createEsc(0, $idArmoire, null, null);
+        }
+        
+        $donneesArmoire = new DonneesArmoire;
+        $donneesArmoire->setIdArmoire($this->manager->getRepository(Armoire::class)->findOneById($idArmoire));
+        $donneesArmoire->setPression($pression);
+        $donneesArmoire->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+        $donneesArmoire->setLatitude($latitude);
+        $donneesArmoire->setLongitude($longitude);
+        
+        return $donneesArmoire;
+    }
+    
 }

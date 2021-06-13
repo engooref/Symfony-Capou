@@ -39,7 +39,7 @@ var chartContainerTemp = new Chart(ctx1, {
 		]
 	},
 	options: {
-		responsive : true,
+		responsive:true,
 		scales: {
 			x: {
 				grid: {

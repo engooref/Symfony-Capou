@@ -32,11 +32,11 @@ class ResetPasswordController extends AbstractController
             $user->setResetToken(null);
             $entityManager->persist($user);
             $entityManager->flush();
-            $this->addFlash('success', 'Votre mot de passe a bien été modifié');
+            $this->addFlash('success', 'Votre mot de passe a bien Ã©tÃ© modifiÃ©. Vous pouvez maintenant vous connecter.');
             return $this->redirectToRoute('login');
         }
         return $this->render('reset_password/index.html.twig', [
-            'form' => $form->createView(),
+            'resetPasswordform' => $form->createView(),
             'controller_name' => 'ResetPasswordController',
         ]);
     }
@@ -60,7 +60,7 @@ class ResetPasswordController extends AbstractController
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($user);
                 $entityManager->flush();
-                $this->addFlash('success', 'Votre mot de passe a bien été modifié');
+                $this->addFlash('success', 'Votre mot de passe a bien Ã©tÃ© modifiÃ©. Vous pouvez maintenant vous connecter.');
                 return $this->redirectToRoute('resetPasswordWithoutToken');
             }
         }
@@ -68,7 +68,7 @@ class ResetPasswordController extends AbstractController
             return $this->redirectToRoute('login');
         }
         return $this->render('reset_password/index.html.twig', [
-            'form' => $form->createView(),
+            'resetPasswordform' => $form->createView(),
             'controller_name' => 'ResetPasswordController',
         ]);
     }

@@ -8,25 +8,20 @@
       		<span class="navbar-toggler-icon"></span>
     	</button>
     	<div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mx-auto">
-			{% if app.user %}
-
-            	<li class="nav-item">
-            		<a class="nav-link h5" href="{{ path('home') }}"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a>
-            	</li>
+            <ul class="navbar-nav mx-auto"
             	<li class="nav-item">
             		<a class="nav-link h5" href="{{ path('analysis') }}"><i class="fas fa-chart-line"></i> Analyse des données</a
             	</li>
+            	{% if app.user %}
             	<li class="nav-item">
             		<a class="nav-link h5" href="{{ path('control') }}"><i class="fas fa-grip-horizontal"></i> Contrôle du système</a>
             	</li>
-			{% endif %}
-
+            	{% endif %}
             </ul>
          	{% if not app.user %}
-			<form class="d-flex" action="{{ path('login') }}">
-				<button class="btn btn-outline-primary mb-0" type="submit"><i class="fas fa-user mr-2"></i> Se connecter</button>
- 			</form>
+    			<form class="d-flex" action="{{ path('login') }}">
+    				<button class="btn btn-outline-primary mb-0" type="submit"><i class="fas fa-user mr-2"></i> Se connecter</button>
+     			</form>
  			{% else %}
  			<li class="nav-item dropdown d-flex">
         		<a class="nav-link h5 dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">

@@ -1,66 +1,97 @@
 {% extends 'base.html.twig' %}
 {% block title %}Accueil{% endblock %}
 {% block body %}
-
-<div class="row">
-    <div class="col-sm-4 jutify-content-center">
-        <div class="card border-dark">
-        	<div class="card-body">
-    			<center><u><h5 class="card-title">Piquets</h5></u></center>
-    			<p class="card-text"><i class="fas fa-circle text-success"></i> {{ nb_piquet }} piquets connectés</p>
-    			<p class="card-text">Date de la dernière donnée reçue : {{ donnees_piquet.horodatage.format('Y/m/d H:i:s') }}</p>
-    			<p class="card-text">Dernière température reçue : {{ donnees_piquet.temperature }} °C</p>
-    			<p class="card-text">Température minimale : {{ temperature_minimale.temperature }} °C</p>
-    			<p class="card-text">Température maximale : {{ temperature_maximale.temperature }} °C</p>
-    			<table class="table text-center table-borderless">
-    				<tr class="card-text">Derniers pourcentage d'humidité reçus : </tr>
-    				{% for humidite in donnees_piquet.humidite %}
-    					<td>{{ humidite }} %</td>
-					{% endfor %}
-	            </table>
-          	</div>
-        </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="card border-dark">
-          	<div class="card-body">
-            	<center><u><h5 class="card-title">Electrovannes</h5></u></center>
-            	<p class="card-text">Date de la dernière donnée reçue : {{ donnees_vanne.horodatage.format('Y/m/d H:i:s') }}</p>
-            	<p class="card-text">Dernières coordonnées : 
-            		<table class="table text-center">
+<div class="container-fluid" style="padding-bottom:100px;">
+    <div class="row">
+        <div class="col-sm-4 col-md-4" style="padding-top:10px;">
+            <div class="card border-dark">
+            	<div class="card-body">
+        			<center><u><h5 class="card-title">Piquets</h5></u></center>
+        			{% if nb_piquet == 0 %}
+        			<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">{{ nb_piquet }} piquet connecté</b></p>
+        			{% elseif nb_piquet == 1 %}
+        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_piquet }}</b> piquet connecté</p>
+        			{% else %}
+        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_piquet }}</b> piquets connectés</p>
+        			{% endif %}
+        			<p class="card-text">Date de la dernière donnée reçue : {% if donnees_piquet is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_piquet.horodatage.format('Y/m/d H:i:s') }}</b>{% endif %}</p>
+        			<p class="card-text">Dernière température reçue : {% if donnees_piquet is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_piquet.temperature }} °C</b>{% endif %}</p>
+        			<p class="card-text">Température minimale : {% if temperature_minimale is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ temperature_minimale.temperature }} °C</b>{% endif %}</p>
+        			<p class="card-text">Température maximale : {% if temperature_minimale is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ temperature_maximale.temperature }} °C</b>{% endif %}</p>
+        			<table class="table text-center">
+        				<tr class="card-text">Derniers pourcentage d'humidité reçus: </tr>
+        				{% if donnees_piquet is null%}
+                        	<tr><b style="color:red;">Aucune donnée</b></tr>
+                        {%else%}
             				<tr>
-            					<th> Latitude </th>
-            					<th> Longitude </th>
+            					<th class="card-text"> 1 </th>
+            					<th class="card-text"> 2 </th>
+            					<th class="card-text"> 3 </th>
+            					<th class="card-text"> 4 </th>
             				</tr>
             				<tr>
-            					<td>{{ donnees_vanne.latitude }}</td>
-            					<td>{{ donnees_vanne.longitude }}</td>
-            				</tr>
+                                {% for humidite in donnees_piquet.humidite %}
+            						<td class="card-text">{{ humidite }} %</td>
+            				    {% endfor %}
+        				    </tr>
+    					{% endif %}
     	            </table>
-    	    	</p>
-          	</div>
+              	</div>
+            </div>
         </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="card border-dark">
-          	<div class="card-body">
-            	<center><u><h5 class="card-title">Armoire</h5></u></center>
-            	<p class="card-text">Date de la dernière donnée reçue : {{ donnees_armoire.horodatage.format('Y/m/d H:i:s') }}</p>
-            	<p class="card-text">Dernières coordonnées : 
+        <div class="col-sm-4 col-md-4" style="padding-top:10px;">
+            <div class="card border-dark">
+              	<div class="card-body">
+                	<center><u><h5 class="card-title">Electrovannes</h5></u></center>
+                	{% if nb_vanne == 0 %}
+        			<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">{{ nb_vanne }} électrovanne connectée</b></p>
+        			{% elseif nb_vanne == 1 %}
+        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_vanne }}</b> électrovanne connectée</p>
+        			{% else %}
+        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_vanne }}</b> électrovannes connectées</p>
+        			{% endif %}
+                	<p class="card-text">Date de la dernière donnée reçue: {% if donnees_vanne is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_vanne.horodatage.format('Y/m/d H:i:s') }}</b>{% endif %}</p>
             		<table class="table text-center">
-            				<tr>
-            					<th> Latitude </th>
-            					<th> Longitude </th>
-            				</tr>
-            				<tr>
-            					<td>{{ donnees_armoire.latitude }}</td>
-            					<td>{{ donnees_armoire.longitude }}</td>
-            				</tr>
+            			<tr class="card-text">Dernières coordonnées: </tr>
+        				<tr>
+        					<th class="card-text"> Latitude </th>
+        					<th class="card-text"> Longitude </th>
+        				</tr>
+        				<tr>
+        					<td class="card-text">{% if donnees_vanne is null%}<b style="color:red;">Aucune donnée</b>{%else%}{{ donnees_vanne.latitude }}{% endif %}</td>
+        					<td class="card-text">{% if donnees_vanne is null%}<b style="color:red;">Aucune donnée</b>{%else%}{{ donnees_vanne.longitude }}{% endif %}</td>
+        				</tr>
     	            </table>
-    	    	</p>
-          	</div>
+              	</div>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4" style="padding-top:10px;">
+            <div class="card border-dark">
+              	<div class="card-body">
+                	<center><u><h5 class="card-title">Armoire</h5></u></center>
+                	{% if nb_armoire == 0 %}
+        			<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">{{ nb_armoire }} armoire connectée</b></p>
+        			{% elseif nb_armoire == 1 %}
+        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_armoire }}</b> armoire connectée</p>
+        			{% else %}
+        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_armoire }}</b> armoires connectées</p>
+        			{% endif %}
+                	<p class="card-text">Date de la dernière donnée reçue: {% if donnees_armoire is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_armoire.horodatage.format('Y/m/d H:i:s') }}</b>{% endif %}</p>
+            		<table class="table text-center">
+            		<tr class="card-text">Dernières coordonnées: </tr>
+        				<tr>
+        					<th class="card-text"> Latitude </th>
+        					<th class="card-text"> Longitude </th>
+        				</tr>
+        				<tr>
+        					<td class="card-text">{% if donnees_armoire is null%}<b style="color:red;">Aucune donnée</b>{%else%}{{ donnees_armoire.latitude }}{% endif %}</td>
+        					<td class="card-text">{% if donnees_armoire is null%}<b style="color:red;">Aucune donnée</b>{%else%}{{ donnees_armoire.longitude }}{% endif %}</td>
+        				</tr>
+    	            </table>
+              	</div>
+        	</div>
     	</div>
-	</div>
+    </div>
 </div>
-<img src="{{ asset('img/herbe.png') }}" alt="Logo Lycée Capou" width="100%" height="20%" class="d-inline-block">
+<img src="{{ asset('img/herbe.png') }}" width="100%" class="d-inline-block fixed-bottom">
 {% endblock %}

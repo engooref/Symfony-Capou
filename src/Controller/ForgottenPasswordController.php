@@ -25,7 +25,7 @@ class ForgottenPasswordController extends AbstractController
         
         // Si le formulaire est valide
         if ($form->isSubmitted() && $form->isValid()) {
-            // On récupère les données
+            // On rï¿½cupï¿½re les donnï¿½es
             $donnees = $form->getData();
             
             // On cherche un utilisateur ayant cet e-mail
@@ -37,13 +37,13 @@ class ForgottenPasswordController extends AbstractController
                 $this->addFlash('danger', 'Cette adresse e-mail est inconnue');
                 
                 // On retourne sur la page de connexion
-                return $this->redirectToRoute('login');
+                return $this->redirectToRoute('forgottenpassword');
             }
             
-            // On génère un token
+            // On gï¿½nï¿½re un token
             $token = $tokenGenerator->generateToken();
             
-            // On essaie d'écrire le token en base de données
+            // On essaie d'ï¿½crire le token en base de donnï¿½es
             try{
                 $user->setResetToken($token);
                 $entityManager = $this->getDoctrine()->getManager();
@@ -54,11 +54,11 @@ class ForgottenPasswordController extends AbstractController
                 return $this->redirectToRoute('login');
             }
             
-            // On génère l'URL de réinitialisation de mot de passe
+            // On gï¿½nï¿½re l'URL de rï¿½initialisation de mot de passe
             $url = $this->generateUrl('resetpassword', array('token' => $token), UrlGeneratorInterface::ABSOLUTE_URL);
             
-            // On génère l'e-mail
-            $message = (new \Swift_Message('Mot de passe oublie'))
+            // On gï¿½nï¿½re l'e-mail
+            $message = (new \Swift_Message('Mot de passe oubliÃ©'))
             ->setFrom('inscription.lyceecapou@gmail.com')
             ->setTo($user->getEmail())
             ->setBody(
@@ -73,11 +73,11 @@ class ForgottenPasswordController extends AbstractController
             // On envoie l'e-mail
             $mailer->send($message);
             
-            // On crée le message flash de confirmation
-            $this->addFlash('message', 'E-mail de reinitialisation du mot de passe envoye !');
+            // On crï¿½e le message flash de confirmation
+            $this->addFlash('message', 'Merci de consulter vos mails. Un mail permettant de modifier votre mot de passe vient de vous Ãªtre envoyÃ©');
             
             // On redirige vers la page de login
-            //return $this->redirectToRoute('login');
+            return $this->redirectToRoute('login');
         }
         return $this->render('forgotten_password/index.html.twig', [
             'current_menu' => 'active_forgotten_password',

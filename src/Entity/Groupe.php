@@ -25,12 +25,12 @@ class Groupe
     private $idOperateur;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Piquet::class)
+     * @ORM\OneToMany(targetEntity=Piquet::class, mappedBy="idGroupe")
      */
     private $idPiquets;
 
     /**
-     * @ORM\ManyToMany(targetEntity=ElectroVanne::class)
+     * @ORM\OneToMany(targetEntity=ElectroVanne::class, mappedBy="idGroupe")
      */
     private $idElectrovannes;
 
@@ -38,6 +38,11 @@ class Groupe
      * @ORM\ManyToMany(targetEntity=Armoire::class)
      */
     private $idArmoires;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $label;
 
     public function __construct()
     {
@@ -69,7 +74,7 @@ class Groupe
      */
     public function getIdOperateur(): Collection
     {
-        return $this->idOperateur;
+        return $this->idOperateur;  
     }
 
     public function addIdOperateur(operateur $idOperateur): self
@@ -162,6 +167,18 @@ class Groupe
     public function removeIdArmoire(Armoire $idArmoire): self
     {
         $this->idArmoires->removeElement($idArmoire);
+
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
 
         return $this;
     }

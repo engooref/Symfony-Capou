@@ -4,20 +4,33 @@ namespace App\EventSubscriber;
 
 use \DateTime;
 use App\Entity\Operateur;
+use App\Entity\Piquet;
+use App\Entity\Groupe;
+use App\Entity\ElectroVanne;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
+use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
+use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityDeletedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 //use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class EasyAdminSubscriber implements EventSubscriberInterface
+
+class EasyAdminSubscriber implements EventSubscriberInterface 
 {
     private $passwordEncoder;
     private $mailer;
+    private $doctrineManager;
     
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer, EntityManagerInterface $manager, SessionInterface $session)
     {
         $this->passwordEncoder = $passwordEncoder;
         $this->mailer = $mailer;
+        $this->doctrineManager = $manager;
+        $this->session = $session;
     }
     
     
@@ -25,7 +38,8 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     {
         return [
             BeforeEntityPersistedEvent::class => ['createUser'],
-            //BeforeEntityUpdatedEvent::class => ['updateUser'],
+            BeforeEntityPersistedEvent::class => ['createGroup'],
+            BeforeEntityUpdatedEvent::class => ['updateGroupe'],
         ];
     }
     
@@ -40,7 +54,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
             return;
         }
 
-        /* Génération de mot de passe */
+        /* Gï¿½nï¿½ration de mot de passe */
         $password = $this->_generateRandomPassword();
         
         /* Cryptage de mot de passe */
@@ -58,36 +72,36 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         $entity->setCreatedAt(new DateTime());
         
         
-        $titreMail = "Lycée Capou - Votre compte a bien été créé par un administrateur";
+        $titreMail = "Lycï¿½e Capou - Votre compte a bien ï¿½tï¿½ crï¿½ï¿½ par un administrateur";
         $message = (new \Swift_Message($titreMail))
         ->setCharset('ISO-8859-1')
         ->setFrom('inscription.lyceecapou@gmail.com')
         ->setTo($entity->getEmail())
         ->setBody(
-            '<h1>Bonjour ! Un administrateur vous a créé un compte sur le site Lycée Capou - Irrigation Connectée</h1>
+            '<h1>Bonjour ! Un administrateur vous a crï¿½ï¿½ un compte sur le site Lycï¿½e Capou - Irrigation Connectï¿½e</h1>
             <br>
-            <p>Informations de connexion pour vous connecter à votre compte :</p>
+            <p>Informations de connexion pour vous connecter ï¿½ votre compte :</p>
             <p><u>Identifiant :</u> <b>'. $entity->getEmail() . '</b></p>
             <p><u>Mot de passe :</u> <b> '. $password . '</b></p>
             </p>
             <br>
-            <p>Attention, vous avez reçu un mot de passe généré aléatoirement, toutefois, nous vous recommandons de le changer suite à votre première connexion sur notre site.</p>
+            <p>Attention, vous avez reï¿½u un mot de passe gï¿½nï¿½rï¿½ alï¿½atoirement, toutefois, nous vous recommandons de le changer suite ï¿½ votre premiï¿½re connexion sur notre site.</p>
             <br>
-            <p>Merci de votre compréhension. Cordialement !</p>',
+            <p>Merci de votre comprï¿½hension. Cordialement !</p>',
             'text/html'
             );
         
         try {
             $this->mailer->send($message);
         } catch (TransportExceptionInterface $e) {
-            throw new CustomUserMessageAuthenticationException("L'envoi du mail a echoué.");
+            throw new CustomUserMessageAuthenticationException("L'envoi du mail a echouï¿½.");
         }
         
     }
     
     private function _generateRandomPassword() : ?string
     {
-        // Génération mot de passe crypté
+        // GÃ©nÃ©ration mot de passe cryptÃ©
         $nbChar = 8;
         $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
         srand((double)microtime()*1000000);
@@ -98,17 +112,82 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         return $generatedPassword;
     }
     
-/*    
-    public function updateUser(BeforeEntityPersistedEvent $event)
+    public function createGroup(BeforeEntityPersistedEvent $event)
     {
         $entity = $event->getEntityInstance();
         
-        if (!($entity instanceof Operator)) {
+        if (!($entity instanceof Groupe)) {
+            return;
+        }
+        // creation operateurs
+        foreach($entity->getIdOperateur() as $idOperateur){
+            $idOperateur->setIdGroupe($entity);
+            $entity->addIdOperateur($idOperateur);
+        }
+        // creation piquets
+        foreach($entity->getIdPiquets() as $idPiquet){
+            $idPiquet->setIdGroupe($entity);
+            $entity->addIdPiquet($idPiquet);
+        }
+        // crÃ©ation electrovannes
+        foreach($entity->getIdElectrovannes() as $idElectrovanne){
+            $idElectrovanne->setIdGroupe($entity);
+            $entity->addIdElectrovanne($idElectrovanne);
+        }
+    }
+  
+    public function updateGroupe(BeforeEntityUpdatedEvent $event)
+    {
+        $entity = $event->getEntityInstance(); // On rï¿½cupï¿½re l'instance de l'entitï¿½
+        if (!($entity instanceof Groupe)) { // On test si l'entitï¿½ est bien une instance de Groupe
             return;
         }
         
-        $slug = $this->slugger->slugify($entity->getTitle());
-        $entity->setSlug($slug);
+        //dump($entity);die();    
+        
+        $defaultGroup = $this->doctrineManager->getRepository(Groupe::class)->findOneById('1'); // Le groupe considï¿½rï¿½ "par dï¿½faut" est le groupe avec comme id=1
+        
+        //gestion des opÃ©rateurs
+        $GroupAct = $this->doctrineManager->getRepository(Groupe::class)->findOneById($entity->getId()); // Le groupe actuel est l'id de l'entitï¿½
+        
+        $operatorTab = $this->doctrineManager->getRepository(Operateur::class)->findBy(['idGroupe'=>$GroupAct->getId()]); 
+        
+        foreach($operatorTab as $Operator){ // Pour chaque opï¿½rateurs contenus dans le groupe actuel, on les transfere dans le groupe par dï¿½faut (1)
+            $Operator->setIdGroupe($defaultGroup);
+            $this->doctrineManager->flush();
+        }
+       
+        foreach($entity->getIdOperateur() as $idOperateur){ // Pour chaque opï¿½rateurs contenus dans l'entitï¿½, on assigne aux nouveaux groupes les clï¿½s ï¿½trangï¿½res
+            $idOperateur->setIdGroupe($entity);
+            $entity->addIdOperateur($idOperateur);
+        }
+        
+        
+        //gestion des piquets
+        $piquetTab = $this->doctrineManager->getRepository(Piquet::class)->findBy(['idGroupe'=>$GroupAct->getId()]);
+        
+        foreach($piquetTab as $Piquet){ // Pour chaque opï¿½rateurs contenus dans le groupe actuel, on les transfere dans le groupe par dï¿½faut (1)
+            $Piquet->setIdGroupe(null);
+            $this->doctrineManager->flush();
+        }
+        
+        foreach($entity->getIdPiquets() as $idPiquet){ // Pour chaque opï¿½rateurs contenus dans l'entitï¿½, on assigne aux nouveaux groupes les clï¿½s ï¿½trangï¿½res
+            $idPiquet->setIdGroupe($entity);
+            $entity->addIdPiquet($idPiquet);
+        }
+        
+        //gestion des electrovannes
+        $electrovanneTab = $this->doctrineManager->getRepository(ElectroVanne::class)->findBy(['idGroupe'=>$GroupAct->getId()]);
+        
+        foreach($electrovanneTab as $Electrovanne){ // Pour chaque opï¿½rateurs contenus dans le groupe actuel, on les transfere dans le groupe par dï¿½faut (1)
+            $Electrovanne->setIdGroupe(null);
+            $this->doctrineManager->flush();
+        }
+        
+        foreach($entity->getIdElectrovannes() as $idElectrovanne){ // Pour chaque opï¿½rateurs contenus dans l'entitï¿½, on assigne aux nouveaux groupes les clï¿½s ï¿½trangï¿½res
+            $idElectrovanne->setIdGroupe($entity);
+            $entity->addIdElectrovanne($idElectrovanne);
+        }
+        
     }
-*/
 }

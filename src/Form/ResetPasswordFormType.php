@@ -40,7 +40,6 @@ class ResetPasswordFormType extends AbstractType
             // this is read and encoded in the controller
             'mapped' => false,
         ])
-        ->add('envoyer', SubmitType::class)
         ;
     }
     

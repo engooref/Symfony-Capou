@@ -25,8 +25,10 @@ import VectorSource from 'ol/source/Vector';
 				map.removeLayer(map.getLayers().item(i+1));
 			}
 		
-		
-		AddToMap(data, 0);
+		// Piquet -> 3
+		AddToMap(data, 3);
+		//AddToMap(data, 2);
+		//AddToMap(data, 1);
 		
 	}
 
@@ -60,7 +62,7 @@ import VectorSource from 'ol/source/Vector';
             	'map',
         		view: new View({
         			center: 
-        				fromLonLat([1.31, 44.05]),
+        				fromLonLat([1.3132516617440526, 44.03227977777603]),
         				maxZoom: 19,
         				zoom: 17
         		})
@@ -75,14 +77,14 @@ import VectorSource from 'ol/source/Vector';
 			    											return layer;}).get('type');
 			    var gps = map.forEachLayerAtPixel(event.pixel, function (layer) {
 															return layer;}).get('gps');
-				
-			    if(type == 0) var nameType = "Piquet";
-				else if(type == 1) var nameType = "Station";
+				// 1 -> Armoire | 2 -> Electrovanne | 3 -> Piquet
+			    if(type == 3) var nameType = "Piquet";
 				else if(type == 2) var nameType = "Electrovanne";
+				else if(type == 1) var nameType = "Armoire";
 					
 				$("#id").text(id);
 				$("#gps").text(gps);
-				var data = "id=" + id + "&type=" + type;
+				var data = "type=" + type + "&id=" + id;
 				
                 $.get({
         			url  : '/getData',

@@ -96,10 +96,10 @@ class PhysicController extends AbstractController
         $piquetDb = $groupe->getIdPiquets();
         $armoireDb = $groupe->getIdArmoires();
         $electrovanneDb = $groupe->getIdElectrovannes();
-        
+        dump($piquetDb, $armoireDb, $electrovanneDb);
         $piquet = array();
         $armoire = array();
-        $electroVanne = array();
+        $electrovanne = array();
         
         for($i = 0; $i < count($piquetDb); $i++){
             if($piquetDb[$i]->getEtat()){
@@ -109,8 +109,8 @@ class PhysicController extends AbstractController
                 $coordsPiq["id"] = $piquetDb[$i]->getId();
                 $coordsPiq["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
                 array_push($piquet, $coordsPiq);
-                }
             }
+        }
         
         for($i = 0; $i < count($armoireDb); $i++){
             if($armoireDb[$i]->getEtat()){
@@ -131,10 +131,11 @@ class PhysicController extends AbstractController
                 $coordsElec["id"] = $electrovanneDb[$i]->getId();
                 $coordsElec["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
                 array_push($electrovanne, $coordsElec);
-                }
             }
-        
-            return new JsonResponse(array("1" => $armoire, "2" => $electroVanne, "3" => $piquet));
+        }
+        //dump($piquet, $armoire, $electrovanne);
+        die();
+        return new JsonResponse(array("1" => $armoire, "2" => $electroVanne, "3" => $piquet));
        
     }
     
@@ -174,7 +175,7 @@ class PhysicController extends AbstractController
                 default:
                     return new Response(Response::HTTP_NOT_FOUND);
             }
-            if((!$newData) || ($newData === -1)) {
+            if($newData === -1) {
                 return new Response(Response::HTTP_NOT_ACCEPTABLE);
             }
             $this->manager->persist($newData);

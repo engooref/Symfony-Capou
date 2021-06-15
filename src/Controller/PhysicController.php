@@ -178,8 +178,10 @@ class PhysicController extends AbstractController
             if($newData === -1) {
                 return new Response(Response::HTTP_NOT_ACCEPTABLE);
             }
-            $this->manager->persist($newData);
-            $this->manager->flush();
+            if($newData) {
+                $this->manager->persist($newData);
+                $this->manager->flush();
+            }
         }
         return new Response(Response::HTTP_OK);
     }

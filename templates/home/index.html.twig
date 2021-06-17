@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 {% block title %}Accueil{% endblock %}
 {% block body %}
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success text-center">
+        <p> Votre mot de passe a été modifié avec succès ! </p>
+    </div>
+{% endfor %}
+
 <div class="container-fluid" style="padding-bottom:100px;">
     <div class="row">
         <div class="col-sm-4 col-md-4" style="padding-top:10px;">

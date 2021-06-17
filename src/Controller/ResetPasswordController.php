@@ -61,7 +61,7 @@ class ResetPasswordController extends AbstractController
                 $entityManager->persist($user);
                 $entityManager->flush();
                 $this->addFlash('success', 'Votre mot de passe a bien été modifié. Vous pouvez maintenant vous connecter.');
-                return $this->redirectToRoute('resetPasswordWithoutToken');
+                return $this->redirectToRoute('home');
             }
         }
         else{

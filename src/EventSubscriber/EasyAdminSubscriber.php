@@ -37,48 +37,37 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            BeforeEntityPersistedEvent::class => ['createUser'],
-            BeforeEntityPersistedEvent::class => ['createGroup'],
+            BeforeEntityPersistedEvent::class => ['createUserAndGroup'],
+            //BeforeEntityPersistedEvent::class => ['createGroup'],
             BeforeEntityUpdatedEvent::class => ['updateGroupe'],
         ];
     }
     
-
-
-        
-    public function createUser(BeforeEntityPersistedEvent $event)
-    {
+    public function createUserAndGroup(BeforeEntityPersistedEvent $event) {
         $entity = $event->getEntityInstance();
         
-        if (!($entity instanceof Operateur)) {
-            return;
-        }
-
-        /* G�n�ration de mot de passe */
-        $password = $this->_generateRandomPassword();
-        
-        /* Cryptage de mot de passe */
-        $entity->setPassword($this->passwordEncoder->encodePassword(
+        if ($entity instanceof Operateur) {
+            /* G�n�ration de mot de passe */
+            $password = $this->_generateRandomPassword();
+            
+            /* Cryptage de mot de passe */
+            $entity->setPassword($this->passwordEncoder->encodePassword(
                 $entity,
                 $password
                 ));
-
-
-        //$entity->setPassword($password);
-        //$entity->setPassword('Test');
-        
-        $entity->setVerifiedbyadmin(true);
-        $entity->setIsFirstConnexion(true);
-        $entity->setCreatedAt(new DateTime());
-        
-        
-        $titreMail = "Lyc�e Capou - Votre compte a bien �t� cr�� par un administrateur";
-        $message = (new \Swift_Message($titreMail))
-        ->setCharset('ISO-8859-1')
-        ->setFrom('inscription.lyceecapou@gmail.com')
-        ->setTo($entity->getEmail())
-        ->setBody(
-            '<h1>Bonjour ! Un administrateur vous a cr�� un compte sur le site Lyc�e Capou - Irrigation Connect�e</h1>
+            
+            $entity->setVerifiedbyadmin(true);
+            $entity->setIsFirstConnexion(true);
+            $entity->setCreatedAt(new DateTime());
+            
+            
+            $titreMail = "Lyc�e Capou - Votre compte a bien �t� cr�� par un administrateur";
+            $message = (new \Swift_Message($titreMail))
+            ->setCharset('ISO-8859-1')
+            ->setFrom('inscription.lyceecapou@gmail.com')
+            ->setTo($entity->getEmail())
+            ->setBody(
+                '<h1>Bonjour ! Un administrateur vous a cr�� un compte sur le site Lyc�e Capou - Irrigation Connect�e</h1>
             <br>
             <p>Informations de connexion pour vous connecter � votre compte :</p>
             <p><u>Identifiant :</u> <b>'. $entity->getEmail() . '</b></p>
@@ -88,54 +77,35 @@ class EasyAdminSubscriber implements EventSubscriberInterface
             <p>Attention, vous avez re�u un mot de passe g�n�r� al�atoirement, toutefois, nous vous recommandons de le changer suite � votre premi�re connexion sur notre site.</p>
             <br>
             <p>Merci de votre compr�hension. Cordialement !</p>',
-            'text/html'
-            );
-        
-        try {
-            $this->mailer->send($message);
-        } catch (TransportExceptionInterface $e) {
-            throw new CustomUserMessageAuthenticationException("L'envoi du mail a echou�.");
+                'text/html'
+                );
+            
+            try {
+                $this->mailer->send($message);
+            } catch (TransportExceptionInterface $e) {
+                throw new CustomUserMessageAuthenticationException("L'envoi du mail a echou�.");
+            }
         }
         
-    }
-    
-    private function _generateRandomPassword() : ?string
-    {
-        // Génération mot de passe crypté
-        $nbChar = 8;
-        $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
-        srand((double)microtime()*1000000);
-        $generatedPassword = '';
-        for($i=0; $i<$nbChar; $i++){
-            $generatedPassword .= $chaine[rand()%strlen($chaine)];
-        }
-        return $generatedPassword;
-    }
-    
-    public function createGroup(BeforeEntityPersistedEvent $event)
-    {
-        $entity = $event->getEntityInstance();
-        
-        if (!($entity instanceof Groupe)) {
-            return;
-        }
-        // creation operateurs
-        foreach($entity->getIdOperateur() as $idOperateur){
-            $idOperateur->setIdGroupe($entity);
-            $entity->addIdOperateur($idOperateur);
-        }
-        // creation piquets
-        foreach($entity->getIdPiquets() as $idPiquet){
-            $idPiquet->setIdGroupe($entity);
-            $entity->addIdPiquet($idPiquet);
-        }
-        // création electrovannes
-        foreach($entity->getIdElectrovannes() as $idElectrovanne){
-            $idElectrovanne->setIdGroupe($entity);
-            $entity->addIdElectrovanne($idElectrovanne);
+        if ($entity instanceof Groupe) {
+            // creation operateurs
+            foreach($entity->getIdOperateur() as $idOperateur){
+                $idOperateur->setIdGroupe($entity);
+                $entity->addIdOperateur($idOperateur);
+            }
+            // creation piquets
+            foreach($entity->getIdPiquets() as $idPiquet){
+                $idPiquet->setIdGroupe($entity);
+                $entity->addIdPiquet($idPiquet);
+            }
+            // création electrovannes
+            foreach($entity->getIdElectrovannes() as $idElectrovanne){
+                $idElectrovanne->setIdGroupe($entity);
+                $entity->addIdElectrovanne($idElectrovanne);
+            }
         }
     }
-  
+
     public function updateGroupe(BeforeEntityUpdatedEvent $event)
     {
         $entity = $event->getEntityInstance(); // On r�cup�re l'instance de l'entit�
@@ -143,20 +113,20 @@ class EasyAdminSubscriber implements EventSubscriberInterface
             return;
         }
         
-        //dump($entity);die();    
+        //dump($entity);die();
         
         $defaultGroup = $this->doctrineManager->getRepository(Groupe::class)->findOneById('1'); // Le groupe consid�r� "par d�faut" est le groupe avec comme id=1
         
         //gestion des opérateurs
         $GroupAct = $this->doctrineManager->getRepository(Groupe::class)->findOneById($entity->getId()); // Le groupe actuel est l'id de l'entit�
         
-        $operatorTab = $this->doctrineManager->getRepository(Operateur::class)->findBy(['idGroupe'=>$GroupAct->getId()]); 
+        $operatorTab = $this->doctrineManager->getRepository(Operateur::class)->findBy(['idGroupe'=>$GroupAct->getId()]);
         
         foreach($operatorTab as $Operator){ // Pour chaque op�rateurs contenus dans le groupe actuel, on les transfere dans le groupe par d�faut (1)
             $Operator->setIdGroupe($defaultGroup);
             $this->doctrineManager->flush();
         }
-       
+        
         foreach($entity->getIdOperateur() as $idOperateur){ // Pour chaque op�rateurs contenus dans l'entit�, on assigne aux nouveaux groupes les cl�s �trang�res
             $idOperateur->setIdGroupe($entity);
             $entity->addIdOperateur($idOperateur);
@@ -189,5 +159,18 @@ class EasyAdminSubscriber implements EventSubscriberInterface
             $entity->addIdElectrovanne($idElectrovanne);
         }
         
+    }
+    
+    private function _generateRandomPassword() : ?string
+    {
+        // Génération mot de passe crypté
+        $nbChar = 8;
+        $chaine ="mnoTUzS5678kVvwxy9WXYZRNCDEFrslq41GtuaHIJKpOPQA23LcdefghiBMbj0";
+        srand((double)microtime()*1000000);
+        $generatedPassword = '';
+        for($i=0; $i<$nbChar; $i++){
+            $generatedPassword .= $chaine[rand()%strlen($chaine)];
+        }
+        return $generatedPassword;
     }
 }

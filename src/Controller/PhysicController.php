@@ -259,7 +259,7 @@ class PhysicController extends AbstractController
         $longitude = $inputTrameArmoire[4];
         $latitude = $inputTrameArmoire[5];
         
-        $armoire = $this->manager->getRepository(Armoire::class)->findOneById($idCentrale);
+        $result = $this->manager->getRepository(DonneesArmoire::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         
         if($result){
             foreach($result as $val){

@@ -47,6 +47,7 @@ class SecurityController extends AbstractController
             $user->setPassword($encoded);
             if(!$entityManager->getRepository(Groupe::class)->findOneById('1')){
                 $groupe = new Groupe();
+                $groupe->setLabel("Groupe par défaut");
                 $entityManager->persist($groupe);
                 $entityManager->flush();
             }

@@ -28,6 +28,12 @@ class Armoire implements JsonSerializable
      * @ORM\OneToMany(targetEntity=DonneesArmoire::class, mappedBy="idArmoire", orphanRemoval=true)
      */
     private $idDonneesArmoire;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idArmoires")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $idGroupe;
 
     public function __construct()
     {

@@ -22,7 +22,7 @@ class Groupe
     /**
      * @ORM\OneToMany(targetEntity=Operateur::class, mappedBy="idGroupe")
      */
-    private $idOperateur;
+    private $idOperateurs;
 
     /**
      * @ORM\OneToMany(targetEntity=Piquet::class, mappedBy="idGroupe")
@@ -35,7 +35,7 @@ class Groupe
     private $idElectrovannes;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Armoire::class)
+     * @ORM\OneToMany(targetEntity=Armoire::class, mappedBy="idGroupe")
      */
     private $idArmoires;
 

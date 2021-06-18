@@ -133,8 +133,6 @@ class PhysicController extends AbstractController
                 array_push($electrovanne, $coordsElec);
             }
         }
-        //dump($piquet, $armoire, $electrovanne);
-        die();
         return new JsonResponse(array("1" => $armoire, "2" => $electroVanne, "3" => $piquet));
        
     }

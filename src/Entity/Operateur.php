@@ -38,7 +38,7 @@ class Operateur implements UserInterface
     private $password;
     
     /**
-     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idOperateur")
+     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idOperateurs")
      * @ORM\JoinColumn(nullable=false)
      */
     private $idGroupe;

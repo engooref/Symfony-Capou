@@ -22,8 +22,8 @@ class HomeController extends AbstractController
         $piquet = $this->getDoctrine()->getManager()->getRepository(Piquet::class)->findByEtat(1);
         $nb_piquet = count($piquet);
         $donnees_piquet = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['horodatage' => 'desc']);
-        $temperature_min = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['temperature' => 'asc'],1);
-        $temperature_max = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['temperature' => 'desc'],1);
+        $temperature_min = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['temperature' => 'asc']);
+        $temperature_max = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['temperature' => 'desc']);
         
         //Armoire
         $armoire = $this->getDoctrine()->getManager()->getRepository(Armoire::class)->findByEtat(1);

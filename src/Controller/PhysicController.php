@@ -74,18 +74,37 @@ class PhysicController extends AbstractController
 
     #[Route('/getDataPiquet', name: 'getDataPiquet')]
     public function getDataPiquet() : Response {
+        $periode = "1sem";
+
+            $periode = $_POST['periode'];
+
+
+        $date = new dateTime();
+
+        if(($periode == "24h") || ($periode == "")){
+            $datePeriode = $date->sub(new DateInterval('P1D'));     // Période de 24h
+        } else if ($periode == "1sem"){
+            $datePeriode = $date->sub(new DateInterval('P7D'));     // Période de 1 semaine
+        }   else if ($periode == "1mois"){
+            $datePeriode = $date->sub(new DateInterval('P1M'));     // Période de 1 mois
+        }  else if ($periode == "1an"){
+            $datePeriode = $date->sub(new DateInterval('P1Y'));     // Période de 1 an
+        }  else if ($periode == "10ans"){
+            $datePeriode = $date->sub(new DateInterval('P10Y'));    // Période de 10 ans
+        }  
         
         $dataPiquet = $this->manager->getRepository(DonneesPiquet::class);
-        
-        $obj = $dataPiquet->findBy([],['horodatage' => 'asc']);
-        foreach($obj as $article)
+        $obj = $dataPiquet->findByDateBetween($datePeriode);
+
+        foreach($obj as $piquet)
         {
-            $id[] = $article->getId();
-            $Horodatage = $article->getHorodatage();
+            $id[] = $piquet->getId();
+            $Horodatage = $piquet->getHorodatage();
             $horodatage[] = $Horodatage->format('Y/m/d H:i:s');
-            $temp[] = $article->getTemperature();
-            $humi[] = $article->getHumidite();
+            $temp[] = $piquet->getTemperature();
+            $humi[] = $piquet->getHumidite();
         }
+
         return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi));
     }
     

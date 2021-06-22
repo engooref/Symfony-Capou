@@ -3,6 +3,8 @@ var Chart = require('chart.js');
 
 const delay = 10000;
 
+var periodeGlo = '1sem';
+
 var HeureSplit = [];
 
 var id = [];
@@ -23,19 +25,12 @@ var chartContainerTemp = new Chart(ctx1, {
     	labels: HeureSplit,
     	datasets: [
 				{
-					label: 'Temperature Intérieure',
+					label: 'Temperature',
 					data: temp,
 					fill: false,
 					borderColor: 'blue',
 					borderWidth: 1
-				}/*,
-				{
-	                label: 'Temperature Extérieure',
-                	data: globalData.Temp2,
-                	fill: false,
-                	borderColor: 'red',
-                	borderWidth: 1
-      			}*/
+				}
 		]
 	},
 	options: {
@@ -74,28 +69,28 @@ var chartContainerHumi = new Chart(ctx2, {
     	labels: HeureSplit,
     	datasets: [
 			{
-				label: 'Humidité 1',
+				label: 'Humidité air',
 				data: humi1,
 				fill: false,
 				borderColor: 'blue',
 				borderWidth: 1
 			},
 			{
-				label: 'Humidité 2',
+				label: 'Humidité sol 1',
 				data: humi2,
 				fill: false,
 				borderColor: 'red',
 				borderWidth: 1
 			},
 			{
-				label: 'Humidité 3',
+				label: 'Humidité sol 2',
 				data: humi3,
 				fill: false,
 				borderColor: 'green',
 				borderWidth: 1
 			},
 			{
-				label: 'Humidité 4',
+				label: 'Humidité sol 3',
 				data: humi4,
 				fill: false,
 				borderColor: 'purple',
@@ -145,15 +140,22 @@ function Update() {
 	chartContainerHumi.update();
 }
 
+
+window.setPeriode = function setPeriode(periode){
+	console.log("------------ Période active ------------");
+	periodeGlo = periode;
+	getData();
+}
+
 function getData() {
-	
+
 	console.log("recuperation des donnees piquet");
 	
 	$.ajax('/getDataPiquet', {
 		method: "POST",
 		dataType:'json',
+		data: 'periode=' + periodeGlo,
 		success: function (response) {
-			
 			id = response["Id"];
 			heure = response["Heure"];
 			temp = response["Temp"];
@@ -163,10 +165,19 @@ function getData() {
 			humi2=[];
 			humi3=[];
 			humi4=[];
+
+			HeureSplit = [];
 			
-			for(var m=0; m<heure.length; m++){
-				HeureSplit[m] = heure[m].split(' ').slice(1);
+			if (periodeGlo == '24h'){
+				for(var m=0; m<heure.length; m++){
+					HeureSplit[m] = heure[m].split(' ').slice(1);
+				}
+			} else {
+				for(var m=0; m<heure.length; m++){
+				HeureSplit[m] = heure[m].split(' ')[0];
+				}
 			}
+
 			
 			for(var k=0; k<humi.length;k++){
 				var humik = [];
@@ -178,7 +189,7 @@ function getData() {
 				humi4.push(humik[3]);
 			}
 			
-			console.log("id = ",id,"heure = ", heure,"temp = ", temp,"humi = ",humi);
+			console.log("id = ",id,"heure = ", HeureSplit,"temp = ", temp,"humi = ",humi);
 			
 			Update();
 		},

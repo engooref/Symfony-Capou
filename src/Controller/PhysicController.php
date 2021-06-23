@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Piquet;
 use App\Entity\Armoire;
 use App\Entity\ElectroVanne;
-use App\Entity\Centrale;
 
 use App\Entity\DonneesArmoire;
 use App\Entity\DonneesPiquet;
@@ -41,33 +40,34 @@ class PhysicController extends AbstractController
         $type = $_GET['type'];
         $id = $_GET['id'];
         $obj = null;
-        // 1 -> Armoire | 2 -> Electrovanne | 3 -> Piquet
+        //  1 -> Electrovanne | 2 -> Piquet | 3 -> Armoire
         switch (intval($type))
         {
             case 1:
-                $obj = $this->manager->getRepository(Armoire::class);
-                break;
-            case 2:
                 $obj = $this->manager->getRepository(ElectroVanne::class);
                 break;
-            case 3:
+            case 2:
                 $obj = $this->manager->getRepository(Piquet::class);
                 break;
+            case 3:
+                $obj = $this->manager->getRepository(Armoire::class);
+                break;
         }
-        
         $obj = $obj->findOneById($id);
         $dataObj = $obj->getIdDonnees()->getValues();
-
-        $dateMin = (DateTime::createFromInterface(end($dataObj)->getHorodatage()))->sub(new DateInterval("P1W"));
-        $dateMax = DateTime::createFromInterface(end($dataObj)->getHorodatage());
-
-        $dataCount = count($dataObj);
         
-        for($i = 0; $i < $dataCount; $i++){
-            $dateObj = $dataObj[$i]->getHorodatage();
-            if(!(($dateObj->diff($dateMin)->invert) && !($dateObj->diff($dateMax)->invert)))
-                unset($dataObj[$i]);    
-        }
+        if((intval($type) == 2) || (intval($type) == 3)) {
+            $dateMin = (DateTime::createFromInterface(end($dataObj)->getHorodatage()))->sub(new DateInterval("P1W"));
+            $dateMax = DateTime::createFromInterface(end($dataObj)->getHorodatage());
+            
+            $dataCount = count($dataObj);
+            
+            for($i = 0; $i < $dataCount; $i++){
+                $dateObj = $dataObj[$i]->getHorodatage();
+                if(!(($dateObj->diff($dateMin)->invert) && !($dateObj->diff($dateMax)->invert)))
+                    unset($dataObj[$i]);
+            }
+        }     
         
         return new JsonResponse(array("Object" => $obj, "Data" => $dataObj));
     }
@@ -101,7 +101,7 @@ class PhysicController extends AbstractController
         {
             $id[] = $piquet->getId();
             $Horodatage = $piquet->getHorodatage();
-            $horodatage[] = $Horodatage->format('Y/m/d H:i:s');
+            $horodatage[] = $Horodatage->format('d/m/Y H:i:s');
             $temp[] = $piquet->getTemperature();
             $humi[] = $piquet->getHumidite();
         }
@@ -175,20 +175,17 @@ class PhysicController extends AbstractController
         foreach($array_nb_module as $module) {
             $array_data_module = explode(';', $module);
             $type = $array_data_module[0];  // Length : 0 -> type
-            // 0 -> Centrale | 1 -> Armoire | 2 -> Electrovanne | 3 -> Piquet
+            // 1 -> Electrovanne  | 2 -> Piquet | 3 -> Armoire
             switch (intval($type))
             {
-                case 0:
-                    $this->InputCentrale($array_data_module);
-                    break;
                 case 1:
-                    $newData = $this->InputArmoire($array_data_module);
-                    break;
-                case 2:
                     $newData = $this->InputElectrovanne($array_data_module);
                     break;
-                case 3:
+                case 2:
                     $newData = $this->InputPiquet($array_data_module);
+                    break;
+                case 3:
+                    $newData = $this->InputArmoire($array_data_module);
                     break;
                 default:
                     return new Response(Response::HTTP_NOT_FOUND);
@@ -204,7 +201,7 @@ class PhysicController extends AbstractController
         return new Response(Response::HTTP_OK);
     }
     
-    private function createEsc($type=null, $id=null, $idCen=null, $ipCen=null) {
+    private function createEsc($type=null, $id=null, $idMaitre=null, $ipModule=null, $etatMaitre=null) {
         
         if(!isset($type) && !isset($id) && !isset($idCen) && !isset($ipCen)) {
             return -1;
@@ -212,32 +209,27 @@ class PhysicController extends AbstractController
 
         $newObj = null;
         
-        // 0 -> Centrale | 1 -> Armoire | 2 -> Electrovanne | 3 -> Piquet
+        // 1 -> Electrovanne | 2 -> Piquet | 3 -> Armoire
         switch (intval($type))
-        {
-            case 0:
-                $newObj = new Centrale;
-                $newObj->setId($id);
-                $newObj->setIp($ipCen);
-                break;  
+        {  
             case 1:
-                $newObj = new Armoire;
-                $newObj->setId($id);
-                $newObj->setEtat(True);
-                break;  
-            case 2:
                 $newObj = new ElectroVanne;
                 $newObj->setId($id);
                 $newObj->setEtat(True);
-                $newObj->setIdCentrale($this->manager->getRepository(Centrale::class)->findOneById($idCen));
-                break;    
-            case 3:
+                $newObj->setIp($ipModule);
+                break;
+            case 2:
                 $newObj = new Piquet;
                 $newObj->setId($id);
                 $newObj->setEtat(True);
-                $newObj->setIdCentrale($this->manager->getRepository(Centrale::class)->findOneById($idCen));
-                break;
-                  
+                $newObj->setIdMaitreRadio($this->manager->getRepository(ElectroVanne::class)->findOneById($idMaitre));
+                break;    
+            case 3:
+                $newObj = new Armoire;
+                $newObj->setId($id);
+                $newObj->setEtat($etatMaitre);
+                $newObj->setIp($ipModule);
+                break;                 
         }
 
         $this->manager->persist($newObj);
@@ -246,76 +238,19 @@ class PhysicController extends AbstractController
         return 0;
     }
 
-    private function InputCentrale($inputTrameCentrale) {
-        // ==================== TRAME CENTRALE ==================
-        // [type;id;ip]
-        
-        // Trame de 3 données pour la Centrale
-        if(count($inputTrameCentrale) !== 3) return -1; // Trame pas complète renvoie -1
-        
-        
-        $idCentrale = hexdec($inputTrameCentrale[1]);
-        $ipCentrale = $inputTrameCentrale[2];
-        
-        $centrale = $this->manager->getRepository(Centrale::class)->findOneById($idCentrale);
-        
-        if(!isset($centrale)){
-            $this->createEsc(0, $idCentrale, null, $ipCentrale);
-        }
-    }
-    
-    private function InputArmoire($inputTrameArmoire) {
-        // ==================== TRAME ARMOIRE ==================
-        // [type;id;pression;horodate;longitude;latitude]
-        
-        // Trame de 6 données pour l'Armoire
-        if(count($inputTrameArmoire) !== 6) return -1; // Trame pas complète renvoie -1
-        
-        $idArmoire = hexdec($inputTrameArmoire[1]);
-        $pression = $inputTrameArmoire[2];
-        $horodatage = $inputTrameArmoire[3];
-        $longitude = $inputTrameArmoire[4];
-        $latitude = $inputTrameArmoire[5];
-        
-        $result = $this->manager->getRepository(DonneesArmoire::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
-        
-        if($result){
-            foreach($result as $val){
-                if($val->getIdArmoire()->getId() === $idArmoire){
-                    return -1;
-                }
-            }
-        }
-        
-        $armoire = $this->manager->getRepository(Armoire::class)->findOneById($idArmoire);
-        
-        if(!isset($armoire)){
-            $this->createEsc(1, $idArmoire, null, null);
-        }
-        
-        $donneesArmoire = new DonneesArmoire;
-        $donneesArmoire->setIdArmoire($this->manager->getRepository(Armoire::class)->findOneById($idArmoire));
-        $donneesArmoire->setPression($pression);
-        $donneesArmoire->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
-        $donneesArmoire->setLatitude($latitude);
-        $donneesArmoire->setLongitude($longitude);
-        
-        return $donneesArmoire;
-    }
-    
     private function InputElectrovanne($inputTrameElectrovanne) {
         // ==================== TRAME ELECTROVANNE ==================
-        // [type;id;idMaitre;debit;horodate;longitude;latitude]
+        // [type;id;ip;horodatage;longitude;latitude;batterie]    
         
-        // Trame de 7 données pour l'ElectroVanne
+        // Trame de  données pour l'ElectroVanne
         if(count($inputTrameElectrovanne) !== 7) return -1; // Trame pas complète renvoie -1
         
         $idElectroVanne = hexdec($inputTrameElectrovanne[1]);
-        $idCentrale = hexdec($inputTrameElectrovanne[2]);
-        $debit =  $inputTrameElectrovanne[3];
-        $horodatage = $inputTrameElectrovanne[4];
-        $longitude = $inputTrameElectrovanne[5];
-        $latitude = $inputTrameElectrovanne[6];
+        $ipElectroVanne = $inputTrameElectrovanne[2];
+        $horodatage = $inputTrameElectrovanne[3];
+        $longitude = $inputTrameElectrovanne[4];
+        $latitude = $inputTrameElectrovanne[5];
+        $batterie =  $inputTrameElectrovanne[6];
         
         $result = $this->manager->getRepository(DonneesVanne::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         
@@ -330,34 +265,33 @@ class PhysicController extends AbstractController
         $electrovanne = $this->manager->getRepository(ElectroVanne::class)->findOneById($idElectroVanne);
         
         if(!isset($electrovanne)){
-            $this->createEsc(2, $idElectroVanne, $idCentrale, null);
+            $this->createEsc(1, $idElectroVanne, null, $ipElectroVanne);
         }
         
         $donneesVanne = new DonneesVanne;
         $donneesVanne->setIdVanne($this->manager->getRepository(ElectroVanne::class)->findOneById($idElectroVanne));
-        $donneesVanne->setDebit($debit);
         $donneesVanne->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         $donneesVanne->setLatitude($latitude);
         $donneesVanne->setLongitude($longitude);
-        
+        $donneesVanne->setBatterie($batterie);
         return $donneesVanne;
     }
     
     private function InputPiquet($inputTramePiquet) {
         // ==================== TRAME PIQUET ==================
-        // [type;id;idMaitre;batterie;horodate;temperature;longitude;latitude;[humidite1:humidite2:humidite3:...]]
+        // [type;id;idMaitre;temperature;horodatage;longitude;latitude;[humidite1:humidite2:humidite3:...];batterie]
         
         // Trame de 9 données pour le Piquet         
         if(count($inputTramePiquet) !== 9) return -1; // Trame pas complète renvoie -1
         
         $idPiquet = hexdec($inputTramePiquet[1]);
-        $idCentrale = hexdec($inputTramePiquet[2]);
-        $batterie =  $inputTramePiquet[3];
+        $idMaitre = hexdec($inputTramePiquet[2]);
+        $temperature = $inputTramePiquet[3];
         $horodatage = $inputTramePiquet[4];
-        $temperature = $inputTramePiquet[5];
-        $longitude = $inputTramePiquet[6];
-        $latitude = $inputTramePiquet[7];
-        $humidite = explode(':', $inputTramePiquet[8]);
+        $longitude = $inputTramePiquet[5];
+        $latitude = $inputTramePiquet[6];
+        $humidite = explode(':', $inputTramePiquet[7]);
+        $batterie =  $inputTramePiquet[8];
         
         $result = $this->manager->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         
@@ -369,21 +303,61 @@ class PhysicController extends AbstractController
             }
         }
             
-         $piquet = $this->manager->getRepository(Piquet::class)->findOneById($idPiquet);
-       
-         if(!isset($piquet)){
-             $this->createEsc(3, $idPiquet, $idCentrale, null);
-         }
+        $piquet = $this->manager->getRepository(Piquet::class)->findOneById($idPiquet);
+        if(!isset($piquet)){
+            $this->createEsc(2, $idPiquet, $idMaitre);
+        }
          
         $donneesPiquet = new DonneesPiquet;
         $donneesPiquet->setIdPiquet($this->manager->getRepository(Piquet::class)->findOneById($idPiquet));
-        $donneesPiquet->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
-        $donneesPiquet->setHumidite($humidite);
         $donneesPiquet->setTemperature($temperature);
-        $donneesPiquet->setBatterie($batterie);
+        $donneesPiquet->setHorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         $donneesPiquet->setLatitude($latitude);
         $donneesPiquet->setLongitude($longitude);
+        $donneesPiquet->setHumidite($humidite);
+        $donneesPiquet->setBatterie($batterie);
         
         return $donneesPiquet;
     } 
+    
+    private function InputArmoire($inputTrameArmoire) {
+        // ==================== TRAME ARMOIRE ==================
+        // [type;id;etat;ip;batterie]
+        
+        // Trame de 6 données pour l'Armoire
+        if(count($inputTrameArmoire) !== 5) return -1; // Trame pas complète renvoie -1
+        
+        $idArmoire = hexdec($inputTrameArmoire[1]);
+        $etat = $inputTrameArmoire[2];
+        $ipArmoire = $inputTrameArmoire[3];
+        $batterie =  $inputTrameArmoire[4];
+
+        
+//         $result = $this->manager->getRepository(DonneesArmoire::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
+        
+//         if($result){
+//             foreach($result as $val){
+//                 if($val->getIdArmoire()->getId() === $idArmoire){
+//                     return -1;
+//                 }
+//             }
+//         }
+        
+        $armoire = $this->manager->getRepository(Armoire::class)->findOneById($idArmoire);
+        //dump($armoire);
+        if(isset($armoire)) {
+            $armoire->setEtat(intval($etat));
+            $armoire->setIp($ipArmoire);
+            $this->manager->persist($armoire);
+            $this->manager->flush();
+        } else {
+            $this->createEsc(3, $idArmoire, null, $ipArmoire, intval($etat));
+        }
+        
+        $donneesArmoire = new DonneesArmoire;
+        $donneesArmoire->setIdArmoire($this->manager->getRepository(Armoire::class)->findOneById($idArmoire));
+        $donneesArmoire->setBatterie($batterie);
+        
+        return $donneesArmoire;
+    }
 }

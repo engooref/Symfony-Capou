@@ -242,7 +242,7 @@ class PhysicController extends AbstractController
         // ==================== TRAME ELECTROVANNE ==================
         // [type;id;ip;horodatage;longitude;latitude;batterie]    
         
-        // Trame de  données pour l'ElectroVanne
+        // Trame de 7 données pour l'ElectroVanne
         if(count($inputTrameElectrovanne) !== 7) return -1; // Trame pas complète renvoie -1
         
         $idElectroVanne = hexdec($inputTrameElectrovanne[1]);
@@ -324,7 +324,7 @@ class PhysicController extends AbstractController
         // ==================== TRAME ARMOIRE ==================
         // [type;id;etat;ip;batterie]
         
-        // Trame de 6 données pour l'Armoire
+        // Trame de 5 données pour l'Armoire
         if(count($inputTrameArmoire) !== 5) return -1; // Trame pas complète renvoie -1
         
         $idArmoire = hexdec($inputTrameArmoire[1]);

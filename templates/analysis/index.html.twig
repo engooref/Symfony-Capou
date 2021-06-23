@@ -2,11 +2,13 @@
 {% block title %}Analyse{% endblock %}
 
 {% block body %}
-  	<button onclick="setPeriode('24h')">24H</button>
-  	<button onclick="setPeriode('1sem')">1 semaine</button>
-  	<button onclick="setPeriode('1mois')">1 mois</button>
-  	<button onclick="setPeriode('1an')">1 an</button>
-  	<button onclick="setPeriode('10ans')">10 ans</button>
+	<center>
+      	<button class="btn btn-light" onclick="setPeriode('24h')">24H</button>
+      	<button class="btn btn-light" onclick="setPeriode('1sem')">1 semaine</button>
+      	<button class="btn btn-light" onclick="setPeriode('1mois')">1 mois</button>
+      	<button class="btn btn-light" onclick="setPeriode('1an')">1 an</button>
+      	<button class="btn btn-light" onclick="setPeriode('10ans')">10 ans</button>
+  	</center>
 	<canvas id="chartContainerTemp" class="chartContainerTemp"></canvas>
 	</br>
 	<canvas id="chartContainerHumi" class="chartContainerHumi"></canvas>

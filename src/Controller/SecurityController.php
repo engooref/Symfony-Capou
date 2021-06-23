@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use \DateTime;
 use App\Entity\Operateur;
-use App\Entity\Groupe;
+use App\Entity\Parcelle;
 use App\Form\RegistrationFormType;
 use App\Security\OperatorAuthenticator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -45,13 +45,13 @@ class SecurityController extends AbstractController
             // on encode le mot de passe
             $encoded = $passwordEncoder->encodePassword($user, $password);
             $user->setPassword($encoded);
-            if(!$entityManager->getRepository(Groupe::class)->findOneById('1')){
-                $groupe = new Groupe();
-                $groupe->setLabel("Groupe par défaut");
-                $entityManager->persist($groupe);
+            if(!$entityManager->getRepository(Parcelle::class)->findOneById('1')){
+                $parcelle = new Parcelle();
+                $parcelle->setLabel("Parcelle par défaut");
+                $entityManager->persist($parcelle);
                 $entityManager->flush();
             }
-            $user->setIdGroupe($entityManager->getRepository(Groupe::class)->findOneById('1'));
+            $user->setIdParcelle($entityManager->getRepository(Parcelle::class)->findOneById('1'));
             $user->setVerifiedbyadmin('0');
             $user->setIsFirstConnexion('1');
             $user->setCreatedAt(new DateTime());

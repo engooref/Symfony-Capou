@@ -38,10 +38,10 @@ class Operateur implements UserInterface
     private $password;
     
     /**
-     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idOperateurs")
+     * @ORM\ManyToOne(targetEntity=Parcelle::class, inversedBy="idOperateurs")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $idGroupe;
+    private $idParcelle;
     
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
@@ -153,14 +153,14 @@ class Operateur implements UserInterface
         // $this->plainPassword = null;
     }
     
-    public function getIdGroupe(): ?Groupe
+    public function getIdParcelle(): ?Parcelle
     {
-        return $this->idGroupe;
+        return $this->idParcelle;
     }
     
-    public function setIdGroupe(?Groupe $idGroupe): self
+    public function setIdParcelle(?Parcelle $idParcelle): self
     {
-        $this->idGroupe = $idGroupe;
+        $this->idParcelle = $idParcelle;
         
         return $this;
     }

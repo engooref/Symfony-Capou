@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Groupe;
+use App\Entity\Parcelle;
 use App\Entity\Operateur;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
@@ -25,7 +25,7 @@ class OperateurCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             EmailField::new('email')->setHelp('Choisir l\'adresse email'), 
-            AssociationField::new('idGroupe', 'Groupe')->setRequired(true)->setHelp('Choisir à quel groupe l\'opérateur appartient'),
+            AssociationField::new('idParcelle', 'Parcelle')->setRequired(true)->setHelp('Choisir Ã  quel parcelle l\'opÃ©rateur appartient'),
             DateTimeField::new('createdAt')->hideOnForm(),
         ];
     }

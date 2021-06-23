@@ -31,17 +31,16 @@ class Piquet implements JsonSerializable
 
     
     /**
-     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idPiquets")
+     * @ORM\ManyToOne(targetEntity=Parcelle::class, inversedBy="idPiquets")
      * @ORM\JoinColumn(nullable=true)
      */
-    private $idGroupe;
-    
+    private $idParcelle;
     
     /**
-     * @ORM\ManyToOne(targetEntity=Centrale::class, inversedBy="idPiquets")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity=ElectroVanne::class, inversedBy="idElectroVannes")
+     * @ORM\JoinColumn(nullable=true)
      */
-    private $idCentrale;
+    private $idMaitreRadio;
 
     public function __construct()
     {
@@ -59,18 +58,17 @@ class Piquet implements JsonSerializable
             'id' => $this->getId(),
             'etat' => $this->getEtat()
         );
-    }
-
-    public function setId(?int $id): self
-    {
-        $this->id = $id;
-        return $this;
-    }
-    
+    }  
     
     public function getId(): ?int
     {
         return $this->id;
+    }
+    
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+        return $this;
     }
     
     public function getEtat(): ?bool
@@ -115,30 +113,27 @@ class Piquet implements JsonSerializable
         return $this;
     }
 
-    
-    public function getIdGroupe(): ?Groupe
+    public function getIdParcelle(): ?Parcelle
     {
-        return $this->idGroupe;
+        return $this->idParcelle;
     }
     
-    public function setIdGroupe(?Groupe $idGroupe): self
+    public function setIdParcelle(?Parcelle $idParcelle): self
     {
-        $this->idGroupe = $idGroupe;
+        $this->idParcelle = $idParcelle;
         
         return $this;
+    }  
+    
+    public function getIdMaitreRadio(): ?ElectroVanne
+    {
+        return $this->idMaitreRadio;
     }
     
-    public function getIdCentrale(): ?Centrale
+    public function setIdMaitreRadio(?ElectroVanne $idMaitreRadio): self
     {
-        return $this->idCentrale;
-    }
-
-    public function setIdCentrale(?Centrale $idCentrale): self
-    {
-        $this->idCentrale = $idCentrale;
-
+        $this->idMaitreRadio = $idMaitreRadio;
+        
         return $this;
-    }
-    
-    
+    }  
 }

@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\GroupeRepository;
+use App\Repository\ParcelleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=GroupeRepository::class)
+ * @ORM\Entity(repositoryClass=ParcelleRepository::class)
  */
-class Groupe
+class Parcelle
 {
     /**
      * @ORM\Id
@@ -20,22 +20,22 @@ class Groupe
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity=Operateur::class, mappedBy="idGroupe")
+     * @ORM\OneToMany(targetEntity=Operateur::class, mappedBy="idParcelle")
      */
     private $idOperateurs;
 
     /**
-     * @ORM\OneToMany(targetEntity=Piquet::class, mappedBy="idGroupe")
+     * @ORM\OneToMany(targetEntity=Piquet::class, mappedBy="idParcelle")
      */
     private $idPiquets;
 
     /**
-     * @ORM\OneToMany(targetEntity=ElectroVanne::class, mappedBy="idGroupe")
+     * @ORM\OneToMany(targetEntity=ElectroVanne::class, mappedBy="idParcelle")
      */
     private $idElectrovannes;
 
     /**
-     * @ORM\OneToMany(targetEntity=Armoire::class, mappedBy="idGroupe")
+     * @ORM\OneToMany(targetEntity=Armoire::class, mappedBy="idParcelle")
      */
     private $idArmoires;
 
@@ -46,7 +46,7 @@ class Groupe
 
     public function __construct()
     {
-        $this->idOperateur = new ArrayCollection();
+        $this->idOperateurs = new ArrayCollection();
         $this->idPiquets = new ArrayCollection();
         $this->idElectrovannes = new ArrayCollection();
         $this->idArmoires = new ArrayCollection();
@@ -62,7 +62,7 @@ class Groupe
         return $this->id;
     }
     
-    public function setId(?Groupe $id): self
+    public function setId(?Parcelle $id): self
     {
         $this->id = $id;
         
@@ -72,16 +72,16 @@ class Groupe
     /**
      * @return Collection|Operateur[]
      */
-    public function getIdOperateur(): Collection
+    public function getIdOperateurs(): Collection
     {
-        return $this->idOperateur;  
+        return $this->idOperateurs;  
     }
 
     public function addIdOperateur(operateur $idOperateur): self
     {
-        if (!$this->idOperateur->contains($idOperateur)) {
-            $this->idOperateur[] = $idOperateur;
-            $idOperateur->setIdGroupe($this);
+        if (!$this->idOperateurs->contains($idOperateur)) {
+            $this->idOperateurs[] = $idOperateur;
+            $idOperateur->setIdParcelle($this);
         }
 
         return $this;
@@ -89,10 +89,10 @@ class Groupe
 
     public function removeIdOperateur(operateur $idOperateur): self
     {
-        if ($this->idOperateur->removeElement($idOperateur)) {
+        if ($this->idOperateurs->removeElement($idOperateur)) {
             // set the owning side to null (unless already changed)
-            if ($idOperateur->getIdGroupe() === $this) {
-                $idOperateur->setIdGroupe(null);
+            if ($idOperateur->getIdParcelle() === $this) {
+                $idOperateur->setIdParcelle(null);
             }
         }
 

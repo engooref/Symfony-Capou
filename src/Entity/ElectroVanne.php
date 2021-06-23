@@ -25,22 +25,26 @@ class ElectroVanne implements JsonSerializable
     private $etat;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $ip;
+    
+    /**
      * @ORM\OneToMany(targetEntity=DonneesVanne::class, mappedBy="idVanne", orphanRemoval=true)
      */
     private $idDonneesVanne;
 
     
     /**
-     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idElectroVannes")
+     * @ORM\ManyToOne(targetEntity=Parcelle::class, inversedBy="idElectroVannes")
      * @ORM\JoinColumn(nullable=true)
      */
-    private $idGroupe;
+    private $idParcelle;
     
     /**
-     * @ORM\ManyToOne(targetEntity=Centrale::class, inversedBy="idElectroVannes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToMany(targetEntity=Piquet::class, mappedBy="$idMaitreRadio", orphanRemoval=true)
      */
-    private $idCentrale;
+    private $idPiquet;
 
     public function __construct()
     {
@@ -60,15 +64,15 @@ class ElectroVanne implements JsonSerializable
         );
     }
     
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    
     public function setId(int $id): self
     {
         $this->id = $id;
         return $this;
-    }
-    
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getEtat(): ?bool
@@ -82,6 +86,17 @@ class ElectroVanne implements JsonSerializable
 
         return $this;
     }
+    
+    public function getIp(): ?string
+    {
+        return $this->ip;
+    }
+    
+    public function setIp(string $ip): self
+    {
+        $this->ip = $ip;
+        return $this;
+    }  
 
     /**
      * @return Collection|DonneesVanne[]
@@ -113,27 +128,26 @@ class ElectroVanne implements JsonSerializable
         return $this;
     }
 
-    public function getIdGroupe(): ?Groupe
+    public function getIdParcelle(): ?Parcelle
     {
-        return $this->idGroupe;
+        return $this->idParcelle;
     }
     
-    public function setIdGroupe(?Groupe $idGroupe): self
+    public function setIdParcelle(?Parcelle $idParcelle): self
     {
-        $this->idGroupe = $idGroupe;
+        $this->idParcelle = $idParcelle;
         
         return $this;
-    }
-   
+    }  
     
-    public function getIdCentrale(): ?Centrale
+    public function getIdPiquet(): ?Piquet
     {
-        return $this->idCentrale;
+        return $this->idPiquet;
     }
 
-    public function setIdCentrale(?Centrale $idCentrale): self
+    public function setIdPiquet(?Piquet $idPiquet): self
     {
-        $this->idCentrale = $idCentrale;
+        $this->idPiquet = $idPiquet;
 
         return $this;
     }

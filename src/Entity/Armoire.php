@@ -20,9 +20,14 @@ class Armoire implements JsonSerializable
     private $id;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="integer")
      */
     private $etat;
+    
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $ip;
 
     /**
      * @ORM\OneToMany(targetEntity=DonneesArmoire::class, mappedBy="idArmoire", orphanRemoval=true)
@@ -30,16 +35,21 @@ class Armoire implements JsonSerializable
     private $idDonneesArmoire;
     
     /**
-     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="idArmoires")
+     * @ORM\ManyToOne(targetEntity=Parcelle::class, inversedBy="idArmoires")
      * @ORM\JoinColumn(nullable=true)
      */
-    private $idGroupe;
+    private $idParcelle;
 
     public function __construct()
     {
         $this->idDonneesArmoire = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->getId();
+    }
+    
     public function JsonSerialize()
     {
         return array(
@@ -48,26 +58,37 @@ class Armoire implements JsonSerializable
         );
     }
     
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    
     public function setId(int $id): self
     {
         $this->id = $id;
         return $this;
     }
-    
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
-    public function getEtat(): ?bool
+    public function getEtat(): ?int
     {
         return $this->etat;
     }
 
-    public function setEtat(bool $etat): self
+    public function setEtat(int $etat): self
     {
         $this->etat = $etat;
 
+        return $this;
+    }
+    
+    public function getIp(): ?string
+    {
+        return $this->ip;
+    }
+    
+    public function setIp(string $ip): self
+    {
+        $this->ip = $ip;
         return $this;
     }
 
@@ -98,6 +119,18 @@ class Armoire implements JsonSerializable
             }
         }
 
+        return $this;
+    }
+    
+    public function getIdParcelle(): ?Parcelle
+    {
+        return $this->idParcelle;
+    }
+    
+    public function setIdParcelle(?Parcelle $idParcelle): self
+    {
+        $this->idParcelle = $idParcelle;
+        
         return $this;
     }
 }

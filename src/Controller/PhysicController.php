@@ -111,10 +111,10 @@ class PhysicController extends AbstractController
     #[Route('/mapsControl', name: 'mapsControl')]
     public function mapsControl()
     {
-        $groupe = $this->getUser()->getIdGroupe();
-        $piquetDb = $groupe->getIdPiquets();
-        $armoireDb = $groupe->getIdArmoires();
-        $electrovanneDb = $groupe->getIdElectrovannes();
+        $parcelle = $this->getUser()->getIdParcelle();
+        $piquetDb = $parcelle->getIdPiquets();
+        $armoireDb = $parcelle->getIdArmoires();
+        $electrovanneDb = $parcelle->getIdElectrovannes();
         dump($piquetDb, $armoireDb, $electrovanneDb);
         $piquet = array();
         $armoire = array();

@@ -19,40 +19,26 @@ class DonneesArmoire implements JsonSerializable
     private $id;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="smallint")
      */
-    private $pression;
+    private $batterie;
 
     /**
      * @ORM\ManyToOne(targetEntity=Armoire::class, inversedBy="idDonneesArmoire")
      * @ORM\JoinColumn(nullable=false)
      */
     private $idArmoire;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $horodatage;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $latitude;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $longitude;
+    
+    public function __toString()
+    {
+        return $this->getId();
+    }
 
     public function JsonSerialize()
     {
         return array(
             'id' => $this->getId(),
-            'horodatage' => $this->getHorodatage()->format("Y-m-d H:i:s"),
-            'latitude' => $this->getLatitude(),
-            'longitude' => $this->getLongitude(),
-            'pression' => $this->getPression()
-            
+            'batterie' => $this->getBatterie(),
         );
     }
     
@@ -61,15 +47,15 @@ class DonneesArmoire implements JsonSerializable
         return $this->id;
     }
 
-    public function getPression(): ?float
+    public function getBatterie(): ?int
     {
-        return $this->pression;
+        return $this->batterie;
     }
-
-    public function setPression(float $pression): self
+    
+    public function setBatterie(int $batterie): self
     {
-        $this->pression = $pression;
-
+        $this->batterie = $batterie;
+        
         return $this;
     }
 
@@ -81,42 +67,6 @@ class DonneesArmoire implements JsonSerializable
     public function setIdArmoire(?Armoire $idArmoire): self
     {
         $this->idArmoire = $idArmoire;
-
-        return $this;
-    }
-
-    public function getHorodatage(): ?\DateTimeInterface
-    {
-        return $this->horodatage;
-    }
-
-    public function setHorodatage(\DateTimeInterface $horodatage): self
-    {
-        $this->horodatage = $horodatage;
-
-        return $this;
-    }
-
-    public function getLatitude(): ?float
-    {
-        return $this->latitude;
-    }
-
-    public function setLatitude(float $latitude): self
-    {
-        $this->latitude = $latitude;
-
-        return $this;
-    }
-
-    public function getLongitude(): ?float
-    {
-        return $this->longitude;
-    }
-
-    public function setLongitude(float $longitude): self
-    {
-        $this->longitude = $longitude;
 
         return $this;
     }

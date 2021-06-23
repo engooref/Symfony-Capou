@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Groupe;
+use App\Entity\Parcelle;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -15,7 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use Doctrine\ORM\EntityManagerInterface;
 
 
-class GroupeCrudController extends AbstractCrudController
+class ParcelleCrudController extends AbstractCrudController
 {
     private $manager;
     
@@ -26,31 +26,30 @@ class GroupeCrudController extends AbstractCrudController
     
     public static function getEntityFqcn(): string
     {
-        return Groupe::class;
+        return Parcelle::class;
     }
-
 
     public function configureFields(string $pageName): iterable
     {
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('label'),
-            AssociationField::new('idOperateur', 'Operateur')->setHelp('Choisir les opérateurs appartenant à ce groupe'),
-            AssociationField::new('idPiquets', 'Piquets')->setHelp('Choisir les piquets appartenant à ce groupe'),
-            AssociationField::new('idElectrovannes', 'Electrovannes')->setHelp('Choisir les electrovannes appartenant à ce groupe'),
+            AssociationField::new('idOperateurs', 'Operateur')->setHelp('Choisir les opérateurs appartenant à une parcelle'),
+            AssociationField::new('idPiquets', 'Piquets')->setHelp('Choisir les piquets appartenant à une parcelle'),
+            AssociationField::new('idElectrovannes', 'Electrovannes')->setHelp('Choisir les électrovannes appartenant à une parcelle'),
         ];
     }
     
 
     public function configureActions(Actions $actions): Actions
     {
-        //$GroupAct = $this->manager->getRepository(Groupe::class)->findOneById($entity->getId());
+        //$GroupAct = $this->manager->getRepository(Parcelle::class)->findOneById($entity->getId());
         //         $buttonDelete = Action::DELETE('sendInvoice', 'Send invoice', 'fa fa-envelope');
         
         
         $newDelete = Action::new('Supprimer')
         ->addCssClass('action-Supprimer text-danger')
-        ->linkToRoute('deleteCrud', function (Groupe $order) : Array {
+        ->linkToRoute('deleteCrud', function (Parcelle $order) : Array {
             return [
                 'entity' => $order->getId()
             ];

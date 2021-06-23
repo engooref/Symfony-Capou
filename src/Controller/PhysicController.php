@@ -76,8 +76,9 @@ class PhysicController extends AbstractController
     public function getDataPiquet() : Response {
         $periode = "1sem";
 
+        if(isset($_POST['periode'])){
             $periode = $_POST['periode'];
-
+        }
 
         $date = new dateTime();
 

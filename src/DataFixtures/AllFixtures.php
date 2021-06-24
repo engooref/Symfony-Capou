@@ -46,17 +46,6 @@ class AllFixtures extends Fixture
             $manager->persist($parcelle_armoire);
             $manager->flush();
         }
-
-        $user = new Operateur();
-        $user->setRoles(array('ROLE_ADMIN'));
-        $user->setEmail("admin@admin.fr");
-        $user->setPassword($this->encoder->encodePassword($user, "Admin")); // Mot de passe défini : Admin
-        $user->setVerifiedbyadmin(1);
-        $user->setIsFirstConnexion(1);
-        $user->setCreatedAt(new DateTime());
-        $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(1));
-        $manager->persist($user);
-        $manager->flush();
         
         // CREATION D'OPERATEURS
         $manager->getConnection()->exec("ALTER TABLE operateur AUTO_INCREMENT = 1;");
@@ -67,7 +56,7 @@ class AllFixtures extends Fixture
              $user->setVerifiedbyadmin(1);
              $user->setIsFirstConnexion(1);
              if($i < 10) $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(2));
-             else $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(3));
+             else $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(1));
              $user->setCreatedAt(new DateTime());
              $manager->persist($user);
              $manager->flush();
@@ -172,6 +161,17 @@ class AllFixtures extends Fixture
             $donneesPiquet->setBatterie($faker->numberBetween(0,100));
             $manager->persist($donneesPiquet);
             $manager->flush();
-        }     
+        }
+
+        $user = new Operateur();
+        $user->setRoles(array('ROLE_ADMIN'));
+        $user->setEmail("admin@admin.fr");
+        $user->setPassword($this->encoder->encodePassword($user, "Admin")); // Mot de passe défini : Admin
+        $user->setVerifiedbyadmin(1);
+        $user->setIsFirstConnexion(0);
+        $user->setCreatedAt(new DateTime());
+        $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(2));
+        $manager->persist($user);
+        $manager->flush();
     }
 }

@@ -9,6 +9,41 @@
 
 <div class="container-fluid" style="padding-bottom:100px;">
     <div class="row">
+    	<div class="col-sm-4 col-md-4" style="padding-top:10px;">
+            <div class="card border-dark">
+              	<div class="card-body">
+                	<center><u><h5 class="card-title">Parcelle</h5></u></center>
+                	{% if nb_parcelle == 0 %}
+        				<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;"> {{ nb_parcelle }} parcelle connectée</b></p>
+        			{% elseif nb_parcelle == 1 %}
+        				<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_parcelle }}</b> parcelle connectée </p>
+        			{% else %}
+        				<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_parcelle }}</b> parcelles connectées </p>
+        			{% endif %}
+                	<table class="table text-center">
+        				<tr class="card-text">Liste des parcelles:</tr>
+        				{% if donnees_parcelle is null%}
+                        	<tr><b style="color:red;">Aucune parcelle</b></tr>
+                        {%else%}
+            				<tr>
+    							<th class="card-text"> Nom: </th>
+								<th class="card-text"> piquets </th>
+								<th class="card-text"> opérateurs </th>
+								<th class="card-text"> électrovannes </th>
+            				</tr>
+            			    {% for i in 0..nb_parcelle-1 %}
+            			    	<tr>
+            			    		<td class="card-text">{{ donnees_parcelle[i] }} </td>
+        							<td class="card-text">{{ nbParcelle_piquet[i] }} </td>
+        							<td class="card-text">{{ nbParcelle_operateur[i] }} </td>
+        							<td class="card-text">{{ nbParcelle_vanne[i] }} </td>
+    							</tr>
+                            {% endfor %}
+    					{% endif %}
+    	            </table>
+              	</div>
+        	</div>
+    	</div>
         <div class="col-sm-4 col-md-4" style="padding-top:10px;">
             <div class="card border-dark">
             	<div class="card-body">
@@ -49,6 +84,24 @@
         <div class="col-sm-4 col-md-4" style="padding-top:10px;">
             <div class="card border-dark">
               	<div class="card-body">
+                	<center><u><h5 class="card-title">Armoire</h5></u></center>
+                	{% if etat_armoire == 0 %}
+        				<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;"> armoire déconnectée (éteinte)</b></p>
+        			{% elseif etat_armoire == 1 %}
+        				<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;"> armoire déconnectée (mode manuel) </b></p>
+        			{% elseif etat_armoire == 2 %}
+        				<p class="card-text"><i class="fas fa-circle text-success"></i> armoire connectée</p>
+        				<p class="card-text">Batterie: {% if donnees_armoire is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_armoire.batterie }}%</b>{% endif %}</p>
+        			{% else %}
+        				<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">ERREUR DE DONNEE</b> </p>
+        			{% endif %}
+                	
+              	</div>
+        	</div>	
+    	</div>
+    	<div class="col-sm-4 col-md-4" style="padding-top:10px;">
+            <div class="card border-dark">
+              	<div class="card-body">
                 	<center><u><h5 class="card-title">Electrovannes</h5></u></center>
                 	{% if nb_vanne == 0 %}
         			<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">{{ nb_vanne }} électrovanne connectée</b></p>
@@ -72,24 +125,6 @@
               	</div>
             </div>
         </div>
-        <div class="col-sm-4 col-md-4" style="padding-top:10px;">
-            <div class="card border-dark">
-              	<div class="card-body">
-                	<center><u><h5 class="card-title">Armoire</h5></u></center>
-                	{% if etat_armoire == 0 %}
-        				<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;"> armoire déconnectée (éteinte)</b></p>
-        			{% elseif etat_armoire == 1 %}
-        				<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;"> armoire déconnectée (mode manuel) </b></p>
-        			{% elseif etat_armoire == 2 %}
-        				<p class="card-text"><i class="fas fa-circle text-success"></i> armoire connectée</p>
-        				<p class="card-text">Batterie: {% if donnees_armoire is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_armoire.batterie }}%</b>{% endif %}</p>
-        			{% else %}
-        				<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">ERREUR DE DONNEE</b> </p>
-        			{% endif %}
-                	
-              	</div>
-        	</div>
-    	</div>
     </div>
 </div>
 <img src="{{ asset('img/herbe.png') }}" width="100%" class="d-inline-block fixed-bottom">

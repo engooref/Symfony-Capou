@@ -36,7 +36,7 @@ class DonneesPiquetRepository extends ServiceEntityRepository
     }
     */
     
-    public function findByDateBetween($dateBase, $offset=null, $limit=null){
+    public function findByDate($dateBase, $offset=null, $limit=null){
         
             $entityManager = $this->getEntityManager();
             
@@ -49,6 +49,21 @@ class DonneesPiquetRepository extends ServiceEntityRepository
 
             return $query->getResult();
     }
+    
+    public function findByDateBetween($dateBase, $dateFin, $offset=null, $limit=null){
+        
+        $entityManager = $this->getEntityManager();
+        
+        $query = $entityManager->createQuery(
+            'SELECT horodatage
+                FROM App\Entity\DonneesPiquet horodatage
+                WHERE horodatage BETWEEN \'2021-06-23\' AND \'2021-06-24\'
+                ORDER BY horodatage.horodatage ASC'
+            );
+            
+            return $query->getResult();
+    }
+    
     /*
     public function findOneBySomeField($value): ?DonneesPiquet
     {

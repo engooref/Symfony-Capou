@@ -95,7 +95,7 @@ class PhysicController extends AbstractController
         }  
         
         $dataPiquet = $this->manager->getRepository(DonneesPiquet::class);
-        $obj = $dataPiquet->findByDateBetween($datePeriode);
+        $obj = $dataPiquet->findByDate($datePeriode);
 
         foreach($obj as $piquet)
         {

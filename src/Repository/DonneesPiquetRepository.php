@@ -36,13 +36,18 @@ class DonneesPiquetRepository extends ServiceEntityRepository
     }
     */
     
-    public function findByDateBetween($dateBase, $dateFin, $offset=null, $limit=null){
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.horodatage BETWEEN :debut AND :fin')
-            ->setParameter('debut', $dateBase)
-            ->setParameter('fin', $dateFin)
-            ->orderBy('d.horodatage', 'ASC')
-            ->getQuery()->getResult();
+    public function findByDateBetween($dateBase, $offset=null, $limit=null){
+        
+            $entityManager = $this->getEntityManager();
+            
+            $query = $entityManager->createQuery(
+                'SELECT horodatage
+                FROM App\Entity\DonneesPiquet horodatage
+                WHERE horodatage.horodatage > :debut
+                ORDER BY horodatage.horodatage ASC'
+            )->setParameter('debut', $dateBase);
+
+            return $query->getResult();
     }
     /*
     public function findOneBySomeField($value): ?DonneesPiquet

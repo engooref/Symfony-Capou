@@ -18,21 +18,6 @@ class DonneesVanne implements JsonSerializable
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $debit;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=ElectroVanne::class, inversedBy="idDonneesVanne")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $idVanne;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $horodatage;
 
     /**
      * @ORM\Column(type="float")
@@ -43,15 +28,36 @@ class DonneesVanne implements JsonSerializable
      * @ORM\Column(type="float")
      */
     private $longitude;
+    
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $horodatage;
+    
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    private $batterie;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity=ElectroVanne::class, inversedBy="idDonneesVanne")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $idVanne;
+    
+    public function __toString()
+    {
+        return $this->getId();
+    }
 
     public function JsonSerialize()
     {
         return array(
             'id' => $this->getId(),
-            'debit' => $this->getDebit(),
-            'horodatage' => $this->getHorodatage()->format("Y-m-d H:i:s"),
             'latitude' => $this->getLatitude(),
             'longitude' => $this->getLongitude(), 
+            'horodatage' => $this->getHorodatage()->format("Y-m-d H:i:s"),
+            'batterie' => $this->getBatterie(),
         );
     }
     
@@ -59,28 +65,28 @@ class DonneesVanne implements JsonSerializable
     {
         return $this->id;
     }
-
-    public function getDebit(): ?float
+    
+    public function getLatitude(): ?float
     {
-        return $this->debit;
+        return $this->latitude;
     }
-
-    public function setDebit(float $debit): self
+    
+    public function setLatitude(float $latitude): self
     {
-        $this->debit = $debit;
-
+        $this->latitude = $latitude;
+        
         return $this;
     }
-
-    public function getIdVanne(): ?ElectroVanne
+    
+    public function getLongitude(): ?float
     {
-        return $this->idVanne;
+        return $this->longitude;
     }
-
-    public function setIdVanne(?ElectroVanne $idVanne): self
+    
+    public function setLongitude(float $longitude): self
     {
-        $this->idVanne = $idVanne;
-
+        $this->longitude = $longitude;
+        
         return $this;
     }
 
@@ -95,28 +101,28 @@ class DonneesVanne implements JsonSerializable
 
         return $this;
     }
-
-    public function getLatitude(): ?float
+    
+    public function getBatterie(): ?int
     {
-        return $this->latitude;
+        return $this->batterie;
     }
-
-    public function setLatitude(float $latitude): self
+    
+    public function setBatterie(int $batterie): self
     {
-        $this->latitude = $latitude;
-
+        $this->batterie = $batterie;
+        
         return $this;
     }
-
-    public function getLongitude(): ?float
+    
+    public function getIdVanne(): ?ElectroVanne
     {
-        return $this->longitude;
+        return $this->idVanne;
     }
-
-    public function setLongitude(float $longitude): self
+    
+    public function setIdVanne(?ElectroVanne $idVanne): self
     {
-        $this->longitude = $longitude;
-
+        $this->idVanne = $idVanne;
+        
         return $this;
     }
 }

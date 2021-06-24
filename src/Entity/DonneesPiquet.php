@@ -18,7 +18,22 @@ class DonneesPiquet implements JsonSerializable
      * @ORM\Column(type="integer")
      */
     private $id;
-
+    
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $temperature;
+    
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $latitude;
+    
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $longitude;
+    
     /**
      * @ORM\Column(type="datetime")
      */
@@ -30,42 +45,31 @@ class DonneesPiquet implements JsonSerializable
     private $humidite = [];
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="smallint")
      */
-    private $temperature;
-
+    private $batterie;
+    
     /**
      * @ORM\ManyToOne(targetEntity=Piquet::class, inversedBy="idDonneesPiquet")
      * @ORM\JoinColumn(nullable=false)
      */
     private $idPiquet;
-
-    /**
-     * @ORM\Column(type="smallint")
-     */
-    private $batterie;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $latitude;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $longitude;
+    
+    public function __toString()
+    {
+        return $this->getId();
+    }
 
     public function JsonSerialize()
     {
         return array(
             'id' => $this->getId(),
-            'horodatage' => $this->getHorodatage()->format("Y-m-d H:i:s"),
-            'humidite' => $this->getHumidite(),
             'temperature' => $this->getTemperature(),
             'latitude' => $this->getLatitude(),
             'longitude' => $this->getLongitude(),
+            'horodatage' => $this->getHorodatage()->format("Y-m-d H:i:s"),
+            'humidite' => $this->getHumidite(),
             'batterie' => $this->getBatterie(),
-            
         );
     }
     public function getId(): ?int

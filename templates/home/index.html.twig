@@ -24,6 +24,7 @@
         			<p class="card-text">Dernière température reçue : {% if donnees_piquet is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_piquet.temperature }} °C</b>{% endif %}</p>
         			<p class="card-text">Température minimale : {% if temperature_minimale is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ temperature_minimale.temperature }} °C</b>{% endif %}</p>
         			<p class="card-text">Température maximale : {% if temperature_minimale is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ temperature_maximale.temperature }} °C</b>{% endif %}</p>
+        			<p class="card-text">Batterie: {% if donnees_piquet is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_piquet.batterie }}%</b>{% endif %}</p>
         			<table class="table text-center">
         				<tr class="card-text">Derniers pourcentage d'humidité reçus: </tr>
         				{% if donnees_piquet is null%}
@@ -75,25 +76,17 @@
             <div class="card border-dark">
               	<div class="card-body">
                 	<center><u><h5 class="card-title">Armoire</h5></u></center>
-                	{% if nb_armoire == 0 %}
-        			<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">{{ nb_armoire }} armoire connectée</b></p>
-        			{% elseif nb_armoire == 1 %}
-        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_armoire }}</b> armoire connectée</p>
+                	{% if etat_armoire == 0 %}
+        				<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;"> armoire déconnectée (éteinte)</b></p>
+        			{% elseif etat_armoire == 1 %}
+        				<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;"> armoire déconnectée (mode manuel) </b></p>
+        			{% elseif etat_armoire == 2 %}
+        				<p class="card-text"><i class="fas fa-circle text-success"></i> armoire connectée</p>
+        				<p class="card-text">Batterie: {% if donnees_armoire is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_armoire.batterie }}%</b>{% endif %}</p>
         			{% else %}
-        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_armoire }}</b> armoires connectées</p>
+        				<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">ERREUR DE DONNEE</b> </p>
         			{% endif %}
-                	<p class="card-text">Date de la dernière donnée reçue: {% if donnees_armoire is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_armoire.horodatage.format('Y/m/d H:i:s') }}</b>{% endif %}</p>
-            		<table class="table text-center">
-            		<tr class="card-text">Dernières coordonnées: </tr>
-        				<tr>
-        					<th class="card-text"> Latitude </th>
-        					<th class="card-text"> Longitude </th>
-        				</tr>
-        				<tr>
-        					<td class="card-text">{% if donnees_armoire is null%}<b style="color:red;">Aucune donnée</b>{%else%}{{ donnees_armoire.latitude }}{% endif %}</td>
-        					<td class="card-text">{% if donnees_armoire is null%}<b style="color:red;">Aucune donnée</b>{%else%}{{ donnees_armoire.longitude }}{% endif %}</td>
-        				</tr>
-    	            </table>
+                	
               	</div>
         	</div>
     	</div>

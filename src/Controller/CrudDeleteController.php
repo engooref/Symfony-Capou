@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Groupe;
+use App\Entity\Parcelle;
 use App\Entity\Piquet;
 use App\Entity\ElectroVanne;
 use App\Entity\Operateur;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use App\Controller\Admin\GroupeCrudController;
+use App\Controller\Admin\ParcelleCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use App\Controller\DashboardController;
@@ -50,39 +50,39 @@ class CrudDeleteController extends AbstractController
     public function deleteCrud(Request $request): Response
     {
         $manager = $this->getDoctrine()->getManager();
-        $groupe = $manager->getRepository(Groupe::class)->findOneById(intval($request->query->get('routeParams')['entity']));
+        $Parcelle = $manager->getRepository(Parcelle::class)->findOneById(intval($request->query->get('routeParams')['entity']));
         $piquet = $manager->getRepository(Piquet::class)->findOneById(intval($request->query->get('routeParams')['entity']));
         $electrovanne = $manager->getRepository(ElectroVanne::class)->findOneById(intval($request->query->get('routeParams')['entity']));
         //dump($electrovanne); die();
         
-        $operatorTab       =    $manager->getRepository(Operateur::class)->findBy(['idGroupe'=>$groupe->getId()]);
-        $piquetTab         =    $manager->getRepository(Piquet::class)->findBy(['idGroupe'=>$piquet->getId()]);
-        $electrovanneTab   =    $manager->getRepository(ElectroVanne::class)->findBy(['idGroupe'=>$electrovanne->getId()]);
+        $operatorTab       =    $manager->getRepository(Operateur::class)->findBy(['idParcelle'=>$Parcelle->getId()]);
+        $piquetTab         =    $manager->getRepository(Piquet::class)->findBy(['idParcelle'=>$piquet->getId()]);
+        $electrovanneTab   =    $manager->getRepository(ElectroVanne::class)->findBy(['idParcelle'=>$electrovanne->getId()]);
         //dump($operatorTab);die();
         
         
         if(!empty($operatorTab)){
-            $this->addFlash('danger', 'Impossible de supprimer le groupe ! La parcelle contient des operateurs, veuillez d\'abord les transferer dans un autre groupe');
+            $this->addFlash('danger', 'Impossible de supprimer le Parcelle ! La parcelle contient des operateurs, veuillez d\'abord les transferer dans un autre Parcelle');
         }
         else{
             
             
-            foreach($piquetTab as $Piquet){ // Pour chaque op�rateurs contenus dans le groupe actuel, on les transfere dans le groupe par d�faut (1)
-                $Piquet->setIdGroupe(null);
+            foreach($piquetTab as $Piquet){ // Pour chaque op�rateurs contenus dans le Parcelle actuel, on les transfere dans le Parcelle par d�faut (1)
+                $Piquet->setIdParcelle(null);
                 $this->doctrineManager->flush();
             }
             
-            foreach($electrovanneTab as $Electrovanne){ // Pour chaque op�rateurs contenus dans le groupe actuel, on les transfere dans le groupe par d�faut (1)
-                $Electrovanne->setIdGroupe(null);
+            foreach($electrovanneTab as $Electrovanne){ // Pour chaque op�rateurs contenus dans le Parcelle actuel, on les transfere dans le Parcelle par d�faut (1)
+                $Electrovanne->setIdParcelle(null);
                 $this->doctrineManager->flush();
             }
             
-            $manager->remove($groupe);
+            $manager->remove($Parcelle);
             $manager->flush();
         }
         
         $url = $this->adminUrlGenerator
-        ->setController(GroupeCrudController::class)
+        ->setController(ParcelleCrudController::class)
         ->setAction(Action::INDEX)
         ->generateUrl();
         

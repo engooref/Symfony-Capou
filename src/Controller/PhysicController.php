@@ -116,7 +116,6 @@ class PhysicController extends AbstractController
         $piquetDb = $parcelle->getIdPiquets();
         $armoireDb = $parcelle->getIdArmoires();
         $electrovanneDb = $parcelle->getIdElectrovannes();
-        dump($piquetDb, $armoireDb, $electrovanneDb);
         $piquet = array();
         $armoire = array();
         $electrovanne = array();
@@ -153,7 +152,7 @@ class PhysicController extends AbstractController
                 array_push($electrovanne, $coordsElec);
             }
         }
-        return new JsonResponse(array("1" => $armoire, "2" => $electroVanne, "3" => $piquet));
+        return new JsonResponse(array("1" => $armoire, "2" => $electrovanne, "3" => $piquet));
        
     }
     

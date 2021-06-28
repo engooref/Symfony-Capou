@@ -24,20 +24,13 @@ class HomeController extends AbstractController
     {
 
         //Piquet
-        $piquet = $this->getDoctrine()->getManager()->getRepository(Piquet::class)->findByEtat(1);
-        $nb_piquet = count($piquet);
-        $donnees_piquet = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['horodatage' => 'desc']);
-        $temperature_min = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['temperature' => 'asc']);
-        $temperature_max = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneBy([],['temperature' => 'desc']);
-        
-//         $date = new dateTime();
-//         $date6h = DateTime::createFromFormat('H:i:s', '06:00:00');
-        
-//         $date = $date6h;
-//         $dateadd = $date->add(new DateInterval('PT2H'));
-// //         $datePeriode = $date->sub(new DateInterval('PT6H'));
-//         $dataPiq = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findByDateBetween($date6h,$dateadd);
-//         dump($dataPiq); die();
+        $nbpiquet_print = 10;
+        $nb_piquet = count($this->getDoctrine()->getManager()->getRepository(Piquet::class)->findByEtat(1));
+        if ($nb_piquet < $nbpiquet_print) $nbpiquet_print = $nb_piquet;
+        for($k = 0; $k<$nbpiquet_print; $k++){
+            $donnees_piquet[$k] = $this->getDoctrine()->getManager()->getRepository(DonneesPiquet::class)->findOneByIdPiquet([$k+1],['horodatage' => 'desc']);
+            $parcellePiquet[$k] = $this->getDoctrine()->getManager()->getRepository(Piquet::class)->findOneById($k+1)->getIdParcelle();
+        }
         
         //Armoire
         $etat_armoire = $this->getDoctrine()->getManager()->getRepository(Armoire::class)->findAll();
@@ -45,33 +38,31 @@ class HomeController extends AbstractController
         $donnees_armoire = $this->getDoctrine()->getManager()->getRepository(DonneesArmoire::class)->findOneBy([],[]);
 
         //Electrovanne
-        $vanne = $this->getDoctrine()->getManager()->getRepository(ElectroVanne::class)->findByEtat(1);
-        $nb_vanne = count($vanne);
-        $donnees_vanne = $this->getDoctrine()->getManager()->getRepository(DonneesVanne::class)->findOneBy([],['horodatage' => 'desc']);
-
+        $nbvanne_print = 5;
+        $nb_vanne = count($this->getDoctrine()->getManager()->getRepository(ElectroVanne::class)->findByEtat(1));
+        if ($nb_vanne < $nbvanne_print) $nbvanne_print = $nb_vanne;
+        for($k = 0; $k<$nbvanne_print; $k++){
+            $donnees_vanne[$k] = $this->getDoctrine()->getManager()->getRepository(DonneesVanne::class)->findOneByIdVanne([$k+1],['horodatage' => 'desc']);
+            $parcelleVanne[$k] = $this->getDoctrine()->getManager()->getRepository(ElectroVanne::class)->findOneById($k+1)->getIdParcelle();
+            
+        }
         //Parcelle
-        $parcelle = $this->getDoctrine()->getManager()->getRepository(Parcelle::class)->findAll();
-        $nb_parcelle = count($parcelle);
-
-        
+        $nb_parcelle = count($this->getDoctrine()->getManager()->getRepository(Parcelle::class)->findAll());
         for($k = 0; $k<$nb_parcelle; $k++){
            $parcelle[$k] = $this->getDoctrine()->getManager()->getRepository(Parcelle::class)->findOneById($k+1)->getLabel();
            $pPiquet[$k] = count($this->getDoctrine()->getManager()->getRepository(Piquet::class)->findByIdParcelle($k+1));
            $pVanne[$k] = count($this->getDoctrine()->getManager()->getRepository(ElectroVanne::class)->findByIdParcelle($k+1));         
            $pOperateur[$k] = count($this->getDoctrine()->getManager()->getRepository(Operateur::class)->findByIdParcelle($k+1));
-
         }
-//         dump($pPiquet);
-//         dump($pVanne);
-//         dump($pOperateur);
-//         die();
         
         return $this->render('home/index.html.twig', [
             'nb_piquet' => $nb_piquet,
-            'temperature_minimale' => $temperature_min,
-            'temperature_maximale' => $temperature_max,
+            'nbpiquet_print' => $nbpiquet_print,
+            'parcellePiquet' => $parcellePiquet,
             'donnees_piquet' => $donnees_piquet,
             'nb_vanne' => $nb_vanne,
+            'nbvanne_print' => $nbvanne_print,
+            'parcelleVanne' => $parcelleVanne,
             'donnees_vanne' => $donnees_vanne,
             'etat_armoire' => $etat_armoire,
             'donnees_armoire' => $donnees_armoire,

@@ -20,64 +20,66 @@
         			{% else %}
         				<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_parcelle }}</b> parcelles connectées </p>
         			{% endif %}
-                	<table class="table text-center">
-        				<tr class="card-text">Liste des parcelles:</tr>
-        				{% if donnees_parcelle is null%}
-                        	<tr><b style="color:red;">Aucune parcelle</b></tr>
-                        {%else%}
-            				<tr>
-    							<th class="card-text"> Nom: </th>
-								<th class="card-text"> piquets </th>
-								<th class="card-text"> opérateurs </th>
-								<th class="card-text"> électrovannes </th>
-            				</tr>
-            			    {% for i in 0..nb_parcelle-1 %}
-            			    	<tr>
-            			    		<td class="card-text">{{ donnees_parcelle[i] }} </td>
-        							<td class="card-text">{{ nbParcelle_piquet[i] }} </td>
-        							<td class="card-text">{{ nbParcelle_operateur[i] }} </td>
-        							<td class="card-text">{{ nbParcelle_vanne[i] }} </td>
-    							</tr>
-                            {% endfor %}
-    					{% endif %}
-    	            </table>
+        			<div class="table-responsive">
+                    	<table class="table text-center">
+            				<tr class="card-text">Liste des parcelles:</tr>
+            				{% if donnees_parcelle is null%}
+                            	<tr><b style="color:red;">Aucune parcelle</b></tr>
+                            {%else%}
+                				<tr>
+        							<th class="card-text"> Nom: </th>
+    								<th class="card-text"> piquets </th>
+    								<th class="card-text"> opérateurs </th>
+    								<th class="card-text"> électrovannes </th>
+                				</tr>
+                			    {% for i in 0..nb_parcelle-1 %}
+                			    	<tr>
+                			    		<td class="card-text">{{ donnees_parcelle[i] }} </td>
+            							<td class="card-text">{{ nbParcelle_piquet[i] }} </td>
+            							<td class="card-text">{{ nbParcelle_operateur[i] }} </td>
+            							<td class="card-text">{{ nbParcelle_vanne[i] }} </td>
+        							</tr>
+                                {% endfor %}
+        					{% endif %}
+        	            </table>
+    	            </div>
               	</div>
         	</div>
     	</div>
         <div class="col-sm-4 col-md-4" style="padding-top:10px;">
             <div class="card border-dark">
-            	<div class="card-body">
-        			<center><u><h5 class="card-title">Piquets</h5></u></center>
-        			{% if nb_piquet == 0 %}
-        			<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">{{ nb_piquet }} piquet connecté</b></p>
-        			{% elseif nb_piquet == 1 %}
-        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_piquet }}</b> piquet connecté</p>
+              	<div class="card-body">
+                	<center><u><h5 class="card-title">Electrovannes</h5></u></center>
+                	{% if nb_vanne == 0 %}
+        			<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">{{ nb_vanne }} électrovanne connectée</b></p>
+        			{% elseif nb_vanne == 1 %}
+        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_vanne }}</b> électrovanne connectée</p>
         			{% else %}
-        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_piquet }}</b> piquets connectés</p>
+        			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_vanne }}</b> électrovannes connectées</p>
         			{% endif %}
-        			<p class="card-text">Date de la dernière donnée reçue : {% if donnees_piquet is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_piquet.horodatage.format('Y/m/d H:i:s') }}</b>{% endif %}</p>
-        			<p class="card-text">Dernière température reçue : {% if donnees_piquet is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_piquet.temperature }} °C</b>{% endif %}</p>
-        			<p class="card-text">Température minimale : {% if temperature_minimale is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ temperature_minimale.temperature }} °C</b>{% endif %}</p>
-        			<p class="card-text">Température maximale : {% if temperature_minimale is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ temperature_maximale.temperature }} °C</b>{% endif %}</p>
-        			<p class="card-text">Batterie: {% if donnees_piquet is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_piquet.batterie }}%</b>{% endif %}</p>
-        			<table class="table text-center">
-        				<tr class="card-text">Derniers pourcentage d'humidité reçus: </tr>
-        				{% if donnees_piquet is null%}
-                        	<tr><b style="color:red;">Aucune donnée</b></tr>
-                        {%else%}
-            				<tr>
-            					<th class="card-text"> 1 </th>
-            					<th class="card-text"> 2 </th>
-            					<th class="card-text"> 3 </th>
-            					<th class="card-text"> 4 </th>
-            				</tr>
-            				<tr>
-                                {% for humidite in donnees_piquet.humidite %}
-            						<td class="card-text">{{ humidite }} %</td>
+                	<div class="table-responsive">
+            			<table class="table table-responsive text-center">
+            				<tr class="card-text">Données ElectroVannes: </tr>
+            				{% if donnees_vanne is null%}
+                            	<tr><b style="color:red;">Aucune donnée</b></tr>
+                            {%else%}
+                				<tr>
+                					<th class="card-text"> Id </th>
+                					<th class="card-text"> Batterie </th>
+                					<th class="card-text"> Date </th>
+                					<th class="card-text"> Parcelle </th>
+                				</tr>
+                				{% for i in 0..nbvanne_print-1 %}
+                    				<tr>
+                                        <td class="card-text"> {{ donnees_vanne[i].idVAnne }} </td>
+                                        <td class="card-text"> {{ donnees_vanne[i].batterie }}%</td>
+                                        <td class="card-text"> {{ donnees_vanne[i].horodatage.format("Y/m/d h:i:s") }} </td>
+            							<td class="card-text"> {{ parcelleVanne[i] }} </td>
+                				    </tr>
             				    {% endfor %}
-        				    </tr>
-    					{% endif %}
-    	            </table>
+            				{% endif %}
+                        </table>
+                    </div>
               	</div>
             </div>
         </div>
@@ -96,38 +98,59 @@
             			{% else %}
             				<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">ERREUR DE DONNEE</b> </p>
             			{% endif %}
-                    	
                   	</div>
             	</div>
         	</div>
-        	<div style="padding-top:10px;">
-            	<div class="card border-dark">
-                  	<div class="card-body">
-                    	<center><u><h5 class="card-title">Electrovannes</h5></u></center>
-                    	{% if nb_vanne == 0 %}
-            			<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">{{ nb_vanne }} électrovanne connectée</b></p>
-            			{% elseif nb_vanne == 1 %}
-            			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_vanne }}</b> électrovanne connectée</p>
-            			{% else %}
-            			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_vanne }}</b> électrovannes connectées</p>
-            			{% endif %}
-                    	<p class="card-text">Date de la dernière donnée reçue: {% if donnees_vanne is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_vanne.horodatage.format('Y/m/d H:i:s') }}</b>{% endif %}</p>
-                		<table class="table text-center">
-                			<tr class="card-text">Dernières coordonnées: </tr>
-            				<tr>
-            					<th class="card-text"> Latitude </th>
-            					<th class="card-text"> Longitude </th>
-            				</tr>
-            				<tr>
-            					<td class="card-text">{% if donnees_vanne is null%}<b style="color:red;">Aucune donnée</b>{%else%}{{ donnees_vanne.latitude }}{% endif %}</td>
-            					<td class="card-text">{% if donnees_vanne is null%}<b style="color:red;">Aucune donnée</b>{%else%}{{ donnees_vanne.longitude }}{% endif %}</td>
-            				</tr>
-        	            </table>
-                  	</div>
-                </div>
-            </div>
     	</div>
     </div>
+    <div class="col-sm col-md" style="padding-top:10px;">
+        <div class="card border-dark">
+        	<div class="card-body">
+    			<center><u><h5 class="card-title">Piquets</h5></u></center>
+    			{% if nb_piquet == 0 %}
+    			<p class="card-text"><i class="fas fa-circle text-danger"></i> <b style="color:red;">{{ nb_piquet }} piquet connecté</b></p>
+    			{% elseif nb_piquet == 1 %}
+    			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_piquet }}</b> piquet connecté</p>
+    			{% else %}
+    			<p class="card-text"><i class="fas fa-circle text-success"></i> <b>{{ nb_piquet }}</b> piquets connectés</p>
+    			{% endif %}
+    			{#<p class="card-text">Batterie: {% if donnees_piquet is null%}<b style="color:red;">Aucune donnée</b>{%else%}<b>{{ donnees_piquet.batterie }}%</b>{% endif %}</p>#}
+    			<div class="table-responsive">
+        			<table class="table table-responsive text-center">
+        				<tr class="card-text">Données piquets: </tr>
+        				{% if donnees_piquet is null%}
+                        	<tr><b style="color:red;">Aucune donnée</b></tr>
+                        {%else%}
+            				<tr>
+            					<th class="card-text"> Id </th>
+            					<th class="card-text"> Batterie </th>
+            					<th class="card-text"> Date </th>
+            					<th class="card-text"> Température </th>
+            					<th class="card-text"> Humidité </th>
+            					<th class="card-text"> Parcelle </th>
+            				</tr>
+            				{% for i in 0..nbpiquet_print-1 %}
+                				<tr>
+                                    <td class="card-text"> {{ donnees_piquet[i].idPiquet }} </td>
+                                    <td class="card-text"> {{ donnees_piquet[i].batterie }}% </td>
+                                    <td class="card-text"> {{ donnees_piquet[i].horodatage.format("Y/m/d h:i:s") }} </td>
+                                    <td class="card-text"> {{ donnees_piquet[i].temperature }} </td>
+                                    <td class="card-text">
+                                    	<table class="table text-center">
+                                            {% for hum in donnees_piquet[i].humidite %}
+                                        		<tr class="card-text"> {{ hum }}% </tr>
+                                            {% endfor %}
+                                        </table>
+                                    </td>
+        							<td class="card-text"> {{ parcellePiquet[i] }} </td>
+            				    </tr>
+        				    {% endfor %}
+        				{% endif %}
+                    </table>
+                </div>
+          	</div>
+        </div>
+    </div>
 </div>
-<img src="{{ asset('img/herbe.png') }}" width="100%" class="d-inline-block fixed-bottom">
+<!-- <img src="{{ asset('img/herbe.png') }}" width="100%" class="d-inline-block fixed-bottom">-->
 {% endblock %}

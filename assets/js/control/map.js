@@ -4,6 +4,8 @@ import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import {fromLonLat} from 'ol/proj';
 import Point from 'ol/geom/Point';
+import Circle from 'ol/geom/Circle';
+import Style from 'ol/style/Style';
 import Feature from 'ol/Feature';
 
 import VectorLayer from 'ol/layer/Vector';
@@ -31,40 +33,97 @@ import VectorSource from 'ol/source/Vector';
 		//AddToMap(data, 1);
 		
 	}
-
+	function addCircle(percent, circle){
+		circle.setStyle(
+			new Style({
+			    renderer: function renderer(coordinates, state) {
+			      var coordinates_0 = coordinates[0];
+			      var x = coordinates_0[0];
+			      var y = coordinates_0[1];
+			      var coordinates_1 = coordinates[1];
+			      var x1 = coordinates_1[0];
+			      var y1 = coordinates_1[1];
+			      var ctx = state.context;
+			      var dx = x1 - x;
+			      var dy = y1 - y;
+			      var radius = Math.sqrt(dx * dx + dy * dy);
+			
+			      var innerRadius = 0;
+			      var outerRadius = radius * 1.4;
+			
+			      var gradient = ctx.createRadialGradient(
+			        x,
+			        y,
+			        innerRadius,
+			        x,
+			        y,
+			        outerRadius
+			      );
+			      gradient.addColorStop(0, 'rgba(255,0,0,0)');
+			      gradient.addColorStop(0.6, 'rgba(255,0,0,0.2)');
+			      gradient.addColorStop(1, 'rgba(255,0,0,0.8)');
+			      ctx.beginPath();
+			      ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
+			      ctx.fillStyle = gradient;
+			      ctx.fill();
+			
+			      ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
+			      ctx.strokeStyle = 'rgba(255,0,0,1)';
+			      ctx.stroke();
+			  	},
+			})
+		)
+	}
+		var circleTab = [];
     	function AddToMap(data, type){
     		var dataSelect = data[type.toString()];
     		for(let i = 0; i < dataSelect.length; i++){
         		var gps = dataSelect[i]["gps"];
+				console.log(gps);
+    			circleTab[i] = new Feature({
+					geometry: new Circle(fromLonLat([gps["latitude"],gps["longitude"]]),40)
+				});
+				//addCircle(Math.floor(Math.random()*100),circleTab[i]);
+				console.log(circleTab);
 				var layer = new VectorLayer({
-					id: dataSelect[i]["id"],
-					type: type,
-					gps:  "lat: " + gps["latitude"] + " long: " + gps["longitude"],
-					source: new VectorSource({
-	          			features: [
-	        				new Feature({
-	              				geometry: new Point(fromLonLat([gps["longitude"], gps["latitude"]]))
-	            			}),
-	          			]
-	        		})
+						id: dataSelect[i]["id"],
+						type: type,
+						gps:  "lat: " + gps["latitude"] + " long: " + gps["longitude"],
+						source: new VectorSource({
+		          			features: [
+		        				new Feature({
+		              				geometry: new Point(fromLonLat([gps["longitude"], gps["latitude"]]))
+		            			}),
+								//circleTab[i]
+							]
+	        			})
 	        	});
 	        	map.addLayer(layer);
 			}
         }
 		
         var map = new Map({
-            layers: [
-              new TileLayer({
-                source: new OSM({ maxZoom: 19 })
-             })
-            ],
+        	layers: [ 
+				new TileLayer({
+	        		source: new OSM({ 
+	        			maxZoom: 19
+	        		})
+
+        		}),
+				new VectorLayer({
+					source: new VectorSource({
+						features: circleTab
+					})
+				})
+			],
+			
             target: 
             	'map',
         		view: new View({
         			center: 
         				fromLonLat([1.3132516617440526, 44.03227977777603]),
         				maxZoom: 19,
-        				zoom: 17
+        				zoom: 15
         		})
         });
 

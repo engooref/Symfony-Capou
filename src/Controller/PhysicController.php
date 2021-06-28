@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Parcelle;
 use App\Entity\Piquet;
 use App\Entity\Armoire;
 use App\Entity\ElectroVanne;
@@ -36,7 +37,7 @@ class PhysicController extends AbstractController
     
     #[Route('/getData', name: 'getData')]
     public function getData() : Response {
-        if(!isset($_GET['type'], $_GET['id'])) return new Response(Response::HTTP_ERROR);
+        if(!isset($_GET['type'], $_GET['id'])) return new Response(Response::HTTP_NOT_FOUND);
         $type = $_GET['type'];
         $id = $_GET['id'];
         $obj = null;
@@ -54,9 +55,12 @@ class PhysicController extends AbstractController
                 break;
         }
         $obj = $obj->findOneById($id);
+        if(!$obj) {
+            return new Response(Response::HTTP_NOT_FOUND);
+        }
         $dataObj = $obj->getIdDonnees()->getValues();
         
-        if((intval($type) == 2) || (intval($type) == 3)) {
+        if((intval($type) == 1) || (intval($type) == 2)) {
             $dateMin = (DateTime::createFromInterface(end($dataObj)->getHorodatage()))->sub(new DateInterval("P1W"));
             $dateMax = DateTime::createFromInterface(end($dataObj)->getHorodatage());
             
@@ -112,47 +116,57 @@ class PhysicController extends AbstractController
     #[Route('/mapsControl', name: 'mapsControl')]
     public function mapsControl()
     {
-        $parcelle = $this->getUser()->getIdParcelle();
-        $piquetDb = $parcelle->getIdPiquets();
-        $armoireDb = $parcelle->getIdArmoires();
-        $electrovanneDb = $parcelle->getIdElectrovannes();
-        $piquet = array();
-        $armoire = array();
         $electrovanne = array();
+        $piquet = array();
         
-        for($i = 0; $i < count($piquetDb); $i++){
-            if($piquetDb[$i]->getEtat()){
-                $val = $piquetDb[$i]->getIdDonnees()->GetValues();
-                $data = end($val);
-                
-                $coordsPiq["id"] = $piquetDb[$i]->getId();
-                $coordsPiq["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
-                array_push($piquet, $coordsPiq);
+        $adminRoles = $this->getUser()->getRoles();
+        if($adminRoles[0] === "ROLE_ADMIN") {
+            $electrovannes = $this->manager->getRepository(Electrovanne::class)->findAll();
+            $piquets = $this->manager->getRepository(Piquet::class)->findAll();
+            for($i = 0; $i < count($electrovannes); $i++) {
+                if($electrovannes[$i]->getEtat()){
+                    $val = $electrovannes[$i]->getIdDonnees()->GetValues();
+                    $data = end($val);
+                    $coordsElec["id"] = $electrovannes[$i]->getId();
+                    $coordsElec["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
+                    array_push($electrovanne, $coordsElec);
+                }
             }
-        }
-        
-        for($i = 0; $i < count($armoireDb); $i++){
-            if($armoireDb[$i]->getEtat()){
-                $val = $armoireDb[$i]->getIdDonnees()->GetValues();
-                $data = end($val);
-                
-                $coordsArm["id"] = $armoireDb[$i]->getId();
-                $coordsArm["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
-                array_push($armoire, $coordsArm);
+            for($i = 0; $i < count($piquets); $i++) {
+                if($piquets[$i]->getEtat()){
+                    $val = $piquets[$i]->getIdDonnees()->GetValues();
+                    $data = end($val);
+                    $coordsPiq["id"] = $piquets[$i]->getId();
+                    $coordsPiq["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
+                    array_push($piquet, $coordsPiq);
+                }
+            }  
+        } else {
+            $parcelle = $this->getUser()->getIdParcelle();
+            $electrovanneDb = $parcelle->getIdElectrovannes();
+            $piquetDb = $parcelle->getIdPiquets();
+            for($i = 0; $i < count($electrovanneDb); $i++){
+                if($electrovanneDb[$i]->getEtat()){
+                    $val = $electrovanneDb[$i]->getIdDonnees()->GetValues();
+                    $data = end($val);
+                    
+                    $coordsElec["id"] = $electrovanneDb[$i]->getId();
+                    $coordsElec["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
+                    array_push($electrovanne, $coordsElec);
+                }
             }
-        }
-        
-        for($i = 0; $i < count($electrovanneDb); $i++){
-            if($electrovanneDb[$i]->getEtat()){
-                $val = $electrovanneDb[$i]->getIdDonnees()->GetValues();
-                $data = end($val);
-                
-                $coordsElec["id"] = $electrovanneDb[$i]->getId();
-                $coordsElec["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
-                array_push($electrovanne, $coordsElec);
+            for($i = 0; $i < count($piquetDb); $i++){
+                if($piquetDb[$i]->getEtat()){
+                    $val = $piquetDb[$i]->getIdDonnees()->GetValues();
+                    $data = end($val);
+                    
+                    $coordsPiq["id"] = $piquetDb[$i]->getId();
+                    $coordsPiq["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
+                    array_push($piquet, $coordsPiq);
+                }
             }
-        }
-        return new JsonResponse(array("1" => $armoire, "2" => $electrovanne, "3" => $piquet));
+        }  
+        return new JsonResponse(array("1" => $electrovanne, "2" => $piquet));
        
     }
     

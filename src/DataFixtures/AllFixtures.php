@@ -49,14 +49,15 @@ class AllFixtures extends Fixture
         
         // CREATION D'OPERATEURS
         $manager->getConnection()->exec("ALTER TABLE operateur AUTO_INCREMENT = 1;");
-         for ($i = 0; $i < 20; $i++) {
+         for ($i = 0; $i < 30; $i++) {
              $user = new Operateur();
-             $user->setEmail("FakeData@FakeData".$i.".fr");
+             $user->setEmail("FakeData@FakeData" . ($i+1) . ".fr");
              $user->setPassword($this->encoder->encodePassword($user, "Capou")); // Mot de passe défini : Capou
              $user->setVerifiedbyadmin(1);
-             $user->setIsFirstConnexion(1);
-             if($i < 10) $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(2));
-             else $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(1));
+             $user->setIsFirstConnexion(0);
+             if($i < 10) $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(1));
+             else if($i < 20) $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(2));
+             else $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(3));
              $user->setCreatedAt(new DateTime());
              $manager->persist($user);
              $manager->flush();
@@ -80,24 +81,24 @@ class AllFixtures extends Fixture
         $manager->flush();
         
         // CREATION D'ELECTROVANNES
-        for($i=1; $i<4; $i++){
+        for($i=0; $i<3; $i++){
             $manager->getConnection()->exec("ALTER TABLE electro_vanne AUTO_INCREMENT = 1;");
             $electrovanne = new ElectroVanne();
-            $electrovanne->setId($i);
+            $electrovanne->setId($i+234);
             $electrovanne->setEtat(1);
-            $electrovanne->setIp("10.60.0." . $i);
+            $electrovanne->setIp("10.60.0." . $i+1);
             switch ($i) {
-            case 1:
+            case 0:
                 $electrovanne->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(1));
                 $parcelle1->addIdElectrovanne($electrovanne);
                 $manager->persist($parcelle1);
                 break;
-            case 2:
+            case 1:
                 $electrovanne->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(2));
                 $parcelle2->addIdElectrovanne($electrovanne);
                 $manager->persist($parcelle2);
                 break;
-            case 3:
+            case 2:
                 $electrovanne->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(3));
                 $parcelle3->addIdElectrovanne($electrovanne);
                 $manager->persist($parcelle3);
@@ -109,7 +110,7 @@ class AllFixtures extends Fixture
             // CREATION DE DONNEES ELECTROVANNES
             $manager->getConnection()->exec("ALTER TABLE donnees_vanne AUTO_INCREMENT = 1;");
             $donneesVanne = new DonneesVanne();
-            $donneesVanne->setIdVanne($manager->getRepository(ElectroVanne::class)->findOneById($i));
+            $donneesVanne->setIdVanne($manager->getRepository(ElectroVanne::class)->findOneById($i+234));
             $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
             $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);
             $donneesVanne->setLatitude($latitude);
@@ -121,26 +122,26 @@ class AllFixtures extends Fixture
         }
         
         // CREATION DE PIQUETS
-        for($i=1; $i<30; $i++){
+        for($i=0; $i<30; $i++){
             $manager->getConnection()->exec("ALTER TABLE piquet AUTO_INCREMENT = 1;");
             $piquet = new Piquet();
-            $piquet->setId($i);
+            $piquet->setId($i+1);
             $piquet->setEtat(1);
-            if($i < 11) {
+            if($i < 10) {
                 $piquet->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(1));
-                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(1));
+                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(234));
                 $parcelle1->addIdPiquet($piquet);
                 $manager->persist($parcelle1);
             }
-            else if($i < 21) {
+            else if($i < 20) {
                 $piquet->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(2));
-                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(2));
+                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(235));
                 $parcelle2->addIdPiquet($piquet);
                 $manager->persist($parcelle2);
             }
             else {
                 $piquet->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(3));
-                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(3));
+                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(236));
                 $parcelle3->addIdPiquet($piquet);
                 $manager->persist($parcelle3);
             }
@@ -150,7 +151,7 @@ class AllFixtures extends Fixture
             // CREATION DE DONNEES PIQUETS
             $manager->getConnection()->exec("ALTER TABLE donnees_piquet AUTO_INCREMENT = 1;");
             $donneesPiquet = new DonneesPiquet();
-            $donneesPiquet->setIdPiquet($manager->getRepository(Piquet::class)->findOneById($i));
+            $donneesPiquet->setIdPiquet($manager->getRepository(Piquet::class)->findOneById($i+1));
             $donneesPiquet->setTemperature($faker->numberBetween(0,35));
             $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
             $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);
@@ -170,7 +171,7 @@ class AllFixtures extends Fixture
         $user->setVerifiedbyadmin(1);
         $user->setIsFirstConnexion(0);
         $user->setCreatedAt(new DateTime());
-        $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(2));
+        $user->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(4));
         $manager->persist($user);
         $manager->flush();
     }

@@ -25,6 +25,8 @@ class HomeController extends AbstractController
 
         //Piquet
         $nbpiquet_print = 10;
+        $this->getDoctrine()->getManager()->getConnection()->exec("ALTER TABLE piquet AUTO_INCREMENT = 1;");
+        $this->getDoctrine()->getManager()->getConnection()->exec("ALTER TABLE electro_vanne AUTO_INCREMENT = 1;");
         $nb_piquet = count($this->getDoctrine()->getManager()->getRepository(Piquet::class)->findByEtat(1));
         if ($nb_piquet < $nbpiquet_print) $nbpiquet_print = $nb_piquet;
         for($k = 0; $k<$nbpiquet_print; $k++){

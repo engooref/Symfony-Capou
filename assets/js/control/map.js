@@ -6,6 +6,9 @@ import {fromLonLat} from 'ol/proj';
 import Point from 'ol/geom/Point';
 import Circle from 'ol/geom/Circle';
 import Style from 'ol/style/Style';
+import Fill from 'ol/style/Fill';
+import Stroke from 'ol/style/Stroke';
+import RegularShape from 'ol/style/RegularShape';
 import Feature from 'ol/Feature';
 
 import VectorLayer from 'ol/layer/Vector';
@@ -14,6 +17,20 @@ import VectorSource from 'ol/source/Vector';
 actMaps();
 var intervalId = setInterval(actMaps,9000); 
 var circleTab = [];  
+var stroke = new Stroke({
+	color: 'black',
+	width: 2
+}); 
+var electrovanneFill = new Fill({
+	color: 'blue'
+});
+var piquetFill = new Fill({
+	color: 'green'
+});
+var armoireFill = new Fill({
+	color: 'red'
+});
+var marqueur;
 var map = new Map({
 	layers: [ 
 		new TileLayer({
@@ -47,9 +64,9 @@ function SuccessMaps(data) {
 			map.removeLayer(map.getLayers().item(i+1));
 		}
 	// Electrovanne -> 1
-	//AddToMap(data, 1);
+	AddToMap(data, 1);
 	// Piquet -> 2
-	AddToMap(data, 2);	
+	//AddToMap(data, 2);	
 }
 
 function addCircle(percent, circle) {
@@ -98,23 +115,48 @@ function AddToMap(data, type) {
 	var dataSelect = data[type.toString()];
 	for(let i = 0; i < dataSelect.length; i++){
 		var gps = dataSelect[i]["gps"];
-		circleTab[i] = new Feature({
-			geometry: new Circle(fromLonLat([gps["longitude"], gps["latitude"]]),40)
-		});
-		addCircle(Math.floor(Math.random()*100),circleTab[i]);
+		if(type == 1) { 		// Electrovanne 
+			
+		} else if (type == 2) {	// Piquet 
+			var piquet = new Circle(fromLonLat([gps["longitude"], gps["latitude"]]), 8);
+			var piquetStyle = new Style({
+				geometry: piquet,
+				fill: piquetFill,
+				stroke:	stroke,
+			});
+			var marqueur = new Feature(piquet);
+			marqueur.setStyle(piquetStyle);	
+			circleTab[i] = new Feature({
+				geometry: new Circle(fromLonLat([gps["longitude"], gps["latitude"]]),40)
+			});
+			addCircle(Math.floor(Math.random()*100),circleTab[i]);
+		} else if(type == 3) {	// Armoire 
+			var armoire = new Point(fromLonLat([gps["longitude"], gps["latitude"]]));
+			var armoireStyle = new Style ({
+				image: new RegularShape({
+					fill: armoireFill, 
+					stroke: stroke,
+					points: 4,
+					radius: 8,
+					angle: Math.PI / 4,
+				}),
+			})
+			var marqueur = new Feature(armoire);
+			marqueur.setStyle(armoireStyle);
+		} else {
+			
+		}
 		var layer = new VectorLayer({
-				id: dataSelect[i]["id"],
+				id: dataSelect[i]["id"],	
 				type: type,
 				gps:  "lat: " + gps["latitude"] + " long: " + gps["longitude"],
 				source: new VectorSource({
           			features: [
-        				new Feature({
-              				geometry: new Point(fromLonLat([gps["longitude"], gps["latitude"]]))
-            			}),
-						circleTab[i]
+						marqueur,
+						//circleTab[i]
 					]
     			})
-    	});
+    		});
     	map.addLayer(layer);
 	}
 }

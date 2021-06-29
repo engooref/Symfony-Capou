@@ -84,7 +84,7 @@ class AllFixtures extends Fixture
         for($i=0; $i<3; $i++){
             $manager->getConnection()->exec("ALTER TABLE electro_vanne AUTO_INCREMENT = 1;");
             $electrovanne = new ElectroVanne();
-            $electrovanne->setId($i+234);
+            $electrovanne->setId($i+1);
             $electrovanne->setEtat(1);
             $electrovanne->setIp("10.60.0." . $i+1);
             switch ($i) {
@@ -110,7 +110,7 @@ class AllFixtures extends Fixture
             // CREATION DE DONNEES ELECTROVANNES
             $manager->getConnection()->exec("ALTER TABLE donnees_vanne AUTO_INCREMENT = 1;");
             $donneesVanne = new DonneesVanne();
-            $donneesVanne->setIdVanne($manager->getRepository(ElectroVanne::class)->findOneById($i+234));
+            $donneesVanne->setIdVanne($manager->getRepository(ElectroVanne::class)->findOneById($i+1));
             $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
             $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);
             $donneesVanne->setLatitude($latitude);
@@ -129,19 +129,19 @@ class AllFixtures extends Fixture
             $piquet->setEtat(1);
             if($i < 10) {
                 $piquet->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(1));
-                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(234));
+                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(1));
                 $parcelle1->addIdPiquet($piquet);
                 $manager->persist($parcelle1);
             }
             else if($i < 20) {
                 $piquet->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(2));
-                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(235));
+                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(2));
                 $parcelle2->addIdPiquet($piquet);
                 $manager->persist($parcelle2);
             }
             else {
                 $piquet->setIdParcelle($manager->getRepository(Parcelle::class)->findOneById(3));
-                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(236));
+                $piquet->setIdMaitreRadio($manager->getRepository(ElectroVanne::class)->findOneById(3));
                 $parcelle3->addIdPiquet($piquet);
                 $manager->persist($parcelle3);
             }

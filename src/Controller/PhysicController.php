@@ -118,52 +118,38 @@ class PhysicController extends AbstractController
     {
         $electrovanne = array();
         $piquet = array();
+        $piquetDb = array();
+        $electrovanneDb = array();
         
         $adminRoles = $this->getUser()->getRoles();
+        
         if($adminRoles[0] === "ROLE_ADMIN") {
-            $electrovannes = $this->manager->getRepository(Electrovanne::class)->findAll();
-            $piquets = $this->manager->getRepository(Piquet::class)->findAll();
-            for($i = 0; $i < count($electrovannes); $i++) {
-                if($electrovannes[$i]->getEtat()){
-                    $val = $electrovannes[$i]->getIdDonnees()->GetValues();
-                    $data = end($val);
-                    $coordsElec["id"] = $electrovannes[$i]->getId();
-                    $coordsElec["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
-                    array_push($electrovanne, $coordsElec);
-                }
-            }
-            for($i = 0; $i < count($piquets); $i++) {
-                if($piquets[$i]->getEtat()){
-                    $val = $piquets[$i]->getIdDonnees()->GetValues();
-                    $data = end($val);
-                    $coordsPiq["id"] = $piquets[$i]->getId();
-                    $coordsPiq["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
-                    array_push($piquet, $coordsPiq);
-                }
-            }  
+            $electrovanneDb = $this->manager->getRepository(Electrovanne::class)->findAll();
+            $piquetDb = $this->manager->getRepository(Piquet::class)->findAll();
+            
         } else {
             $parcelle = $this->getUser()->getIdParcelle();
             $electrovanneDb = $parcelle->getIdElectrovannes();
             $piquetDb = $parcelle->getIdPiquets();
-            for($i = 0; $i < count($electrovanneDb); $i++){
-                if($electrovanneDb[$i]->getEtat()){
-                    $val = $electrovanneDb[$i]->getIdDonnees()->GetValues();
-                    $data = end($val);
-                    
-                    $coordsElec["id"] = $electrovanneDb[$i]->getId();
-                    $coordsElec["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
-                    array_push($electrovanne, $coordsElec);
-                }
+        }  
+        
+        for($i = 0; $i < count($electrovanneDb); $i++) {
+            if($electrovanneDb[$i]->getEtat()){
+                $val = $electrovanneDb[$i]->getIdDonnees()->GetValues();
+                $data = end($val);
+                $dataSerializeVanne["id"] = $electrovanneDb[$i]->getId();
+                $dataSerializeVanne["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
+                array_push($electrovanne, $dataSerializeVanne);
             }
-            for($i = 0; $i < count($piquetDb); $i++){
-                if($piquetDb[$i]->getEtat()){
-                    $val = $piquetDb[$i]->getIdDonnees()->GetValues();
-                    $data = end($val);
-                    
-                    $coordsPiq["id"] = $piquetDb[$i]->getId();
-                    $coordsPiq["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
-                    array_push($piquet, $coordsPiq);
-                }
+        }
+        for($i = 0; $i < count($piquetDb); $i++) {
+            if($piquetDb[$i]->getEtat()){
+                $val = $piquetDb[$i]->getIdDonnees()->GetValues();
+                $data = end($val);
+                $dataSerializePiquet["id"] = $piquetDb[$i]->getId();
+                $dataSerializePiquet["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
+                $dataSerializePiquet["humidite"] = $data->getHumidite();
+                array_push($piquet, $dataSerializePiquet);
             }
         }  
         return new JsonResponse(array("1" => $electrovanne, "2" => $piquet));

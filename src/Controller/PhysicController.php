@@ -79,9 +79,11 @@ class PhysicController extends AbstractController
     #[Route('/getDataPiquet', name: 'getDataPiquet')]
     public function getDataPiquet() : Response {
         $periode = "1sem";
+        $choixPiquet = "1";
 
-        if(isset($_POST['periode'])){
+        if(isset($_POST['periode']) AND isset($_POST['choixPiquet'])){
             $periode = $_POST['periode'];
+            $choixPiquet = $_POST['choixPiquet'];
         }
 
         $date = new dateTime();
@@ -98,19 +100,36 @@ class PhysicController extends AbstractController
             $datePeriode = $date->sub(new DateInterval('P10Y'));    // Période de 10 ans
         }  
         
-        $dataPiquet = $this->manager->getRepository(DonneesPiquet::class);
-        $obj = $dataPiquet->findByDate($datePeriode);
-
-        foreach($obj as $piquet)
-        {
-            $id[] = $piquet->getId();
-            $Horodatage = $piquet->getHorodatage();
-            $horodatage[] = $Horodatage->format('d/m/Y H:i:s');
-            $temp[] = $piquet->getTemperature();
-            $humi[] = $piquet->getHumidite();
+        $data = $this->manager->getRepository(DonneesPiquet::class);
+        
+        if($choixPiquet == "all"){
+            $cPiquet = $data->findAll();
+//         } else if ($choixPiquet == "1pi"){
+        } else{
+            $cPiquet = $data->findByIdPiquet($choixPiquet);
         }
 
-        return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi));
+        $nbPi = count($cPiquet);
+        
+        for($k = 0; $k<$nbPi; $k++){
+            if($data->findByDate($datePeriode)){
+                $id[$k] = $cPiquet[$k]->getId();
+                $Horodatage = $cPiquet[$k]->getHorodatage();
+                $horodatage[$k] = $Horodatage->format('d/m/Y H:i:s');
+                $temp[$k] = $cPiquet[$k]->getTemperature();
+                $humi[$k] = $cPiquet[$k]->getHumidite();
+                $idP[$k] = $cPiquet[$k]->getIdPiquet()->getId();
+            } else {
+                $id[$k] = 0;
+                $horodatage = 0;
+//                 $horodatage[$k] = $Horodatage->format('d/m/Y H:i:s');
+                $temp[$k] = 0;
+                $humi[$k] = 0;
+                $idP[$k] = 0;
+            }
+        }
+
+        return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi, "IdPiquet"=> $idP));
     }
     
     #[Route('/mapsControl', name: 'mapsControl')]

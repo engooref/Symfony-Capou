@@ -4,8 +4,11 @@ var Chart = require('chart.js');
 const delay = 10000;
 
 var periodeGlo = '1sem';
+var ChoixPiquet = 'all';
 
 var HeureSplit = [];
+
+var ipP = [];
 
 var id = [];
 var heure = [];
@@ -35,7 +38,6 @@ var chartContainerTemp = new Chart(ctx1, {
 		]
 	},
 	options: {
-		responsive:true,
 		scales: {
 			x: {
 				grid: {
@@ -129,6 +131,77 @@ var chartContainerHumiSol = new Chart(ctx3, {
 getData();
 setInterval(getData,delay);
 
+window.setPeriode = function setPeriode(periode){
+	console.log("------------ Période active ------------");
+	periodeGlo = periode;
+	getData();
+}
+
+window.setOnePiquet = function setOnePiquet(choix){
+	console.log("------------ choix One actif ------------", choix);
+	ChoixPiquet = choix;
+	getData();
+}
+
+window.setAllPiquet = function setAllPiquet(){
+	console.log("------------ choix All actif ------------");
+	ChoixPiquet = 'all';
+	getData();
+}
+
+function getData() {
+
+	console.log("recuperation des donnees piquet");
+	
+	$.ajax('/getDataPiquet', {
+		method: "POST",
+		dataType:'json',
+		data:'periode=' + periodeGlo,
+		success: function (response) {
+			id = response["Id"];
+			heure = response["Heure"];
+			temp = response["Temp"];
+			humi = response["Humi"];
+			ipP = response["IdPiquet"];
+			
+			humiAir=[];
+			humiSol1=[];
+			humiSol2=[];
+			humiSol3=[];
+
+			HeureSplit = [];
+			
+			if (periodeGlo == '24h'){
+				for(var m=0; m<heure.length; m++){
+					HeureSplit[m] = heure[m].split(' ').slice(1);
+				}
+			} else {
+				for(var m=0; m<heure.length; m++){
+				HeureSplit[m] = heure[m].split(' ')[0];
+				}
+			}
+
+			
+			for(var k=0; k<humi.length;k++){
+				var humik = [];
+				humik = humi[k];	
+				
+				humiAir.push(humik[0]);
+				humiSol1.push(humik[1]);
+				humiSol2.push(humik[2]);
+				humiSol3.push(humik[3]);
+			}
+			
+			console.log("id = ",id,"heure = ", HeureSplit,"temp = ", temp,"humi = ",humi, "ipPiquet = ",ipP);
+			
+			Update();
+		},
+		error: function (response) {
+			$('#res').html("error ", response);
+		}
+ 	});
+}
+
 function Update() {
 	
 	console.log("Mise à jour des données");
@@ -159,64 +232,5 @@ function Update() {
 	chartContainerHumiSol.data.datasets[1].data = humiSol2;
 	chartContainerHumiSol.data.datasets[2].data = humiSol3;
 	chartContainerHumiSol.update();
-}
-
-
-window.setPeriode = function setPeriode(periode){
-	console.log("------------ Période active ------------");
-	periodeGlo = periode;
-	getData();
-}
-
-function getData() {
-
-	console.log("recuperation des donnees piquet");
-	
-	$.ajax('/getDataPiquet', {
-		method: "POST",
-		dataType:'json',
-		data: 'periode=' + periodeGlo,
-		success: function (response) {
-			id = response["Id"];
-			heure = response["Heure"];
-			temp = response["Temp"];
-			humi = response["Humi"];
-			
-			humiAir=[];
-			humiSol1=[];
-			humiSol2=[];
-			humiSol3=[];
-
-			HeureSplit = [];
-			
-			if (periodeGlo == '24h'){
-				for(var m=0; m<heure.length; m++){
-					HeureSplit[m] = heure[m].split(' ').slice(1);
-				}
-			} else {
-				for(var m=0; m<heure.length; m++){
-				HeureSplit[m] = heure[m].split(' ')[0];
-				}
-			}
-
-			
-			for(var k=0; k<humi.length;k++){
-				var humik = [];
-				humik = humi[k];	
-				
-				humiAir.push(humik[0]);
-				humiSol1.push(humik[1]);
-				humiSol2.push(humik[2]);
-				humiSol3.push(humik[3]);
-			}
-			
-			console.log("id = ",id,"heure = ", HeureSplit,"temp = ", temp,"humi = ",humi);
-			
-			Update();
-		},
-		error: function (response) {
-			$('#res').html("error ", response);
-		}
- 	});
 }
 

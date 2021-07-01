@@ -15,6 +15,10 @@ import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
     	
+window.onload = function(){ 
+	var button = document.getElementById('level_0');
+	button.style.backgroundColor="#33ce56";
+}
 actMaps();
 var GradientMidPourcent = 50;
 var humiditeChx = 0;
@@ -91,7 +95,7 @@ function SuccessMaps(data) {
 		}
 	}
 	// Electrovanne -> 1
-	//AddToMap(data, 1);
+	AddToMap(data, 1);
 	// Piquet -> 2
 	AddToMap(data, 2, humiditeChx);
 }
@@ -105,7 +109,7 @@ function positivSoustraction(a,b){
 }
 
 function getColor(p){
-	var x1 = Math.round(p/100);
+	var x1 = Math.round(p/(GradientMidPourcent*2));
 	var red = (1 - x1) * 255 + x1 * (255 - positivSoustraction(p,GradientMidPourcent)*(255/GradientMidPourcent));
 	var green = x1 * 255 + ( 1 - x1 ) * (positivSoustraction(GradientMidPourcent,p) * (255/GradientMidPourcent));
 	//return 'rgba(255,0,0,'
@@ -217,7 +221,12 @@ function AddToMap(data, type, choixHum) {
 window.humidite = function humidite(niveauHum){
 	humiditeChx = niveauHum;
 	SuccessMaps(dataMap);
-	//AddToMap(data, 2, niveauHum);
+	for(let i=0;i<4;i++){
+		var button = document.getElementById('level_'+i);
+		button.style.backgroundColor="#f8f9fa";
+	}
+	button = document.getElementById('level_'+niveauHum);
+	button.style.backgroundColor="#33ce56";
 }
 
 map.on('singleclick', function (event) {

@@ -16,9 +16,21 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
     	
 actMaps();
-var GradientMidPourcent = 30;
+var GradientMidPourcent = 50;
+var humiditeChx = 0;
+var dataMap = []
 
-var intervalId = setInterval(actMaps,9000); 
+var slider = document.getElementById("sliderHum");
+var output = document.getElementById("moyenneHum");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  	output.innerHTML = this.value;
+	GradientMidPourcent = this.value;
+	SuccessMaps(dataMap);
+}
+
+var intervalId = setInterval(actMaps,5000); 
 var circleTab = [];  
 var stroke = new Stroke({
 	color: 'black',
@@ -67,7 +79,8 @@ function actMaps() {
     });
 };	
 
-function SuccessMaps(data) { 
+function SuccessMaps(data) {
+	dataMap = data;
 	if(map.getLayers().getLength() >= 2) {
 		for(let i = 1; map.getLayers().getLength()!=1 ; i){
 			var layerItem = map.getLayers().item(i);
@@ -80,7 +93,7 @@ function SuccessMaps(data) {
 	// Electrovanne -> 1
 	//AddToMap(data, 1);
 	// Piquet -> 2
-	AddToMap(data, 2);
+	AddToMap(data, 2, humiditeChx);
 }
 
 function positivSoustraction(a,b){
@@ -129,7 +142,7 @@ function addCircle(percent, circle) {
 				var colors = getColor(percent); // couleur du piquet
 				
 		      gradient.addColorStop(0, colors + '0)');
-		      gradient.addColorStop(GradientMidPourcent/100, colors + '0.2)');
+		      gradient.addColorStop(0.6, colors + '0.2)');
 		      gradient.addColorStop(1, colors + '0.8)');
 		      ctx.beginPath();
 		      ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
@@ -144,7 +157,7 @@ function addCircle(percent, circle) {
 	)
 }
 	
-function AddToMap(data, type) {
+function AddToMap(data, type, choixHum) {
 	var dataSelect = data[type.toString()];
 	for(let i = 0; i < dataSelect.length; i++){
 		var gps = dataSelect[i]["gps"];
@@ -156,7 +169,6 @@ function AddToMap(data, type) {
 			circleTab[i] = new Feature(null);
 		} else if (type == 2) {	// Piquet
 			var humidite = dataSelect[i]["humidite"]; 
-			console.log(humidite);
 			var piquet = new Circle(fromLonLat([gps["longitude"], gps["latitude"]]), 8);
 			var piquetStyle = new Style({
 				geometry: piquet,
@@ -168,7 +180,8 @@ function AddToMap(data, type) {
 			circleTab[i] = new Feature({
 				geometry: new Circle(fromLonLat([gps["longitude"], gps["latitude"]]),40)
 			});
-			addCircle(humidite[0], circleTab[i]);
+			/*console.log(humidite);*/
+			addCircle(humidite[choixHum], circleTab[i]);
 		} else if(type == 3) {	// Armoire 
 			var armoire = new Point(fromLonLat([gps["longitude"], gps["latitude"]]));
 			var armoireStyle = new Style ({
@@ -200,6 +213,13 @@ function AddToMap(data, type) {
 	}
 }
 
+
+window.humidite = function humidite(niveauHum){
+	humiditeChx = niveauHum;
+	SuccessMaps(dataMap);
+	//AddToMap(data, 2, niveauHum);
+}
+
 map.on('singleclick', function (event) {
 	map.forEachFeatureAtPixel(event.pixel,
 		function (feature){
@@ -218,7 +238,6 @@ map.on('singleclick', function (event) {
 				$("#id").text(id);
 				$("#gps").text(gps);
 				var data = "type=" + type + "&id=" + id;
-				console.log(id,type,gps)
 		        $.get({
 					url  : '/getData',
 		   			dataType : 'json',

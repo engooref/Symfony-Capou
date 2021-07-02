@@ -11,6 +11,7 @@ import Stroke from 'ol/style/Stroke';
 import Icon from 'ol/style/Icon';
 import RegularShape from 'ol/style/RegularShape';
 import Feature from 'ol/Feature';
+import Control from 'ol/control/Control';
 
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -100,20 +101,13 @@ function SuccessMaps(data) {
 	AddToMap(data, 2, humiditeChx);
 }
 
-function positivSoustraction(a,b){
-	if(a<b){
-		return 0
-	}else{
-		return a-b
-	}
-}
-
 function getColor(p){
-	var x1 = Math.round(p/(GradientMidPourcent*2));
-	var red = (1 - x1) * 255 + x1 * (255 - positivSoustraction(p,GradientMidPourcent)*(255/GradientMidPourcent));
-	var green = x1 * 255 + ( 1 - x1 ) * (positivSoustraction(GradientMidPourcent,p) * (255/GradientMidPourcent));
-	//return 'rgba(255,0,0,'
-	return 'rgba(' + red + ',' + green + ',0,'
+    var x1 = Math.round(p/(GradientMidPourcent*2));
+    if(x1>1)x1=1;
+    var red = Math.round((1 - x1) * 255 + x1 * (255 - (p-GradientMidPourcent)*(255/GradientMidPourcent)));
+    var green = Math.round(x1 * 255 + ( 1 - x1 ) * (p*(255/GradientMidPourcent)));
+    var blue = 0
+    return "rgb("+red+","+green+","+blue
 }
 
 function addCircle(percent, circle) {
@@ -145,9 +139,9 @@ function addCircle(percent, circle) {
 
 				var colors = getColor(percent); // couleur du piquet
 				
-		      gradient.addColorStop(0, colors + '0)');
-		      gradient.addColorStop(0.6, colors + '0.2)');
-		      gradient.addColorStop(1, colors + '0.8)');
+		      gradient.addColorStop(0, colors + ',0)');
+		      gradient.addColorStop(0.6, colors + ',0.2)');
+		      gradient.addColorStop(1, colors + ',0.8)');
 		      ctx.beginPath();
 		      ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
 		      ctx.fillStyle = gradient;

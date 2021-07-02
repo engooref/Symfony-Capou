@@ -69,7 +69,7 @@ class Operateur implements UserInterface
     
     public function __toString()
     {
-        return $this->email;
+        return $this->getEmail();
     }
     
     public function getId(): ?int

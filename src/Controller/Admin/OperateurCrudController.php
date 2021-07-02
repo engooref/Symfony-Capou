@@ -23,7 +23,6 @@ class OperateurCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(),
             EmailField::new('email')->setHelp('Choisir l\'adresse email'), 
             AssociationField::new('idParcelle', 'Parcelle')->setRequired(true)->setHelp('Choisir à quel parcelle l\'opérateur appartient'),
             DateTimeField::new('createdAt')->hideOnForm(),

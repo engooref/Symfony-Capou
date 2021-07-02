@@ -31,7 +31,6 @@ class AllFixtures extends Fixture
         $faker = Faker\Factory::create('fr_FR');
         // CREATION DE PARCELLES
         if(!$manager->getRepository(Parcelle::class)->findOneById('1')){
-            $manager->getConnection()->exec("ALTER TABLE parcelle AUTO_INCREMENT = 1;");
             $parcelle1 = new Parcelle();
             $parcelle1->setLabel("Parcelle 1");
             $parcelle2 = new Parcelle();
@@ -48,7 +47,6 @@ class AllFixtures extends Fixture
         }
         
         // CREATION D'OPERATEURS
-        $manager->getConnection()->exec("ALTER TABLE operateur AUTO_INCREMENT = 1;");
          for ($i = 0; $i < 30; $i++) {
              $user = new Operateur();
              $user->setEmail("FakeData@FakeData" . ($i+1) . ".fr");

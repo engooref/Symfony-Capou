@@ -69,12 +69,12 @@
                 					<th class="card-text"> Date </th>
                 					<th class="card-text"> Parcelle </th>
                 				</tr>
-                				{% for i in 0..nbvanne_print-1 %}
+                				{% for donnees in donnees_vanne %}
                     				<tr>
-                                        <td class="card-text"> {{ donnees_vanne[i].idVAnne }} </td>
-                                        <td class="card-text"> {{ donnees_vanne[i].batterie }}%</td>
-                                        <td class="card-text"> {{ donnees_vanne[i].horodatage.format("Y/m/d h:i:s") }} </td>
-            							<td class="card-text"> {{ parcelleVanne[i] }} </td>
+                                        <td class="card-text"> {{ donnees.idVanne }} </td>
+                                        <td class="card-text"> {{ donnees.batterie }}%</td>
+                                        <td class="card-text"> {{ donnees.horodatage.format("Y/m/d h:i:s") }} </td>
+            							<td class="card-text"> {{ donnees.idVanne.idParcelle }} </td>
                 				    </tr>
             				    {% endfor %}
             				{% endif %}

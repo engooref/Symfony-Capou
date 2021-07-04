@@ -1,8 +1,45 @@
-{% extends '@EasyAdmin/layout.html.twig' %}
-
+{% extends '@EasyAdmin/page/content.html.twig' %}
+{% block page_title 'Administrateur' %}
 {%  block content %}
-	<div class="jumbotron">
-		<h1 class="display-4">Interface administrateur</h1>
-		<p class="lead">Interface administrateur</p>
+    <div class="content">
+    	<div class="container">
+            <div class="row">
+                <h1>Tableau de bord</h1>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6 alert-success">
+                   	<span class="display-3"> {{ countOperateur['value'] }} </span> 
+                   	<b>Operateurs sur le site</b>
+                </div>
+                <div class="col-6 alert-danger">
+                    <span class="display-3"> {{ countOperateurInvalid['value'] }} </span> 
+                    <b>Operateurs a confirmer</b>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-12">
+                 	<h3>Validation des utilisateurs</h3>
+           			<ul class="list-group">
+                        {% if not operateursToValidate %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <b class="text-danger">Il n'y pas de compte a valider pour l'instant !</b>>
+                        </li>
+                        {% endif %}
+                        {% for operateur in operateursToValidate %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="fas fa-user-check"></i>
+                                <b>{{ operateur.email }}</b>
+                            </span>
+                           <span class="justify-content-between">
+                                <button type="button" class="btn btn-success">Valider <i class="fas fa-check-square"></i></button>
+                                <button type="button" class="btn btn-danger">Supprimer <i class="fas fa-window-close"></i></button>
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
 	</div>
 {% endblock %}

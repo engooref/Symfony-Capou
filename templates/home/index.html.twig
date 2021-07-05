@@ -129,20 +129,20 @@
             					<th class="card-text"> Humidité </th>
             					<th class="card-text"> Parcelle </th>
             				</tr>
-            				{% for i in 0..nbpiquet_print-1 %}
+            				{% for donnees in donnees_piquet %}
                 				<tr>
-                                    <td class="card-text"> {{ donnees_piquet[i].idPiquet }} </td>
-                                    <td class="card-text"> {{ donnees_piquet[i].batterie }}% </td>
-                                    <td class="card-text"> {{ donnees_piquet[i].horodatage.format("Y/m/d h:i:s") }} </td>
-                                    <td class="card-text"> {{ donnees_piquet[i].temperature }} </td>
+                                    <td class="card-text"> {{ donnees.idPiquet }} </td>
+                                    <td class="card-text"> {{ donnees.batterie }}% </td>
+                                    <td class="card-text"> {{ donnees.horodatage.format("Y/m/d h:i:s") }} </td>
+                                    <td class="card-text"> {{ donnees.temperature }} </td>
                                     <td class="card-text">
                                     	<table class="table text-center">
-                                            {% for hum in donnees_piquet[i].humidite %}
+                                            {% for hum in donnees.humidite %}
                                         		<tr class="card-text"> {{ hum }}% </tr>
                                             {% endfor %}
                                         </table>
                                     </td>
-        							<td class="card-text"> {{ parcellePiquet[i] }} </td>
+        							<td class="card-text"> {{ donnees.idPiquet.idParcelle }} </td>
             				    </tr>
         				    {% endfor %}
         				{% endif %}

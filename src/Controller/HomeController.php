@@ -60,14 +60,12 @@ class HomeController extends AbstractController
       
         return $this->render('home/index.html.twig', [
             'nb_piquet' => $piquetParse,
-            'parcellePiquet' => $parcellePiquet,
             'donnees_piquet' => $donnees_piquet,
 
             'etat_armoire' => $etat_armoire,
             'donnees_armoire' => $donnees_armoire,
 
             'nb_vanne' => $vanneParse,
-            'parcelleVanne' => $parcelleVanne,
             'donnees_vanne' => $donnees_vanne,
 
             'nb_parcelle' => $parcelleParse,

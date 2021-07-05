@@ -37,32 +37,28 @@ class OperateurRepository extends ServiceEntityRepository implements PasswordUpg
     }
 
     
-    // /**
-    //  * @return Operateur[] Returns an array of Operateur objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return int|mixed|string|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function countAllOperateur()
     {
-        return $this->createQueryBuilder('o')
-            ->andWhere('o.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('o.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $queryBuilder = $this->createQueryBuilder('a');
+        $queryBuilder->select('COUNT(a.id) as value');
+        
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Operateur
+    
+    /**
+     * @return int|mixed|string|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function countAllOperateurInvalid()
     {
-        return $this->createQueryBuilder('o')
-            ->andWhere('o.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $queryBuilder = $this->createQueryBuilder('a');
+        $queryBuilder->select('COUNT(a.id) as value');
+        $queryBuilder->where("a.verified_by_admin = false");
+        
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
-    */
 }

@@ -8,27 +8,53 @@ import Circle from 'ol/geom/Circle';
 import Style from 'ol/style/Style';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
+import Icon from 'ol/style/Icon';
 import RegularShape from 'ol/style/RegularShape';
 import Feature from 'ol/Feature';
+import Control from 'ol/control/Control';
 
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
     	
+window.onload = function(){ 
+	var button = document.getElementById('level_0');
+	button.style.backgroundColor="#33ce56";
+}
 actMaps();
-var intervalId = setInterval(actMaps,9000); 
+var GradientMidPourcent = 50;
+var humiditeChx = 0;
+var dataMap = []
+
+var slider = document.getElementById("sliderHum");
+var output = document.getElementById("moyenneHum");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  	output.innerHTML = this.value;
+	GradientMidPourcent = this.value;
+	SuccessMaps(dataMap);
+}
+
+var intervalId = setInterval(actMaps,5000); 
 var circleTab = [];  
 var stroke = new Stroke({
 	color: 'black',
 	width: 2
 }); 
-var electrovanneFill = new Fill({
+/*var electrovanneFill = new Fill({
 	color: 'blue'
-});
+});*/
 var piquetFill = new Fill({
 	color: 'green'
 });
 var armoireFill = new Fill({
 	color: 'red'
+});
+var vanneStyle = new Style({
+	image: new Icon({
+		src: 'img/vanne_logo.png',
+		scale: 0.05,
+	}),
 });
 var marqueur;
 var map = new Map({
@@ -58,15 +84,30 @@ function actMaps() {
     });
 };	
 
-function SuccessMaps(data) { 
+function SuccessMaps(data) {
+	dataMap = data;
 	if(map.getLayers().getLength() >= 2) {
-		for(let i = 0; i+1 < map.getLayers().getLength() ; i++)
-			map.removeLayer(map.getLayers().item(i+1));
+		for(let i = 1; map.getLayers().getLength()!=1 ; i){
+			var layerItem = map.getLayers().item(i);
+			layerItem.getSource().getFeatures().forEach(function(feature){ 
+				layerItem.getSource().removeFeature(feature)
+			}); 
+			map.removeLayer(map.getLayers().item(i));
 		}
+	}
 	// Electrovanne -> 1
 	AddToMap(data, 1);
 	// Piquet -> 2
-	//AddToMap(data, 2);	
+	AddToMap(data, 2, humiditeChx);
+}
+
+function getColor(p){
+    var x1 = Math.round(p/(GradientMidPourcent*2));
+    if(x1>1)x1=1;
+    var red = Math.round((1 - x1) * 255 + x1 * (255 - (p-GradientMidPourcent)*(255/GradientMidPourcent)));
+    var green = Math.round(x1 * 255 + ( 1 - x1 ) * (p*(255/GradientMidPourcent)));
+    var blue = 0
+    return "rgb("+red+","+green+","+blue
 }
 
 function addCircle(percent, circle) {
@@ -95,41 +136,50 @@ function addCircle(percent, circle) {
 		        y,
 		        outerRadius
 		      );
-		      gradient.addColorStop(0, 'rgba(255,0,0,0)');
-		      gradient.addColorStop(0.6, 'rgba(255,0,0,0.2)');
-		      gradient.addColorStop(1, 'rgba(255,0,0,0.8)');
+
+				var colors = getColor(percent); // couleur du piquet
+				
+		      gradient.addColorStop(0, colors + ',0)');
+		      gradient.addColorStop(0.6, colors + ',0.2)');
+		      gradient.addColorStop(1, colors + ',0.8)');
 		      ctx.beginPath();
 		      ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
 		      ctx.fillStyle = gradient;
 		      ctx.fill();
 		
 		      ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
-		      ctx.strokeStyle = 'rgba(255,0,0,1)';
+		      ctx.strokeStyle = colors+'1)';
 		      ctx.stroke();
 		  	},
 		})
 	)
 }
 	
-function AddToMap(data, type) {
+function AddToMap(data, type, choixHum) {
 	var dataSelect = data[type.toString()];
 	for(let i = 0; i < dataSelect.length; i++){
 		var gps = dataSelect[i]["gps"];
 		if(type == 1) { 		// Electrovanne 
-			
-		} else if (type == 2) {	// Piquet 
+			marqueur = new Feature({
+				geometry: new Point(fromLonLat([gps["longitude"], gps["latitude"]]))
+			});
+			marqueur.setStyle(vanneStyle);
+			circleTab[i] = new Feature(null);
+		} else if (type == 2) {	// Piquet
+			var humidite = dataSelect[i]["humidite"]; 
 			var piquet = new Circle(fromLonLat([gps["longitude"], gps["latitude"]]), 8);
 			var piquetStyle = new Style({
 				geometry: piquet,
 				fill: piquetFill,
 				stroke:	stroke,
 			});
-			var marqueur = new Feature(piquet);
+			marqueur = new Feature(piquet);
 			marqueur.setStyle(piquetStyle);	
 			circleTab[i] = new Feature({
 				geometry: new Circle(fromLonLat([gps["longitude"], gps["latitude"]]),40)
 			});
-			addCircle(Math.floor(Math.random()*100),circleTab[i]);
+			/*console.log(humidite);*/
+			addCircle(humidite[choixHum], circleTab[i]);
 		} else if(type == 3) {	// Armoire 
 			var armoire = new Point(fromLonLat([gps["longitude"], gps["latitude"]]));
 			var armoireStyle = new Style ({
@@ -141,7 +191,7 @@ function AddToMap(data, type) {
 					angle: Math.PI / 4,
 				}),
 			})
-			var marqueur = new Feature(armoire);
+			marqueur = new Feature(armoire);
 			marqueur.setStyle(armoireStyle);
 		} else {
 			
@@ -153,7 +203,7 @@ function AddToMap(data, type) {
 				source: new VectorSource({
           			features: [
 						marqueur,
-						//circleTab[i]
+						circleTab[i]
 					]
     			})
     		});
@@ -161,32 +211,55 @@ function AddToMap(data, type) {
 	}
 }
 
-map.on('singleclick', function (event) {
-    if (map.hasFeatureAtPixel(event.pixel) === true) {
 
-    	var id = map.forEachLayerAtPixel(event.pixel, function (layer) {
-		    										return layer;}).get('id');
-	    var type = map.forEachLayerAtPixel(event.pixel, function (layer) {
-	    											return layer;}).get('type');
-	    var gps = map.forEachLayerAtPixel(event.pixel, function (layer) {
-													return layer;}).get('gps');
-		// 1 -> Electrovanne | 2 -> Piquet | 3 -> Armoire 
-	    if(type == 1) var nameType = "Electrovanne";
-		else if(type == 2) var nameType = "Piquet";
-		//else if(type == 3) var nameType = "Armoire";
-			
-		$("#id").text(id);
-		$("#gps").text(gps);
-		var data = "type=" + type + "&id=" + id;
-		
-        $.get({
-			url  : '/getData',
-   			dataType : 'json',
-   			data: data,
-   			success : AcquireData
-        });    
-	} 
+window.humidite = function humidite(niveauHum){
+	humiditeChx = niveauHum;
+	SuccessMaps(dataMap);
+	for(let i=0;i<4;i++){
+		var button = document.getElementById('level_'+i);
+		button.style.backgroundColor="#f8f9fa";
+	}
+	button = document.getElementById('level_'+niveauHum);
+	button.style.backgroundColor="#33ce56";
+}
+
+map.on('singleclick', function (event) {
+	map.forEachFeatureAtPixel(event.pixel,
+		function (feature){
+			if(feature){
+				var layer = GetLayerEvent(feature)
+				if( !layer){
+					return;
+				}
+				var id = layer.get("id");
+				var type = layer.get("type")
+				var gps = layer.get("gps")
+				
+				if(type == 1) var nameType = "Electrovanne";
+				else if(type == 2) var nameType = "Piquet";
+				
+				$("#id").text(id);
+				$("#gps").text(gps);
+				var data = "type=" + type + "&id=" + id;
+		        $.get({
+					url  : '/getData',
+		   			dataType : 'json',
+		   			data: data,
+		   			success : AcquireData
+		        });    
+			}
+		}
+	);
 });
+
+function GetLayerEvent(feature){
+	var layerMap = map.getLayers();
+	for(let i=1 ; i < layerMap.getLength(); i++){
+		var featureLayer = layerMap.item(i).getSource().getFeatures()[0];
+		if(feature === featureLayer){return layerMap.item(i)}
+	}
+	return null;
+}
 
 function AcquireData(data) {
 	var object = data["Object"];

@@ -54,7 +54,7 @@ class Parcelle
     
     public function __toString()
     {
-        return $this->getId();
+        return $this->getLabel();
     }
 
     public function getId(): ?int

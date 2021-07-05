@@ -30,11 +30,12 @@
         		<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
                     <li>
                     	{% if is_granted('ROLE_ADMIN') %}
-                    	<a class="dropdown-item" href="{{ path('admin') }}">Interface administrateur</a>
+                    	<a class="dropdown-item text-primary" href="{{ path('admin') }}"><i class="fas fa-user-check"></i> Interface administrateur</a>
                     	{% endif %}
+                    	{#
                     	{% if is_granted('ROLE_OPERATOR') and not is_granted('ROLE_ADMIN') %}
                     	<a class="dropdown-item" href="#">Opérateur</a>
-                    	{% endif %}
+                    	{% endif %} #}
                     </li>
                     <li><a class="dropdown-item text-primary" href="{{ path('resetPasswordWithoutToken') }}"><i class="fas fa-user-lock"></i> Changer de mot de passe</a></li>
                     <li><hr class="dropdown-divider" /></li>

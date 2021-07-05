@@ -150,6 +150,7 @@ class AllFixtures extends Fixture
             $manager->getConnection()->exec("ALTER TABLE donnees_piquet AUTO_INCREMENT = 1;");
             $donneesPiquet = new DonneesPiquet();
             $donneesPiquet->setIdPiquet($manager->getRepository(Piquet::class)->findOneById($i+1));
+            
             $donneesPiquet->setTemperature($faker->numberBetween(0,35));
             $latitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 44.05, $max = 44.06);
             $longitude = $faker->randomFloat($nbMaxDecimals = 5, $min = 1.31, $max = 1.315);

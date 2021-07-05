@@ -324,7 +324,7 @@ class PhysicController extends AbstractController
         $latitude = $inputTramePiquet[6];
         $humidite = explode(':', $inputTramePiquet[7]);
         $batterie =  $inputTramePiquet[8];
-        
+            
         $result = $this->manager->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         
         if($result){

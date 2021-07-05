@@ -36,7 +36,7 @@ class DonneesPiquetRepository extends ServiceEntityRepository
     }
     */
     
-    public function findByDateBetween($dateBase, $offset=null, $limit=null){
+    public function findByDate($dateBase, $offset=null, $limit=null){
         
             $entityManager = $this->getEntityManager();
             
@@ -49,6 +49,7 @@ class DonneesPiquetRepository extends ServiceEntityRepository
 
             return $query->getResult();
     }
+    
     /*
     public function findOneBySomeField($value): ?DonneesPiquet
     {

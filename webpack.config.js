@@ -24,6 +24,7 @@ Encore
     .addEntry('app', './assets/js/main/app.js')
     .addEntry('map', './assets/js/control/map.js')
 	.addEntry('graph', './assets/js/analyse/graph.js')
+	.addEntry('admin', './assets/js/admin/admin.js')
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
 

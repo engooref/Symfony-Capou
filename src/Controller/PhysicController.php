@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Parcelle;
 use App\Entity\Piquet;
 use App\Entity\Armoire;
 use App\Entity\ElectroVanne;
@@ -36,7 +37,7 @@ class PhysicController extends AbstractController
     
     #[Route('/getData', name: 'getData')]
     public function getData() : Response {
-        if(!isset($_GET['type'], $_GET['id'])) return new Response(Response::HTTP_ERROR);
+        if(!isset($_GET['type'], $_GET['id'])) return new Response(Response::HTTP_NOT_FOUND);
         $type = $_GET['type'];
         $id = $_GET['id'];
         $obj = null;
@@ -54,9 +55,12 @@ class PhysicController extends AbstractController
                 break;
         }
         $obj = $obj->findOneById($id);
+        if(!$obj) {
+            return new Response(Response::HTTP_NOT_FOUND);
+        }
         $dataObj = $obj->getIdDonnees()->getValues();
         
-        if((intval($type) == 2) || (intval($type) == 3)) {
+        if((intval($type) == 1) || (intval($type) == 2)) {
             $dateMin = (DateTime::createFromInterface(end($dataObj)->getHorodatage()))->sub(new DateInterval("P1W"));
             $dateMax = DateTime::createFromInterface(end($dataObj)->getHorodatage());
             
@@ -75,9 +79,11 @@ class PhysicController extends AbstractController
     #[Route('/getDataPiquet', name: 'getDataPiquet')]
     public function getDataPiquet() : Response {
         $periode = "1sem";
+        $choixPiquet = "1";
 
-        if(isset($_POST['periode'])){
+        if(isset($_POST['periode']) AND isset($_POST['choixPiquet'])){
             $periode = $_POST['periode'];
+            $choixPiquet = $_POST['choixPiquet'];
         }
 
         $date = new dateTime();
@@ -94,65 +100,78 @@ class PhysicController extends AbstractController
             $datePeriode = $date->sub(new DateInterval('P10Y'));    // Période de 10 ans
         }  
         
-        $dataPiquet = $this->manager->getRepository(DonneesPiquet::class);
-        $obj = $dataPiquet->findByDateBetween($datePeriode);
-
-        foreach($obj as $piquet)
-        {
-            $id[] = $piquet->getId();
-            $Horodatage = $piquet->getHorodatage();
-            $horodatage[] = $Horodatage->format('d/m/Y H:i:s');
-            $temp[] = $piquet->getTemperature();
-            $humi[] = $piquet->getHumidite();
+        $data = $this->manager->getRepository(DonneesPiquet::class);
+        
+        if($choixPiquet == "all"){
+            $cPiquet = $data->findAll();
+//         } else if ($choixPiquet == "1pi"){
+        } else{
+            $cPiquet = $data->findByIdPiquet($choixPiquet);
         }
 
-        return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi));
+        $nbPi = count($cPiquet);
+        
+        for($k = 0; $k<$nbPi; $k++){
+            if($data->findByDate($datePeriode)){
+                $id[$k] = $cPiquet[$k]->getId();
+                $Horodatage = $cPiquet[$k]->getHorodatage();
+                $horodatage[$k] = $Horodatage->format('d/m/Y H:i:s');
+                $temp[$k] = $cPiquet[$k]->getTemperature();
+                $humi[$k] = $cPiquet[$k]->getHumidite();
+                $idP[$k] = $cPiquet[$k]->getIdPiquet()->getId();
+            } else {
+                $id[$k] = 0;
+                $horodatage = 0;
+//                 $horodatage[$k] = $Horodatage->format('d/m/Y H:i:s');
+                $temp[$k] = 0;
+                $humi[$k] = 0;
+                $idP[$k] = 0;
+            }
+        }
+
+        return new JsonResponse(array("Id" => $id, "Heure" => $horodatage, "Temp"=> $temp, "Humi" => $humi, "IdPiquet"=> $idP));
     }
     
     #[Route('/mapsControl', name: 'mapsControl')]
     public function mapsControl()
     {
-        $parcelle = $this->getUser()->getIdParcelle();
-        $piquetDb = $parcelle->getIdPiquets();
-        $armoireDb = $parcelle->getIdArmoires();
-        $electrovanneDb = $parcelle->getIdElectrovannes();
-        $piquet = array();
-        $armoire = array();
         $electrovanne = array();
+        $piquet = array();
+        $piquetDb = array();
+        $electrovanneDb = array();
         
-        for($i = 0; $i < count($piquetDb); $i++){
-            if($piquetDb[$i]->getEtat()){
-                $val = $piquetDb[$i]->getIdDonnees()->GetValues();
-                $data = end($val);
-                
-                $coordsPiq["id"] = $piquetDb[$i]->getId();
-                $coordsPiq["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
-                array_push($piquet, $coordsPiq);
-            }
-        }
+        $adminRoles = $this->getUser()->getRoles();
         
-        for($i = 0; $i < count($armoireDb); $i++){
-            if($armoireDb[$i]->getEtat()){
-                $val = $armoireDb[$i]->getIdDonnees()->GetValues();
-                $data = end($val);
-                
-                $coordsArm["id"] = $armoireDb[$i]->getId();
-                $coordsArm["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
-                array_push($armoire, $coordsArm);
-            }
-        }
+        if($adminRoles[0] === "ROLE_ADMIN") {
+            $electrovanneDb = $this->manager->getRepository(Electrovanne::class)->findAll();
+            $piquetDb = $this->manager->getRepository(Piquet::class)->findAll();
+            
+        } else {
+            $parcelle = $this->getUser()->getIdParcelle();
+            $electrovanneDb = $parcelle->getIdElectrovannes();
+            $piquetDb = $parcelle->getIdPiquets();
+        }  
         
-        for($i = 0; $i < count($electrovanneDb); $i++){
+        for($i = 0; $i < count($electrovanneDb); $i++) {
             if($electrovanneDb[$i]->getEtat()){
                 $val = $electrovanneDb[$i]->getIdDonnees()->GetValues();
                 $data = end($val);
-                
-                $coordsElec["id"] = $electrovanneDb[$i]->getId();
-                $coordsElec["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
-                array_push($electrovanne, $coordsElec);
+                $dataSerializeVanne["id"] = $electrovanneDb[$i]->getId();
+                $dataSerializeVanne["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
+                array_push($electrovanne, $dataSerializeVanne);
             }
         }
-        return new JsonResponse(array("1" => $armoire, "2" => $electrovanne, "3" => $piquet));
+        for($i = 0; $i < count($piquetDb); $i++) {
+            if($piquetDb[$i]->getEtat()){
+                $val = $piquetDb[$i]->getIdDonnees()->GetValues();
+                $data = end($val);
+                $dataSerializePiquet["id"] = $piquetDb[$i]->getId();
+                $dataSerializePiquet["gps"] = array("latitude" => $data->getLatitude(), "longitude" => $data->getLongitude());
+                $dataSerializePiquet["humidite"] = $data->getHumidite();
+                array_push($piquet, $dataSerializePiquet);
+            }
+        }  
+        return new JsonResponse(array("1" => $electrovanne, "2" => $piquet));
        
     }
     
@@ -291,7 +310,7 @@ class PhysicController extends AbstractController
         $latitude = $inputTramePiquet[6];
         $humidite = explode(':', $inputTramePiquet[7]);
         $batterie =  $inputTramePiquet[8];
-        
+            
         $result = $this->manager->getRepository(DonneesPiquet::class)->findByhorodatage(date_create_from_format("d-m-Y H:i:s", $horodatage));
         
         if($result){

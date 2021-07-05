@@ -10,7 +10,23 @@
 
 
 <div class="container-fluid" id="control">
-	
+	<center>
+		<fieldset> 
+     		<legend>Niveaux d'humidite dans le sol :	
+     			<button id="level_1" class="btn btn-light" onclick="humidite(1)">Niveau 1</button>	
+    			<button id="level_2" class="btn btn-light" onclick="humidite(2)">Niveau 2</button>	
+    			<button id="level_3" class="btn btn-light" onclick="humidite(3)">Niveau 3</button>	
+    		</legend>
+     		<legend>Niveau d'humidite dans l'air :	
+     			<button id="level_0" class="btn btn-light" onclick="humidite(0)">Humidite dans l'air</button>
+     		</legend>
+     		<div class="slidecontainer">
+              	<input type="range" min="1" max="100" value="50" class="slider" id="sliderHum">
+              	<span>Moyenne Acceptable:<div id='moyenneHum'></div></span>
+            </div>	
+		</fieldset>
+   	</center>
+    
     <div class="row">
         <div class="col-md-6 left" id="left" style="height:inherit;">
         	<div id="map" class="map"></div>

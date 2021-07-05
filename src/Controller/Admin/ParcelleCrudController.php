@@ -32,11 +32,11 @@ class ParcelleCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(),
             TextField::new('label'),
             AssociationField::new('idOperateurs', 'Operateur')->setHelp('Choisir les opérateurs appartenant à une parcelle'),
             AssociationField::new('idPiquets', 'Piquets')->setHelp('Choisir les piquets appartenant à une parcelle'),
             AssociationField::new('idElectrovannes', 'Electrovannes')->setHelp('Choisir les électrovannes appartenant à une parcelle'),
+            AssociationField::new('idArmoires', 'Armoire')->setHelp('Choisir l\'armoire qui appartient à une parcelle'),
         ];
     }
     

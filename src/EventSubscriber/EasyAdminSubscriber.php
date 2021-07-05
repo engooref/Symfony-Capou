@@ -2,21 +2,24 @@
 
 namespace App\EventSubscriber;
 
-use \DateTime;
-use App\Entity\Operateur;
 use App\Entity\Piquet;
-use App\Entity\Groupe;
+use App\Entity\Armoire;
+use App\Entity\Parcelle;
+use App\Entity\Operateur;
 use App\Entity\ElectroVanne;
-use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
+
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityDeletedEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-//use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
+
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+
+use \DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 
 
 class EasyAdminSubscriber implements EventSubscriberInterface 
@@ -38,8 +41,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     {
         return [
             BeforeEntityPersistedEvent::class => ['createUserAndGroup'],
-            //BeforeEntityPersistedEvent::class => ['createGroup'],
-            BeforeEntityUpdatedEvent::class => ['updateGroupe'],
+            BeforeEntityUpdatedEvent::class => ['updateParcelle'],
         ];
     }
     
@@ -87,76 +89,94 @@ class EasyAdminSubscriber implements EventSubscriberInterface
             }
         }
         
-        if ($entity instanceof Groupe) {
+        if ($entity instanceof Parcelle) {
             // creation operateurs
-            foreach($entity->getIdOperateur() as $idOperateur){
-                $idOperateur->setIdGroupe($entity);
+            foreach($entity->getIdOperateurs() as $idOperateur){
+                $idOperateur->setIdParcelle($entity);
                 $entity->addIdOperateur($idOperateur);
             }
             // creation piquets
             foreach($entity->getIdPiquets() as $idPiquet){
-                $idPiquet->setIdGroupe($entity);
+                $idPiquet->setIdParcelle($entity);
                 $entity->addIdPiquet($idPiquet);
             }
             // création electrovannes
             foreach($entity->getIdElectrovannes() as $idElectrovanne){
-                $idElectrovanne->setIdGroupe($entity);
+                $idElectrovanne->setIdParcelle($entity);
                 $entity->addIdElectrovanne($idElectrovanne);
+            }
+            // création armoire
+            foreach($entity->getIdArmoires() as $idArmoire){
+                $idArmoire->setIdParcelle($entity);
+                $entity->addIdArmoire($idArmoire);
             }
         }
     }
 
-    public function updateGroupe(BeforeEntityUpdatedEvent $event)
+    public function updateParcelle(BeforeEntityUpdatedEvent $event)
     {
         $entity = $event->getEntityInstance(); // On r�cup�re l'instance de l'entit�
-        if (!($entity instanceof Groupe)) { // On test si l'entit� est bien une instance de Groupe
+        if (!($entity instanceof Parcelle)) { // On test si l'entit� est bien une instance de Parcelle
             return;
         }
         
         //dump($entity);die();
         
-        $defaultGroup = $this->doctrineManager->getRepository(Groupe::class)->findOneById('1'); // Le groupe consid�r� "par d�faut" est le groupe avec comme id=1
+        $defaultGroup = $this->doctrineManager->getRepository(Parcelle::class)->findOneById('1'); // La parcelle consid�r� "par d�faut" est la parcelle avec comme id=1
         
         //gestion des opérateurs
-        $GroupAct = $this->doctrineManager->getRepository(Groupe::class)->findOneById($entity->getId()); // Le groupe actuel est l'id de l'entit�
+        $GroupAct = $this->doctrineManager->getRepository(Parcelle::class)->findOneById($entity->getId()); // La parcelle actuel est l'id de l'entit�
         
-        $operatorTab = $this->doctrineManager->getRepository(Operateur::class)->findBy(['idGroupe'=>$GroupAct->getId()]);
+        $operatorTab = $this->doctrineManager->getRepository(Operateur::class)->findBy(['idParcelle'=>$GroupAct->getId()]);
         
-        foreach($operatorTab as $Operator){ // Pour chaque op�rateurs contenus dans le groupe actuel, on les transfere dans le groupe par d�faut (1)
-            $Operator->setIdGroupe($defaultGroup);
+        foreach($operatorTab as $Operator){ // Pour chaque op�rateurs contenus dans la parcelle actuel, on les transfere dans la parcelle par d�faut (1)
+            $Operator->setIdParcelle($defaultGroup);
             $this->doctrineManager->flush();
         }
         
-        foreach($entity->getIdOperateur() as $idOperateur){ // Pour chaque op�rateurs contenus dans l'entit�, on assigne aux nouveaux groupes les cl�s �trang�res
-            $idOperateur->setIdGroupe($entity);
+        foreach($entity->getIdOperateurs() as $idOperateur){ // Pour chaque op�rateurs contenus dans l'entit�, on assigne aux nouvelles parcelles les cl�s �trang�res
+            $idOperateur->setIdParcelle($entity);
             $entity->addIdOperateur($idOperateur);
         }
         
         
         //gestion des piquets
-        $piquetTab = $this->doctrineManager->getRepository(Piquet::class)->findBy(['idGroupe'=>$GroupAct->getId()]);
+        $piquetTab = $this->doctrineManager->getRepository(Piquet::class)->findBy(['idParcelle'=>$GroupAct->getId()]);
         
-        foreach($piquetTab as $Piquet){ // Pour chaque op�rateurs contenus dans le groupe actuel, on les transfere dans le groupe par d�faut (1)
-            $Piquet->setIdGroupe(null);
+        foreach($piquetTab as $Piquet){ // Pour chaque op�rateurs contenus dans la parcelle actuel, on les transfere dans la parcelle par d�faut (1)
+            $Piquet->setIdParcelle(null);
             $this->doctrineManager->flush();
         }
         
-        foreach($entity->getIdPiquets() as $idPiquet){ // Pour chaque op�rateurs contenus dans l'entit�, on assigne aux nouveaux groupes les cl�s �trang�res
-            $idPiquet->setIdGroupe($entity);
+        foreach($entity->getIdPiquets() as $idPiquet){ // Pour chaque op�rateurs contenus dans l'entit�, on assigne aux nouvelles parcelles les cl�s �trang�res
+            $idPiquet->setIdParcelle($entity);
             $entity->addIdPiquet($idPiquet);
         }
         
         //gestion des electrovannes
-        $electrovanneTab = $this->doctrineManager->getRepository(ElectroVanne::class)->findBy(['idGroupe'=>$GroupAct->getId()]);
+        $electrovanneTab = $this->doctrineManager->getRepository(ElectroVanne::class)->findBy(['idParcelle'=>$GroupAct->getId()]);
         
-        foreach($electrovanneTab as $Electrovanne){ // Pour chaque op�rateurs contenus dans le groupe actuel, on les transfere dans le groupe par d�faut (1)
-            $Electrovanne->setIdGroupe(null);
+        foreach($electrovanneTab as $Electrovanne){ // Pour chaque op�rateurs contenus dans la parcelle actuel, on les transfere dans la parcelle par d�faut (1)
+            $Electrovanne->setIdParcelle(null);
             $this->doctrineManager->flush();
         }
         
-        foreach($entity->getIdElectrovannes() as $idElectrovanne){ // Pour chaque op�rateurs contenus dans l'entit�, on assigne aux nouveaux groupes les cl�s �trang�res
-            $idElectrovanne->setIdGroupe($entity);
+        foreach($entity->getIdElectrovannes() as $idElectrovanne){ // Pour chaque op�rateurs contenus dans l'entit�, on assigne aux nouvelles parcelles les cl�s �trang�res
+            $idElectrovanne->setIdParcelle($entity);
             $entity->addIdElectrovanne($idElectrovanne);
+        }
+        
+        //gestion de l'armoire
+        $armoireTab = $this->doctrineManager->getRepository(Armoire::class)->findBy(['idParcelle'=>$GroupAct->getId()]);
+        
+        foreach($armoireTab as $Armoire){ // Pour chaque armoires contenus dans la parcelle actuel, on les transfere dans la parcelle par d�faut (1)
+            $Armoire->setIdParcelle(null);
+            $this->doctrineManager->flush();
+        }
+        
+        foreach($entity->getIdArmoires() as $idArmoire){ // Pour chaque armoires contenus dans l'entit�, on assigne aux nouvelles parcelles les cl�s �trang�res
+            $idArmoire->setIdParcelle($entity);
+            $entity->addIdArmoire($idArmoire);
         }
         
     }

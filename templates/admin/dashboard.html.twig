@@ -32,8 +32,8 @@
                                 <b>{{ operateur.email }}</b>
                             </span>
                            <span class="justify-content-between">
-                                <button type="button" class="btn btn-success">Valider <i class="fas fa-check-square"></i></button>
-                                <button type="button" class="btn btn-danger">Supprimer <i class="fas fa-window-close"></i></button>
+                                <button type="button" onclick="validateOperator('{{ operateur.email }}')" class="btn btn-success">Valider <i class="fas fa-check-square"></i></button>
+                                <button type="button" onclick="deleteOperator('{{ operateur.email }}')" class="btn btn-danger">Supprimer <i class="fas fa-window-close"></i></button>
                             </span>
                         </li>
                         {% endfor %}
@@ -42,4 +42,5 @@
             </div>
         </div>
 	</div>
+{{ encore_entry_script_tags('admin') }}
 {% endblock %}

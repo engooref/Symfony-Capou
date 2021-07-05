@@ -80,6 +80,28 @@ class DashboardController extends AbstractDashboardController
             'operateursToValidate' => $this->operateurRepository->findBy(['verified_by_admin' => false]),
         ]);
     }
+    
+    /**
+     * @Route("/admin_59fq5a/validateOperator", name="adminValidateOperator")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function validateOperator(): Response
+    {
+        if($_POST['email']) {
+            dump($_POST['email']); die();
+        }
+        
+    }
+    
+    /**
+     * @Route("/admin_59fq5a/deleteOperator", name="adminDeleteOperator")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function deleteOperator(): Response
+    {
+        
+        
+    }
 
     public function configureDashboard(): Dashboard
     {

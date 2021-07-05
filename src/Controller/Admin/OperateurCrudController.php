@@ -25,7 +25,7 @@ class OperateurCrudController extends AbstractCrudController
             EmailField::new('email')->setHelp('Choisir l\'adresse email'), 
             AssociationField::new('idParcelle', 'Parcelle')->setRequired(true)->setHelp('Choisir à quel parcelle l\'opérateur appartient'),
             DateTimeField::new('createdAt')->hideOnForm(),
-            BooleanField::new('verified_by_admin')->hideOnForm()->setCustomOption('renderAsSwitch', false)
+            BooleanField::new('verified_by_admin')->hideOnForm()
         ];
     }
     
